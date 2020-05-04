@@ -196,7 +196,7 @@ def create_user():
     )
     db.session.add(new_user)
     db.session.commit()
-    return jsonify(user_by_id(id_user)), 201
+    return jsonify(user_by_id(id_user)), 201, {'Access-Control-Allow-Origin': '*'}
 
 
 # Изменение пользователя
