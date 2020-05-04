@@ -10,7 +10,7 @@ from flask_cors import CORS
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 
 @auth.get_password
