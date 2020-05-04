@@ -178,7 +178,10 @@ def create_user():
     if not request.json or not 'email' in request.json:
         abort(400)
     users = models.User.query.all()
-    id_user = users[-1].id + 1
+    if users:
+        id_user = users[-1].id + 1
+    else:
+        id_user = 1
     new_user = models.User(
         id=id_user,
         nickname=request.json.get('nickname', ""),
