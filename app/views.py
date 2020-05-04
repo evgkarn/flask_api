@@ -3,9 +3,11 @@ from numpy import unicode
 from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
+CORS(app)
 
 
 @auth.get_password
