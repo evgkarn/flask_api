@@ -51,30 +51,12 @@ def make_public_task(task):
     return new_task
 
 
-@app.route('/todo/api/v1.0/ads', methods=['GET'])
-def get_ads():
-    return jsonify({'ads': list(map(make_public_task, ads))})
-
-
-@app.route('/todo/api/v1.0/ads/<int:task_id>', methods=['GET'])
-@auth.login_required
-def get_task(task_id):
-    task = list(filter(lambda t: t['id'] == task_id, ads))
-    if len(task) == 0:
-        abort(404)
-    return jsonify({'task': task[0]})
-
-
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
-
-# Формирования словаря полей пользователя для json ответа
+# Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
     new_ad_json = {
         'id': ad.id,
+        'user_id': ad.user_id,
         'name': ad.name_ads,
         'text': ad.body,
         'mark_auto': ad.mark_auto,
@@ -82,9 +64,33 @@ def ad_by_id(id_elem):
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
-        'url': url_for('get_ad', user_id=ad.id, _external=True)
+        'url': url_for('get_ad', ad_id=ad.id, _external=True)
     }
     return new_ad_json
+
+
+# Получить все объявления
+@app.route('/todo/api/v1.0/ads', methods=['GET'])
+def get_ads():
+    ads = models.Post.query.all()
+    lt_ads = []
+    for u in ads:
+        lt_ads.append(ad_by_id(u.id))
+    return jsonify({'ads': lt_ads}), 201
+
+
+# Получить объявление по id
+@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
+def get_ad(ad_id):
+    ad = models.Post.query.get(ad_id)
+    if ad is None:
+        abort(404)
+    return jsonify({'ad': ad_by_id(ad_id)}), 201
+
+
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
 
 
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
@@ -110,57 +116,87 @@ def create_ads():
     )
     db.session.add(new_ad)
     db.session.commit()
-    return jsonify(ad_by_id(id_ad))
+    return jsonify(ad_by_id(id_ad)), 201
 
 
-@app.route('/todo/api/v1.0/ads/<int:task_id>', methods=['PUT'])
-@auth.login_required
-def update_task(task_id):
-    task = list(filter(lambda t: t['id'] == task_id, ads))
-    if len(task) == 0:
+# Изменение объявления
+@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
+# @auth.login_required
+def update_ad(ad_id):
+    ad = models.Post.query.get(ad_id)
+    if ad is None:
         abort(404)
     if not request.json:
         abort(400)
-    if 'title' in request.json and type(request.json['title']) != unicode:
+    if 'name' in request.json and type(request.json['name']) is not unicode:
         abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
+    if 'text' in request.json and type(request.json['text']) is not unicode:
         abort(400)
-    if 'done' in request.json and type(request.json['done']) is not bool:
+    if 'mark_auto' in request.json and type(request.json['mark_auto']) is not unicode:
         abort(400)
-    task[0]['title'] = request.json.get('title', task[0]['title'])
-    task[0]['description'] = request.json.get('description', task[0]['description'])
-    task[0]['done'] = request.json.get('done', task[0]['done'])
-    return jsonify({'task': task[0]})
+    if 'model_auto' in request.json and type(request.json['model_auto']) is not unicode:
+        abort(400)
+    if 'year_auto' in request.json and type(request.json['year_auto']) is not unicode:
+        abort(400)
+    if 'vin_auto' in request.json and type(request.json['vin_auto']) is not unicode:
+        abort(400)
+    if 'price' in request.json and type(request.json['price']) is not unicode:
+        abort(400)
+    ad.name_ads = request.json.get('name', ad.name_ads)
+    ad.body = request.json.get('text', ad.body)
+    ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
+    ad.model_auto = request.json.get('model_auto', ad.model_auto)
+    ad.year_auto = request.json.get('year_auto', ad.year_auto)
+    ad.vin_auto = request.json.get('vin_auto', ad.vin_auto)
+    ad.price = request.json.get('price', ad.price)
+    db.session.commit()
+    return jsonify(ad_by_id(ad_id)), 201
 
 
-@app.route('/todo/api/v1.0/ads/<int:task_id>', methods=['DELETE'])
-@auth.login_required
-def delete_task(task_id):
-    task = list(filter(lambda t: t['id'] == task_id, ads))
-    print(task)
-    if len(task) == 0:
+# Удаление объявления
+@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['DELETE'])
+# @auth.login_required
+def delete_ad(ad_id):
+    ad = models.Post.query.get(ad_id)
+    if ad is None:
         abort(404)
-    ads.remove(task[0])
+    db.session.delete(ad)
+    db.session.commit()
     return jsonify({'result': True})
 
 
 # Формирования словаря полей пользователя для json ответа
 def user_by_id(id_elem):
     user = models.User.query.get(id_elem)
+    posts = user.posts
+    user_posts = []
+    for post in posts:
+        user_posts.append({
+            'name': post.name_ads,
+            'text': post.body,
+            'mark_auto': post.mark_auto,
+            'model_auto': post.model_auto,
+            'year_auto': post.year_auto,
+            'vin_auto': post.vin_auto,
+            'price': post.price,
+            'url': url_for('get_ad', ad_id=post.id, _external=True)
+        })
     new_user_json = {
         'id': user.id,
         'nickname': user.nickname,
         'password': user.password,
         'email': user.email,
         'role': user.role,
-        'url': url_for('get_user', user_id=user.id, _external=True)
+        'url': url_for('get_user', user_id=user.id, _external=True),
+        'ads': user_posts
+
     }
     return new_user_json
 
 
 # Получить всех пользователей
 @app.route('/todo/api/v1.0/users', methods=['GET'])
-def get_tasks():
+def get_users():
     users = models.User.query.all()
     lt_users = []
     for u in users:
@@ -174,7 +210,7 @@ def get_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
-    return jsonify({'user': user_by_id(user_id)})
+    return jsonify({'user': user_by_id(user_id)}), 201
 
 
 # Создание пользователя
@@ -196,7 +232,7 @@ def create_user():
     )
     db.session.add(new_user)
     db.session.commit()
-    return jsonify(user_by_id(id_user)), 201, {'Access-Control-Allow-Origin': '*'}
+    return jsonify(user_by_id(id_user)), 201
 
 
 # Изменение пользователя
@@ -216,13 +252,12 @@ def update_user(user_id):
         abort(400)
     if 'role' in request.json and type(request.json['role']) is not unicode:
         abort(400)
-    ast = u''
     user.nickname = request.json.get('nickname', user.nickname)
     user.password = request.json.get('password', user.password)
     user.email = request.json.get('email', user.email)
     user.role = request.json.get('role', user.role)
     db.session.commit()
-    return jsonify(user_by_id(user_id)), 201, {'Content-Type': 'text/css; charset=utf-8'}
+    return jsonify(user_by_id(user_id)), 201
 
 
 # Удаление пользователя
