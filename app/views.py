@@ -196,6 +196,9 @@ def get_user(user_id):
 def create_user():
     if not request.json or not 'email' in request.json:
         abort(400)
+    our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
+    if our_user is not None:
+        return jsonify({'error': 'User already created'})
     users = models.User.query.all()
     if users:
         id_user = users[-1].id + 1
@@ -273,6 +276,6 @@ def auth_user():
         return jsonify({'error': 'Unknown user'})
 
 
-@app.route('/todo/api/v1.0/auth', methods=['GET,PUT,DELETE'])
+@app.route('/todo/api/v1.0/auth', methods=['GET', 'PUT', 'DELETE'])
 def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
