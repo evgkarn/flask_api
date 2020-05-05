@@ -271,3 +271,8 @@ def auth_user():
             return jsonify({'error': 'Unauthorized access'})
     else:
         return jsonify({'error': 'Unknown user'})
+
+
+@app.route('/todo/api/v1.0/auth', methods=['GET,PUT,DELETE'])
+def auth_user_get():
+    return make_response(jsonify({'error': 'Not found'}), 404)
