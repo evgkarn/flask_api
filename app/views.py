@@ -3,6 +3,7 @@ from numpy import unicode
 from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for
 from flask_httpauth import HTTPBasicAuth
+import datetime
 import sys
 
 sys.path.append('/home/evgkarn/.virtualenvs/my-venv/lib/python3.6/site-packages')
@@ -25,32 +26,6 @@ def unauthorized():
     return make_response(jsonify({'error': 'Unauthorized access'}), 403)
 
 
-ads = [
-    {
-        'id': 1,
-        'title': u'Buy groceries',
-        'description': u'Milk, Cheese, Pizza, Fruit, Tylenol',
-        'done': False
-    },
-    {
-        'id': 2,
-        'title': u'Learn Python',
-        'description': u'Need to find a good Python tutorial on the web',
-        'done': False
-    }
-]
-
-
-def make_public_task(task):
-    new_task = {}
-    for field in task:
-        if field == 'id':
-            new_task['uri'] = url_for('get_task', task_id=task['id'], _external=True)
-        else:
-            new_task[field] = task[field]
-    return new_task
-
-
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
@@ -64,7 +39,8 @@ def ad_by_id(id_elem):
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
-        'url': url_for('get_ad', ad_id=ad.id, _external=True)
+        'url': url_for('get_ad', ad_id=ad.id, _external=True),
+        'date_create': ad.timestamp
     }
     return new_ad_json
 
@@ -88,11 +64,13 @@ def get_ad(ad_id):
     return jsonify({'ad': ad_by_id(ad_id)}), 201
 
 
+# Возврат 404 ошибки в json
 @app.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+# Cоздание объявления
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
 # @auth.login_required
 def create_ads():
@@ -112,7 +90,8 @@ def create_ads():
         year_auto=request.json['year_auto'],
         vin_auto=request.json['vin_auto'],
         price=request.json['price'],
-        user_id=request.json['user_id']
+        user_id=request.json['user_id'],
+        timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_ad)
     db.session.commit()
@@ -189,7 +168,6 @@ def user_by_id(id_elem):
         'role': user.role,
         'url': url_for('get_user', user_id=user.id, _external=True),
         'ads': user_posts
-
     }
     return new_user_json
 
@@ -270,3 +248,26 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': True})
+
+
+# Авторизация пользователя
+@app.route('/todo/api/v1.0/auth', methods=['POST'])
+def auth_user():
+    if not request.json or not 'email' in request.json:
+        abort(400)
+    if not request.json or not 'password' in request.json:
+        abort(400)
+    our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
+    if our_user is not None:
+        if our_user.password == request.json['password']:
+            user_auth = {
+                'nickname': our_user.nickname,
+                'email': our_user.email,
+                'role': our_user.role,
+                'url': url_for('get_user', user_id=our_user.id, _external=True),
+            }
+            return jsonify({'user': user_auth}), 201
+        else:
+            return jsonify({'error': 'Unauthorized access'})
+    else:
+        return jsonify({'error': 'Unknown user'})
