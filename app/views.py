@@ -3,6 +3,7 @@ from numpy import unicode
 from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for
 from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import check_password_hash, generate_password_hash
 import datetime
 import sys
 
@@ -163,7 +164,6 @@ def user_by_id(id_elem):
     new_user_json = {
         'id': user.id,
         'nickname': user.nickname,
-        'password': user.password,
         'email': user.email,
         'role': user.role,
         'url': url_for('get_user', user_id=user.id, _external=True),
@@ -207,7 +207,7 @@ def create_user():
     new_user = models.User(
         id=id_user,
         nickname=request.json.get('nickname', ""),
-        password=request.json['password'],
+        hash_password=generate_password_hash((request.json['password'])),
         email=request.json['email'],
         role=request.json['role']
     )
@@ -234,7 +234,7 @@ def update_user(user_id):
     if 'role' in request.json and type(request.json['role']) is not unicode:
         abort(400)
     user.nickname = request.json.get('nickname', user.nickname)
-    user.password = request.json.get('password', user.password)
+    user.hash_password = generate_password_hash((request.json['password']))
     user.email = request.json.get('email', user.email)
     user.role = request.json.get('role', user.role)
     db.session.commit()
@@ -262,7 +262,7 @@ def auth_user():
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
     if our_user is not None:
-        if our_user.password == request.json['password']:
+        if check_password_hash(our_user.hash_password, request.json['password']):
             user_auth = {
                 'nickname': our_user.nickname,
                 'email': our_user.email,
