@@ -4,7 +4,9 @@ from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
+from functools import wraps
 import datetime
+import jwt
 import sys
 
 sys.path.append('/home/evgkarn/.virtualenvs/my-venv/lib/python3.6/site-packages')
@@ -12,7 +14,24 @@ from flask_cors import CORS
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
+app.config['SECRET_KEY'] = 'CeKpeTHbII/I_k/\I-o4'
 CORS(app)
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = request.json.get('token')
+        if not token:
+            return jsonify({'message': 'Token is missing'}), 403
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+        except:
+            return jsonify({'message': 'Token is invalid!'}), 403
+
+        return f(*args, **kwargs)
+
+    return decorated
 
 
 @auth.get_password
@@ -218,6 +237,7 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/user/<int:user_id>', methods=['PUT'])
+@token_required
 # @auth.login_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
@@ -263,13 +283,17 @@ def auth_user():
     our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
-            user_auth = {
-                'nickname': our_user.nickname,
-                'email': our_user.email,
-                'role': our_user.role,
-                'url': url_for('get_user', user_id=our_user.id, _external=True),
-            }
-            return jsonify({'user': user_auth}), 201
+            token = jwt.encode(
+                {'user': our_user.email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                app.config['SECRET_KEY'])
+            # user_auth = {
+            #     'nickname': our_user.nickname,
+            #     'email': our_user.email,
+            #     'role': our_user.role,
+            #     'url': url_for('get_user', user_id=our_user.id, _external=True),
+            # }
+            # return jsonify({'user': user_auth}), 201
+            return jsonify({'token': token.decode('UTF-8')}), 201
         else:
             return jsonify({'error': 'Unauthorized access'})
     else:
