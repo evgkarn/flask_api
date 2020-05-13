@@ -254,20 +254,12 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-@token_required
+# @token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
     if not request.json:
-        abort(400)
-    if type(request.json['nickname']) is not unicode:
-        abort(400)
-    if type(request.json['password']) is not unicode:
-        abort(400)
-    if type(request.json['email']) is not unicode:
-        abort(400)
-    if type(request.json['role']) is not unicode:
         abort(400)
     user.nickname = request.json.get('nickname', user.nickname)
     user.hash_password = generate_password_hash(request.json.get('password', user.hash_password))
