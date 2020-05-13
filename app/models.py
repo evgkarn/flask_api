@@ -39,7 +39,7 @@ class Shop(db.Model):
     name = db.Column(db.String(120), index=True)
     body = db.Column(db.String(768), index=True)
     phone = db.Column(db.Integer, index=True)
-    adress = db.Column(db.String(400), index=True)
+    address = db.Column(db.String(400), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

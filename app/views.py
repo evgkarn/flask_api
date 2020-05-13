@@ -34,18 +34,6 @@ def token_required(f):
     return decorated
 
 
-@auth.get_password
-def get_password(username):
-    if username == 'miguel':
-        return 'python'
-    return None
-
-
-@auth.error_handler
-def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 403)
-
-
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
@@ -67,6 +55,7 @@ def ad_by_id(id_elem):
 
 # Получить все объявления
 @app.route('/todo/api/v1.0/ads', methods=['GET'])
+# @token_required
 def get_ads():
     ads = models.Post.query.all()
     lt_ads = []
@@ -77,6 +66,7 @@ def get_ads():
 
 # Получить объявление по id
 @app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
+# @token_required
 def get_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -92,7 +82,7 @@ def not_found(error):
 
 # Cоздание объявления
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
-# @auth.login_required
+# @token_required
 def create_ads():
     if not request.json or not 'text' in request.json:
         abort(400)
@@ -120,7 +110,7 @@ def create_ads():
 
 # Изменение объявления
 @app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
-# @auth.login_required
+# @token_required
 def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -154,7 +144,7 @@ def update_ad(ad_id):
 
 # Удаление объявления
 @app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['DELETE'])
-# @auth.login_required
+# @token_required
 def delete_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -186,7 +176,7 @@ def user_by_id(id_elem):
             'name': shop.name,
             'text': shop.body,
             'phone': shop.phone,
-            'adress': shop.adress
+            'address': shop.address
         }
     new_user_json = {
         'id': user.id,
@@ -203,6 +193,7 @@ def user_by_id(id_elem):
 
 # Получить всех пользователей
 @app.route('/todo/api/v1.0/users', methods=['GET'])
+# @token_required
 def get_users():
     users = models.User.query.all()
     lt_users = []
@@ -213,6 +204,7 @@ def get_users():
 
 # Получить пользователя по id
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['GET'])
+# @token_required
 def get_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -252,7 +244,7 @@ def create_user():
         name=request.json['name_shop'],
         body=request.json.get('text_shop', "Описание магазина не заполнено"),
         phone=request.json['phone'],
-        adress=request.json.get('adress', "Описание магазина не заполнено"),
+        address=request.json.get('address', "Описание магазина не заполнено"),
         user_id=id_user
     )
     db.session.add(new_shop)
@@ -262,8 +254,7 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-# @token_required
-# @auth.login_required
+@token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -287,14 +278,14 @@ def update_user(user_id):
         shop.name = request.json.get('name_shop', shop.name)
         shop.body = request.json.get('text_shop', shop.body)
         shop.phone = request.json.get('phone', shop.phone)
-        shop.adress = request.json.get('adress', shop.adress)
+        shop.address = request.json.get('address', shop.address)
     db.session.commit()
     return jsonify(user_by_id(user_id)), 201
 
 
 # Удаление пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['DELETE'])
-# @auth.login_required
+@token_required
 def delete_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -315,7 +306,8 @@ def auth_user():
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
             token = jwt.encode(
-                {'user': our_user.email, 'url': url_for('get_user', user_id=our_user.id, _external=True), 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                {'user': our_user.email, 'url': url_for('get_user', user_id=our_user.id, _external=True),
+                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 app.config['SECRET_KEY'])
             # user_auth = {
             #     'nickname': our_user.nickname,
@@ -334,6 +326,7 @@ def auth_user():
 @app.route('/todo/api/v1.0/auth', methods=['GET', 'PUT', 'DELETE'])
 def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
+
 
 # Формирования словаря полей объявления для json ответа
 def shop_by_id(id_elem):
