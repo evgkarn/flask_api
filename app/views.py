@@ -180,6 +180,14 @@ def user_by_id(id_elem):
             'price': post.price,
             'url': url_for('get_ad', ad_id=post.id, _external=True)
         })
+    shop = models.Shop.query.filter_by(user_id=id_elem).first()
+    if shop:
+        user_shops = {
+            'name': shop.name,
+            'text': shop.body,
+            'phone': shop.phone,
+            'adress': shop.adress
+        }
     new_user_json = {
         'id': user.id,
         'nickname': user.nickname,
@@ -188,6 +196,8 @@ def user_by_id(id_elem):
         'url': url_for('get_user', user_id=user.id, _external=True),
         'ads': user_posts
     }
+    if shop:
+        new_user_json['shop'] = user_shops
     return new_user_json
 
 
@@ -232,12 +242,27 @@ def create_user():
     )
     db.session.add(new_user)
     db.session.commit()
+    shop = models.Shop.query.all()
+    if shop:
+        id_shop = shop[-1].id + 1
+    else:
+        id_shop = 1
+    new_shop = models.Shop(
+        id=id_shop,
+        name=request.json['name_shop'],
+        body=request.json.get('text_shop', "Описание магазина не заполнено"),
+        phone=request.json['phone'],
+        adress=request.json.get('adress', "Описание магазина не заполнено"),
+        user_id=id_user
+    )
+    db.session.add(new_shop)
+    db.session.commit()
     return jsonify(user_by_id(id_user)), 201
 
 
 # Изменение пользователя
-@app.route('/todo/api/v1.0/user/<int:user_id>', methods=['PUT'])
-@token_required
+@app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
+# @token_required
 # @auth.login_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
@@ -254,9 +279,15 @@ def update_user(user_id):
     if 'role' in request.json and type(request.json['role']) is not unicode:
         abort(400)
     user.nickname = request.json.get('nickname', user.nickname)
-    user.hash_password = generate_password_hash((request.json['password']))
+    user.hash_password = generate_password_hash(request.json.get('password', user.hash_password))
     user.email = request.json.get('email', user.email)
     user.role = request.json.get('role', user.role)
+    shop = models.Shop.query.filter_by(user_id=user_id).first()
+    if shop:
+        shop.name = request.json.get('name_shop', shop.name)
+        shop.body = request.json.get('text_shop', shop.body)
+        shop.phone = request.json.get('phone', shop.phone)
+        shop.adress = request.json.get('adress', shop.adress)
     db.session.commit()
     return jsonify(user_by_id(user_id)), 201
 
@@ -284,7 +315,7 @@ def auth_user():
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
             token = jwt.encode(
-                {'user': our_user.email, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                {'user': our_user.email, 'url': url_for('get_user', user_id=our_user.id, _external=True), 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 app.config['SECRET_KEY'])
             # user_auth = {
             #     'nickname': our_user.nickname,
@@ -303,3 +334,20 @@ def auth_user():
 @app.route('/todo/api/v1.0/auth', methods=['GET', 'PUT', 'DELETE'])
 def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
+
+# Формирования словаря полей объявления для json ответа
+def shop_by_id(id_elem):
+    ad = models.Shop.query.get(id_elem)
+    new_ad_json = {
+        'id': ad.id,
+        'user_id': ad.user_id,
+        'name': ad.name_ads,
+        'text': ad.body,
+        'mark_auto': ad.mark_auto,
+        'model_auto': ad.model_auto,
+        'year_auto': ad.year_auto,
+        'vin_auto': ad.vin_auto,
+        'price': ad.price,
+        'url': url_for('get_ad', ad_id=ad.id, _external=True),
+    }
+    return new_ad_json
