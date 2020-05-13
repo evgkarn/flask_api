@@ -261,13 +261,13 @@ def update_user(user_id):
         abort(404)
     if not request.json:
         abort(400)
-    if 'nickname' in request.json and type(request.json['nickname']) is not unicode:
+    if type(request.json['nickname']) is not unicode:
         abort(400)
-    if 'password' in request.json and type(request.json['password']) is not unicode:
+    if type(request.json['password']) is not unicode:
         abort(400)
-    if 'email' in request.json and type(request.json['email']) is not unicode:
+    if type(request.json['email']) is not unicode:
         abort(400)
-    if 'role' in request.json and type(request.json['role']) is not unicode:
+    if type(request.json['role']) is not unicode:
         abort(400)
     user.nickname = request.json.get('nickname', user.nickname)
     user.hash_password = generate_password_hash(request.json.get('password', user.hash_password))
