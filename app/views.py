@@ -244,7 +244,7 @@ def create_user():
         name=request.json['name_shop'],
         body=request.json.get('text_shop', "Описание магазина не заполнено"),
         phone=request.json['phone'],
-        address=request.json.get('address', "Описание магазина не заполнено"),
+        address=request.json.get('address', "Адрес магазина не заполнен"),
         user_id=id_user
     )
     db.session.add(new_shop)
