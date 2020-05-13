@@ -254,7 +254,7 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
