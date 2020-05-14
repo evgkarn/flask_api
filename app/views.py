@@ -180,7 +180,6 @@ def user_by_id(id_elem):
         }
     new_user_json = {
         'id': user.id,
-        'nickname': user.nickname,
         'email': user.email,
         'role': user.role,
         'url': url_for('get_user', user_id=user.id, _external=True),
@@ -227,7 +226,6 @@ def create_user():
         id_user = 1
     new_user = models.User(
         id=id_user,
-        nickname=request.json.get('nickname', ""),
         hash_password=generate_password_hash((request.json['password'])),
         email=request.json['email'],
         role=request.json['role']
@@ -254,14 +252,13 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
     if not request.json:
         abort(400)
-    user.nickname = request.json.get('nickname', user.nickname)
     user.hash_password = generate_password_hash(request.json.get('password', user.hash_password))
     user.email = request.json.get('email', user.email)
     user.role = request.json.get('role', user.role)
