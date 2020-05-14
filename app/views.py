@@ -254,7 +254,7 @@ def create_user():
 
 # Изменение пользователя
 @app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-@token_required
+# @token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -298,7 +298,12 @@ def auth_user():
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
             token = jwt.encode(
-                {'user': our_user.email, 'url': url_for('get_user', user_id=our_user.id, _external=True),
+                {'user': our_user.email, 'role': our_user.role,
+                 'shop': {'name': our_user.shops[0].name,
+                          'text': our_user.shops[0].body,
+                          'address': our_user.shops[0].address,
+                          'phone': our_user.shops[0].phone},
+                 'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 app.config['SECRET_KEY'])
             # user_auth = {
