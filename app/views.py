@@ -259,7 +259,8 @@ def update_user(user_id):
         abort(404)
     if not request.json:
         abort(400)
-    user.hash_password = generate_password_hash(request.json.get('password', user.hash_password))
+    if 'password' in request.json:
+        user.hash_password = generate_password_hash(request.json['password'])
     user.email = request.json.get('email', user.email)
     user.role = request.json.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
