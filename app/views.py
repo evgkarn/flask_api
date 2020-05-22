@@ -296,7 +296,9 @@ def auth_user():
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
             token = jwt.encode(
-                {'user': our_user.email, 'role': our_user.role,
+                {'user': our_user.email,
+                 'id': our_user.id,
+                 'role': our_user.role,
                  'shop': {'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
                           'address': our_user.shops[0].address,
