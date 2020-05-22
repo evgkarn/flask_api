@@ -34,6 +34,12 @@ def token_required(f):
     return decorated
 
 
+# Возврат 404 ошибки в json
+@app.errorhandler(404)
+def not_found(error):
+    return make_response(jsonify({'error': 'Not found'}), 404)
+
+
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
@@ -74,11 +80,25 @@ def get_ad(ad_id):
     return jsonify({'ad': ad_by_id(ad_id)}), 201
 
 
-# Возврат 404 ошибки в json
-@app.errorhandler(404)
-def not_found(error):
-    return make_response(jsonify({'error': 'Not found'}), 404)
-
+# Получить все объявления по id пользователя
+@app.route('/todo/api/v1.0/users/<int:user_id>/ads', methods=['GET'])
+# @token_required
+def get_user_ads(user_id):
+    user = models.User.query.get(user_id)
+    posts = user.posts
+    user_posts = []
+    for post in posts:
+        user_posts.append({
+            'name': post.name_ads,
+            'text': post.body,
+            'mark_auto': post.mark_auto,
+            'model_auto': post.model_auto,
+            'year_auto': post.year_auto,
+            'vin_auto': post.vin_auto,
+            'price': post.price,
+            'url': url_for('get_ad', ad_id=post.id, _external=True)
+        })
+    return jsonify({'ads': user_posts}), 201
 
 # Cоздание объявления
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
@@ -117,20 +137,6 @@ def update_ad(ad_id):
         abort(404)
     if not request.json:
         abort(400)
-    if 'name' in request.json and type(request.json['name']) is not unicode:
-        abort(400)
-    if 'text' in request.json and type(request.json['text']) is not unicode:
-        abort(400)
-    if 'mark_auto' in request.json and type(request.json['mark_auto']) is not unicode:
-        abort(400)
-    if 'model_auto' in request.json and type(request.json['model_auto']) is not unicode:
-        abort(400)
-    if 'year_auto' in request.json and type(request.json['year_auto']) is not unicode:
-        abort(400)
-    if 'vin_auto' in request.json and type(request.json['vin_auto']) is not unicode:
-        abort(400)
-    if 'price' in request.json and type(request.json['price']) is not unicode:
-        abort(400)
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
     ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
@@ -157,19 +163,6 @@ def delete_ad(ad_id):
 # Формирования словаря полей пользователя для json ответа
 def user_by_id(id_elem):
     user = models.User.query.get(id_elem)
-    posts = user.posts
-    user_posts = []
-    for post in posts:
-        user_posts.append({
-            'name': post.name_ads,
-            'text': post.body,
-            'mark_auto': post.mark_auto,
-            'model_auto': post.model_auto,
-            'year_auto': post.year_auto,
-            'vin_auto': post.vin_auto,
-            'price': post.price,
-            'url': url_for('get_ad', ad_id=post.id, _external=True)
-        })
     shop = models.Shop.query.filter_by(user_id=id_elem).first()
     if shop:
         user_shops = {
@@ -182,9 +175,11 @@ def user_by_id(id_elem):
         'id': user.id,
         'email': user.email,
         'role': user.role,
-        'url': url_for('get_user', user_id=user.id, _external=True),
-        'ads': user_posts
+        'url': url_for('get_user', user_id=user.id, _external=True)
     }
+    user_posts = models.Post.query.filter_by(user_id=id_elem).first()
+    if user_posts:
+        new_user_json['ads'] = url_for('get_user_ads', user_id=user.id, _external=True)
     if shop:
         new_user_json['shop'] = user_shops
     return new_user_json
