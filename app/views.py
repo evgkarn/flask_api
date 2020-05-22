@@ -302,13 +302,6 @@ def auth_user():
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 app.config['SECRET_KEY'])
-            # user_auth = {
-            #     'nickname': our_user.nickname,
-            #     'email': our_user.email,
-            #     'role': our_user.role,
-            #     'url': url_for('get_user', user_id=our_user.id, _external=True),
-            # }
-            # return jsonify({'user': user_auth}), 201
             return jsonify({'token': token.decode('UTF-8')}), 201
         else:
             return jsonify({'error': 'Unauthorized access'})
