@@ -294,6 +294,7 @@ def auth_user():
                 {'user': our_user.email,
                  'id': our_user.id,
                  'role': our_user.role,
+                 'ads': url_for('get_user_ads', user_id=our_user.id, _external=True),
                  'shop': {'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
                           'address': our_user.shops[0].address,
