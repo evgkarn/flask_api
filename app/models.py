@@ -43,3 +43,13 @@ class Shop(db.Model):
 
     def __repr__(self):
         return '<Shop %r>' % self.name
+
+
+class Auto(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(120), index=True)
+    model = db.Column(db.String(768), index=True)
+    year = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return '<Auto %r>' % self.name

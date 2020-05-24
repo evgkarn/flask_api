@@ -330,3 +330,41 @@ def shop_by_id(id_elem):
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
     return new_ad_json
+
+
+# Получить список марок авто
+@app.route('/todo/api/v1.0/auto', methods=['GET'])
+# @token_required
+def get_auto():
+    auto = models.Auto.query.all()
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.name)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'auto': lt_auto}), 201
+
+# Получить список модель по марке авто
+@app.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
+# @token_required
+def get_model(auto_name):
+    auto = db.session.query(models.Auto).filter_by(name=auto_name).all()
+    if auto is None:
+        abort(404)
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.model)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'model': lt_auto}), 201
+
+# Получить год по модели и марке авто
+@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
+# @token_required
+def get_year(auto_name, auto_model):
+    auto = db.session.query(models.Auto).filter_by(name=auto_name, model=auto_model).all()
+    if auto is None:
+        abort(404)
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.year)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'year': lt_auto}), 201
