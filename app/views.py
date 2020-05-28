@@ -152,7 +152,7 @@ def update_ad(ad_id):
         abort(404)
     if not request.json:
         abort(400)
-    if request.file['file']:
+    if 'file' in request.file:
         ad.image = file_to_upload(request.file['file'])
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
@@ -279,7 +279,7 @@ def update_user(user_id):
     user.role = request.json.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
-        if request.file['file']:
+        if 'file' in request.file:
             shop.image = file_to_upload(request.file['file'])
         shop.name = request.json.get('name_shop', shop.name)
         shop.body = request.json.get('text_shop', shop.body)
@@ -411,7 +411,7 @@ def file_to_upload(file):
 # Загрузка фото
 @app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
-    if request.files['file']:
+    if 'file' in request.file:
         file = request.files['file']
         return jsonify({'image': file_to_upload(file)}), 201
     else:
