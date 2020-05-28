@@ -154,9 +154,6 @@ def update_ad(ad_id):
     if not request.json:
         abort(400)
     print('2')
-    print(request.files)
-    if 'file' in request.files:
-        ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
     ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
