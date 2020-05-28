@@ -65,6 +65,7 @@ def ad_by_id(id_elem):
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
+        'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
         'date_create': ad.timestamp
     }
@@ -108,6 +109,7 @@ def get_user_ads(user_id):
             'year_auto': post.year_auto,
             'vin_auto': post.vin_auto,
             'price': post.price,
+            'image': post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True)
         })
     return jsonify({'ads': user_posts}), 201
@@ -134,6 +136,7 @@ def create_ads():
         vin_auto=request.json['vin_auto'],
         price=request.json['price'],
         user_id=request.json['user_id'],
+        image=file_to_upload(request.file['file']),
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_ad)
@@ -150,6 +153,8 @@ def update_ad(ad_id):
         abort(404)
     if not request.json:
         abort(400)
+    if request.file['file']:
+        ad.image = file_to_upload(request.file['file'])
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
     ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
@@ -182,7 +187,8 @@ def user_by_id(id_elem):
             'name': shop.name,
             'text': shop.body,
             'phone': shop.phone,
-            'address': shop.address
+            'address': shop.address,
+            'image': shop.image
         }
     new_user_json = {
         'id': user.id,
@@ -251,6 +257,7 @@ def create_user():
         body=request.json.get('text_shop', "Описание магазина не заполнено"),
         phone=request.json['phone'],
         address=request.json.get('address', "Адрес магазина не заполнен"),
+        image=file_to_upload(request.file['file']),
         user_id=id_user
     )
     db.session.add(new_shop)
@@ -273,6 +280,8 @@ def update_user(user_id):
     user.role = request.json.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
+        if request.file['file']:
+            shop.image = file_to_upload(request.file['file'])
         shop.name = request.json.get('name_shop', shop.name)
         shop.body = request.json.get('text_shop', shop.body)
         shop.phone = request.json.get('phone', shop.phone)
@@ -311,7 +320,8 @@ def auth_user():
                  'shop': {'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
                           'address': our_user.shops[0].address,
-                          'phone': our_user.shops[0].phone},
+                          'phone': our_user.shops[0].phone,
+                          'image': our_user.shops[0].image},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 app.config['SECRET_KEY'])
@@ -340,6 +350,7 @@ def shop_by_id(id_elem):
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
+        'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
     return new_ad_json
@@ -390,26 +401,22 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# Функция загруки фото в папку upload
+def file_to_upload(file):
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return url_for('uploaded_file', filename=filename, _external=True)
+
+
+# Загрузка фото
 @app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
-    if request.method == 'POST':
-        if request.files['file']:
-            file = request.files['file']
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                return redirect(url_for('uploaded_file', filename=filename, _external=True))
-        else:
-            abort(404)
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    if request.files['file']:
+        file = request.files['file']
+        file_to_upload(file)
+    else:
+        abort(404)
 
 
 @app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])

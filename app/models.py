@@ -26,6 +26,7 @@ class Post(db.Model):
     year_auto = db.Column(db.String(64), index=True)
     vin_auto = db.Column(db.String(64), index=True)
     price = db.Column(db.Integer, index=True)
+    image = db.Column(db.String(500), index=True)
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -39,6 +40,7 @@ class Shop(db.Model):
     body = db.Column(db.String(768), index=True)
     phone = db.Column(db.Integer, index=True)
     address = db.Column(db.String(400), index=True)
+    image = db.Column(db.String(500), index=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):
