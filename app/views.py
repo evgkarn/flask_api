@@ -23,7 +23,7 @@ auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
 app.config['SECRET_KEY'] = 'CeKpeTHbII/I_k/\I-o4'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.add_url_rule('/upload/<filename>', 'uploaded_file',
                  build_only=True)
