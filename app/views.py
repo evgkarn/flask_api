@@ -397,6 +397,7 @@ def upload_file():
             abort(404)
         file = request.files['file']
         if file and allowed_file(file.filename):
+            print(file)
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('uploaded_file', filename=filename, _external=True))
