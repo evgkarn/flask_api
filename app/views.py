@@ -125,6 +125,8 @@ def create_ads():
         id_ad = ads[-1].id + 1
     else:
         id_ad = 1
+    if 'file' in request.files:
+        image = file_to_upload(request.files['file'])
     new_ad = models.Post(
         id=id_ad,
         name_ads=request.json.get('name', ""),
@@ -135,7 +137,7 @@ def create_ads():
         vin_auto=request.json['vin_auto'],
         price=request.json['price'],
         user_id=request.json['user_id'],
-        image=file_to_upload(request.files['file']),
+        image=image,
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_ad)
@@ -150,10 +152,10 @@ def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
         abort(404)
-    print('1')
     if not request.json:
         abort(400)
-    print('2')
+    if 'file' in request.files:
+        ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
     ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
