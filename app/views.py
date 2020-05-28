@@ -1,21 +1,32 @@
 # -*- coding: utf-8 -*-
 from numpy import unicode
 from app import app, models, db
-from flask import jsonify, abort, request, make_response, url_for
+from flask import jsonify, abort, request, make_response, url_for, redirect, send_from_directory
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
+from werkzeug.utils import secure_filename
+from werkzeug.middleware.shared_data import SharedDataMiddleware
 from functools import wraps
 import datetime
 import jwt
 import sys
+import os
 
+UPLOAD_FOLDER = 'app/upload'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 sys.path.append('/home/evgkarn/.virtualenvs/my-venv/lib/python3.6/site-packages')
 from flask_cors import CORS
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
 app.config['SECRET_KEY'] = 'CeKpeTHbII/I_k/\I-o4'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 CORS(app)
+
+app.add_url_rule('/uploads/<filename>', 'uploaded_file',
+                 build_only=True)
+app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
+    '/uploads': app.config['UPLOAD_FOLDER']})
 
 
 def token_required(f):
@@ -99,6 +110,7 @@ def get_user_ads(user_id):
             'url': url_for('get_ad', ad_id=post.id, _external=True)
         })
     return jsonify({'ads': user_posts}), 201
+
 
 # Cоздание объявления
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
@@ -343,6 +355,7 @@ def get_auto():
     lt_auto = sorted(list(lt_auto))
     return jsonify({'auto': lt_auto}), 201
 
+
 # Получить список модель по марке авто
 @app.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
@@ -356,6 +369,7 @@ def get_model(auto_name):
     lt_auto = sorted(list(lt_auto))
     return jsonify({'model': lt_auto}), 201
 
+
 # Получить год по модели и марке авто
 @app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
 # @token_required
@@ -368,3 +382,32 @@ def get_year(auto_name, auto_model):
         lt_auto.add(a.year)
     lt_auto = sorted(list(lt_auto))
     return jsonify({'year': lt_auto}), 201
+
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+@app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        file = request.files['file']
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('uploaded_file', filename=filename, _external=True))
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form action="" method=post enctype=multipart/form-data>
+      <p><input type=file name=file>
+         <input type=submit value=Upload>
+    </form>
+    '''
+
+
+@app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
