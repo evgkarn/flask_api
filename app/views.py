@@ -13,7 +13,8 @@ import jwt
 import sys
 import os
 
-UPLOAD_FOLDER = 'app/upload'
+UPLOAD_FOLDER = '/home/evgkarn/flask_api/app/upload'
+# UPLOAD_FOLDER = 'app/upload'
 ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
 sys.path.append('/home/evgkarn/.virtualenvs/my-venv/lib/python3.6/site-packages')
 from flask_cors import CORS
