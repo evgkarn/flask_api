@@ -394,9 +394,10 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         print('This is POST')
-        print(type(request.files['files']))
-        if request.files['files']:
-            file = request.files['files']
+        print(request.FILES['file'])
+        print(type(request.FILES['file']))
+        if request.FILES['file']:
+            file = request.FILES['file']
             if file and allowed_file(file.filename):
                 filename = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
