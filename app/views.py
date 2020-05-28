@@ -127,6 +127,8 @@ def create_ads():
         id_ad = 1
     if 'file' in request.files:
         image = file_to_upload(request.files['file'])
+    else:
+        image = ''
     new_ad = models.Post(
         id=id_ad,
         name_ads=request.json.get('name', ""),
