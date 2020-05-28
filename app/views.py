@@ -150,9 +150,10 @@ def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
         abort(404)
+    print('1')
     if not request.json:
         abort(400)
-    print('1')
+    print('2')
     print(request.files)
     if 'file' in request.files:
         ad.image = file_to_upload(request.files['file'])
