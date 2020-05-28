@@ -413,7 +413,7 @@ def file_to_upload(file):
 def upload_file():
     if request.files['file']:
         file = request.files['file']
-        return file_to_upload(file)
+        return jsonify({'image': file_to_upload(file)}), 201
     else:
         abort(404)
 
