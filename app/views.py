@@ -5,8 +5,8 @@ from flask import jsonify, abort, request, make_response, url_for, redirect, sen
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from werkzeug.wsgi import SharedDataMiddleware
-# from werkzeug.middleware.shared_data import SharedDataMiddleware
+# from werkzeug.wsgi import SharedDataMiddleware
+from werkzeug.middleware.shared_data import SharedDataMiddleware
 from functools import wraps
 import datetime
 import jwt
