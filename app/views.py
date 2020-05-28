@@ -135,7 +135,7 @@ def create_ads():
         vin_auto=request.json['vin_auto'],
         price=request.json['price'],
         user_id=request.json['user_id'],
-        image=file_to_upload(request.file['file']),
+        image=file_to_upload(request.files['file']),
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_ad)
@@ -152,8 +152,8 @@ def update_ad(ad_id):
         abort(404)
     if not request.json:
         abort(400)
-    if 'file' in request.file:
-        ad.image = file_to_upload(request.file['file'])
+    if 'file' in request.files:
+        ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.json.get('name', ad.name_ads)
     ad.body = request.json.get('text', ad.body)
     ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
@@ -256,7 +256,7 @@ def create_user():
         body=request.json.get('text_shop', "Описание магазина не заполнено"),
         phone=request.json['phone'],
         address=request.json.get('address', "Адрес магазина не заполнен"),
-        image=file_to_upload(request.file['file']),
+        image=file_to_upload(request.files['file']),
         user_id=id_user
     )
     db.session.add(new_shop)
@@ -279,8 +279,8 @@ def update_user(user_id):
     user.role = request.json.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
-        if 'file' in request.file:
-            shop.image = file_to_upload(request.file['file'])
+        if 'file' in request.files:
+            shop.image = file_to_upload(request.files['file'])
         shop.name = request.json.get('name_shop', shop.name)
         shop.body = request.json.get('text_shop', shop.body)
         shop.phone = request.json.get('phone', shop.phone)
@@ -411,7 +411,7 @@ def file_to_upload(file):
 # Загрузка фото
 @app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
-    if 'file' in request.file:
+    if 'file' in request.files:
         file = request.files['file']
         return jsonify({'image': file_to_upload(file)}), 201
     else:
