@@ -394,7 +394,7 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         print('This is POST')
-        print(request)
+        print(request.json['files'])
         if request.files['files']:
             file = request.files['files']
             if file and allowed_file(file.filename):
