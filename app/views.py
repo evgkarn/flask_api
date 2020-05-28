@@ -392,8 +392,8 @@ def allowed_file(filename):
 
 @app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
-    print(request.files['file'])
     if request.method == 'POST':
+        print(request.files['file'])
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
