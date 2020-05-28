@@ -392,10 +392,10 @@ def allowed_file(filename):
 
 @app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
+    print(request.files['file'])
     if request.method == 'POST':
         file = request.files['file']
         if file and allowed_file(file.filename):
-            print(file)
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return redirect(url_for('uploaded_file', filename=filename, _external=True))
