@@ -394,7 +394,7 @@ def allowed_file(filename):
 def upload_file():
     if request.method == 'POST':
         if not request.json or not 'file' in request.json:
-        abort(404)
+            abort(404)
         file = request.files['file']
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
