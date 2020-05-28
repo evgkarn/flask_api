@@ -413,7 +413,7 @@ def file_to_upload(file):
 def upload_file():
     if request.files['file']:
         file = request.files['file']
-        file_to_upload(file)
+        return file_to_upload(file)
     else:
         abort(404)
 
