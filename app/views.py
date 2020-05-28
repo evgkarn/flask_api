@@ -5,7 +5,7 @@ from flask import jsonify, abort, request, make_response, url_for, redirect, sen
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from werkzeug.middleware.shared_data import SharedDataMiddleware
+from werkzeug.wsgi import SharedDataMiddleware
 from functools import wraps
 import datetime
 import jwt
@@ -25,8 +25,7 @@ CORS(app)
 
 app.add_url_rule('/uploads/<filename>', 'uploaded_file',
                  build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {
-    '/uploads': app.config['UPLOAD_FOLDER']})
+app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/uploads': app.config['UPLOAD_FOLDER']})
 
 
 def token_required(f):
