@@ -390,24 +390,14 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-@app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
+@app.route('/todo/api/v1.0/upload', methods=['POST'])
 def upload_file():
-    if request.method == 'POST':
-        print(request.files['file'])
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file', filename=filename, _external=True))
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form action="" method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    print(request.files['file'])
+    file = request.files['file']
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for('uploaded_file', filename=filename, _external=True))
 
 
 @app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])
