@@ -266,9 +266,9 @@ def get_user(user_id):
 def create_user():
     d = request.form['email']
     print(d)
-    if not request.json or not 'email' in request.json:
+    if not request.form or not 'email' in request.form:
         abort(400)
-    our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
+    our_user = db.session.query(models.User).filter_by(email=request.form['email']).first()
     if our_user is not None:
         return jsonify({'error': 'User already created'})
     users = models.User.query.all()
@@ -278,9 +278,9 @@ def create_user():
         id_user = 1
     new_user = models.User(
         id=id_user,
-        hash_password=generate_password_hash((request.json['password'])),
-        email=request.json['email'],
-        role=request.json['role']
+        hash_password=generate_password_hash((request.form['password'])),
+        email=request.form['email'],
+        role=request.form['role']
     )
     db.session.add(new_user)
     db.session.commit()
@@ -291,15 +291,15 @@ def create_user():
         id_shop = 1
     if 'file' in request.files:
         file = request.files['file']
-        image_shop = file_to_upload(file['file'])
+        image_shop = file_to_upload(file)
     else:
         image_shop = ''
     new_shop = models.Shop(
         id=id_shop,
-        name=request.json['name_shop'],
-        body=request.json.get('text_shop', "Описание магазина не заполнено"),
-        phone=request.json['phone'],
-        address=request.json.get('address', "Адрес магазина не заполнен"),
+        name=request.form['name_shop'],
+        body=request.form.get('text_shop', "Описание магазина не заполнено"),
+        phone=request.form['phone'],
+        address=request.form.get('address', "Адрес магазина не заполнен"),
         image=image_shop,
         user_id=id_user
     )
