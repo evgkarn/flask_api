@@ -288,8 +288,8 @@ def create_user():
     else:
         id_shop = 1
     if 'fileData' in request.files:
-        file = request.files['fileData']['file']
-        image_shop = file_to_upload(file)
+        file = request.files['fileData']
+        image_shop = file_to_upload(file['file'])
     else:
         image_shop = ''
     new_shop = models.Shop(
