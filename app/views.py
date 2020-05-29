@@ -59,7 +59,6 @@ def allowed_file(filename):
 
 # Функция загруки фото в папку upload
 def file_to_upload(file):
-    print('file_to_upload')
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
@@ -148,7 +147,7 @@ def get_user_ads(user_id):
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
 # @token_required
 def create_ads():
-    if not request.json or not 'text' in request.json:
+    if not request.form or not 'text' in request.form:
         abort(400)
     ads = models.Post.query.all()
     if ads:
@@ -156,22 +155,20 @@ def create_ads():
     else:
         id_ad = 1
     if 'file' in request.files:
-        print('Before request')
         file = request.files['file']
-        print('After request')
         image_ads = file_to_upload(file)
     else:
         image_ads = ''
     new_ad = models.Post(
         id=id_ad,
-        name_ads=request.json.get('name', ""),
-        body=request.json.get('text', ""),
-        mark_auto=request.json['mark_auto'],
-        model_auto=request.json['model_auto'],
-        year_auto=request.json['year_auto'],
-        vin_auto=request.json['vin_auto'],
-        price=request.json['price'],
-        user_id=request.json['user_id'],
+        name_ads=request.form.get('name', ""),
+        body=request.form.get('text', ""),
+        mark_auto=request.form['mark_auto'],
+        model_auto=request.form['model_auto'],
+        year_auto=request.form['year_auto'],
+        vin_auto=request.form['vin_auto'],
+        price=request.form['price'],
+        user_id=request.form['user_id'],
         image=image_ads,
         timestamp=datetime.datetime.utcnow()
     )
@@ -187,17 +184,17 @@ def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
         abort(404)
-    if not request.json:
+    if not request.form:
         abort(400)
     if 'file' in request.files:
         ad.image = file_to_upload(request.files['file'])
-    ad.name_ads = request.json.get('name', ad.name_ads)
-    ad.body = request.json.get('text', ad.body)
-    ad.mark_auto = request.json.get('mark_auto', ad.mark_auto)
-    ad.model_auto = request.json.get('model_auto', ad.model_auto)
-    ad.year_auto = request.json.get('year_auto', ad.year_auto)
-    ad.vin_auto = request.json.get('vin_auto', ad.vin_auto)
-    ad.price = request.json.get('price', ad.price)
+    ad.name_ads = request.form.get('name', ad.name_ads)
+    ad.body = request.form.get('text', ad.body)
+    ad.mark_auto = request.form.get('mark_auto', ad.mark_auto)
+    ad.model_auto = request.form.get('model_auto', ad.model_auto)
+    ad.year_auto = request.form.get('year_auto', ad.year_auto)
+    ad.vin_auto = request.form.get('vin_auto', ad.vin_auto)
+    ad.price = request.form.get('price', ad.price)
     db.session.commit()
     return jsonify(ad_by_id(ad_id)), 201
 
@@ -264,8 +261,6 @@ def get_user(user_id):
 # Создание пользователя
 @app.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
-    d = request.form['email']
-    print(d)
     if not request.form or not 'email' in request.form:
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.form['email']).first()
@@ -315,20 +310,20 @@ def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
-    if not request.json:
+    if not request.form:
         abort(400)
-    if 'password' in request.json:
-        user.hash_password = generate_password_hash(request.json['password'])
-    user.email = request.json.get('email', user.email)
-    user.role = request.json.get('role', user.role)
+    if 'password' in request.form:
+        user.hash_password = generate_password_hash(request.form['password'])
+    user.email = request.form.get('email', user.email)
+    user.role = request.form.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if 'file' in request.files:
             shop.image = file_to_upload(request.files['file'])
-        shop.name = request.json.get('name_shop', shop.name)
-        shop.body = request.json.get('text_shop', shop.body)
-        shop.phone = request.json.get('phone', shop.phone)
-        shop.address = request.json.get('address', shop.address)
+        shop.name = request.form.get('name_shop', shop.name)
+        shop.body = request.form.get('text_shop', shop.body)
+        shop.phone = request.form.get('phone', shop.phone)
+        shop.address = request.form.get('address', shop.address)
     db.session.commit()
     return jsonify(user_by_id(user_id)), 201
 
