@@ -264,7 +264,7 @@ def get_user(user_id):
 # Создание пользователя
 @app.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
-    d = request.files['file']
+    d = request.json
     print(d)
     if not request.json or not 'email' in request.json:
         abort(400)
@@ -289,8 +289,8 @@ def create_user():
         id_shop = shop[-1].id + 1
     else:
         id_shop = 1
-    if 'fileData' in request.files:
-        file = request.files['fileData']
+    if 'file' in request.files:
+        file = request.files['file']
         image_shop = file_to_upload(file['file'])
     else:
         image_shop = ''
