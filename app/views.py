@@ -264,7 +264,7 @@ def get_user(user_id):
 # Создание пользователя
 @app.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
-    d = request.form
+    d = request.form['email']
     print(d)
     if not request.json or not 'email' in request.json:
         abort(400)
