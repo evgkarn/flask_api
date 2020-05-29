@@ -287,8 +287,8 @@ def create_user():
         id_shop = shop[-1].id + 1
     else:
         id_shop = 1
-    if 'file' in request.files:
-        file = request.files['file']
+    if 'fileData' in request.files:
+        file = request.files['fileData']['file']
         image_shop = file_to_upload(file)
     else:
         image_shop = ''
