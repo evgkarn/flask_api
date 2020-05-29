@@ -264,7 +264,8 @@ def get_user(user_id):
 # Создание пользователя
 @app.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
-    print(request.args)
+    d = request.form.to_dict()
+    print(d)
     if not request.json or not 'email' in request.json:
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
