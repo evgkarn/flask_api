@@ -51,6 +51,36 @@ def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
+# Проверка на расширения файла
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
+
+
+# Функция загруки фото в папку upload
+def file_to_upload(file):
+    print('file_to_upload')
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return url_for('uploaded_file', filename=filename, _external=True)
+
+
+# Загрузка фото
+@app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
+def upload_file():
+    if 'file' in request.files:
+        file = request.files['file']
+        return jsonify({'image': file_to_upload(file)}), 201
+    else:
+        abort(404)
+
+
+@app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])
+def uploaded_file(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
+
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
@@ -126,7 +156,9 @@ def create_ads():
     else:
         id_ad = 1
     if 'file' in request.files:
+        print('Before request')
         file = request.files['file']
+        print('After request')
         image_ads = file_to_upload(file)
     else:
         image_ads = ''
@@ -403,31 +435,3 @@ def get_year(auto_name, auto_model):
         lt_auto.add(a.year)
     lt_auto = sorted(list(lt_auto))
     return jsonify({'year': lt_auto}), 201
-
-
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
-
-
-# Функция загруки фото в папку upload
-def file_to_upload(file):
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return url_for('uploaded_file', filename=filename, _external=True)
-
-
-# Загрузка фото
-@app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
-def upload_file():
-    if 'file' in request.files:
-        file = request.files['file']
-        return jsonify({'image': file_to_upload(file)}), 201
-    else:
-        abort(404)
-
-
-@app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
