@@ -126,9 +126,10 @@ def create_ads():
     else:
         id_ad = 1
     if 'file' in request.files:
-        image = file_to_upload(request.files['file'])
+        file = request.files['file']
+        image_ads = file_to_upload(file)
     else:
-        image = ''
+        image_ads = ''
     new_ad = models.Post(
         id=id_ad,
         name_ads=request.json.get('name', ""),
@@ -139,7 +140,7 @@ def create_ads():
         vin_auto=request.json['vin_auto'],
         price=request.json['price'],
         user_id=request.json['user_id'],
-        image=image,
+        image=image_ads,
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_ad)
@@ -254,13 +255,18 @@ def create_user():
         id_shop = shop[-1].id + 1
     else:
         id_shop = 1
+    if 'file' in request.files:
+        file = request.files['file']
+        image_shop = file_to_upload(file)
+    else:
+        image_shop = ''
     new_shop = models.Shop(
         id=id_shop,
         name=request.json['name_shop'],
         body=request.json.get('text_shop', "Описание магазина не заполнено"),
         phone=request.json['phone'],
         address=request.json.get('address', "Адрес магазина не заполнен"),
-        image=file_to_upload(request.files['file']),
+        image=image_shop,
         user_id=id_user
     )
     db.session.add(new_shop)
