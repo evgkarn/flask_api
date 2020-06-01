@@ -5,3 +5,4 @@ venv
 db_repository
 app.db
 test_for_base.py
+config_local.py

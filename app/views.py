@@ -1,32 +1,28 @@
 # -*- coding: utf-8 -*-
-from numpy import unicode
 from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for, send_from_directory
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from werkzeug.wsgi import SharedDataMiddleware
-# from werkzeug.middleware.shared_data import SharedDataMiddleware
+from config_local import SharedDataMiddleware
 from functools import wraps
 import datetime
 import jwt
 import sys
 import os
+import config_local
 
-UPLOAD_FOLDER = '/home/evgkarn/flask_api/app/upload'
-# UPLOAD_FOLDER = 'app/upload'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'}
-sys.path.append('/home/evgkarn/.virtualenvs/my-venv/lib/python3.6/site-packages')
+sys.path.append(config_local.PATH)
 from flask_cors import CORS
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
-app.config['SECRET_KEY'] = 'CeKpeTHbII/I_k/\I-o4'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
 def token_required(f):
@@ -42,7 +38,7 @@ def token_required(f):
         if not token:
             return jsonify({'message': 'Token is missing'}), 403
         try:
-            data = jwt.decode(token, app.config['SECRET_KEY'])
+            data = jwt.decode(token, config_local.SECRET_KEY)
         except:
             return jsonify({'message': 'Token is invalid!'}), 403
 
@@ -368,7 +364,7 @@ def auth_user():
                           'image': our_user.shops[0].image},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
-                app.config['SECRET_KEY'])
+                config_local.SECRET_KEY)
             return jsonify({'token': token.decode('UTF-8')}), 201
         else:
             return jsonify({'error': 'Unauthorized access'})
