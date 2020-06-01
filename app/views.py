@@ -32,7 +32,13 @@ app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.json.get('token')
+        if not request.json or not 'token' in request.json:
+            if not request.form or not 'token' in request.form:
+                abort(400)
+            else:
+                token = request.form.get('token')
+        else:
+            token = request.json.get('token')
         if not token:
             return jsonify({'message': 'Token is missing'}), 403
         try:
