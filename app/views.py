@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import app, models, db
-from flask import jsonify, abort, request, make_response, url_for, send_from_directory
+from flask import jsonify, abort, request, make_response, url_for, send_from_directory, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -434,3 +434,13 @@ def get_year(auto_name, auto_model):
         lt_auto.add(a.year)
     lt_auto = sorted(list(lt_auto))
     return jsonify({'year': lt_auto}), 201
+
+
+@app.route('/')
+def main(name=None):
+    css_href = url_for('static', filename='app.min.css')
+    js_href = url_for('static', filename='app.min.js')
+    logo = url_for('static', filename='logo.png')
+    favicon = url_for('static', filename='favicon.png')
+    ads = models.Post.query.all()
+    return render_template('main.html', css_href=css_href, js_href=js_href, logo=logo, favicon=favicon, ads=ads)
