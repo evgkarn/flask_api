@@ -456,3 +456,13 @@ def get_shop_html(shop_id):
 def get_ad_html(ad_id):
     ad = models.Post.query.get(ad_id)
     return render_template('ad.html', ad=ad)
+
+
+@app.route('/about')
+def get_about_html():
+    return render_template('about.html')
+
+
+@app.route('/partners')
+def get_partners_html():
+    return render_template('partners.html')
