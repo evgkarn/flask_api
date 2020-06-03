@@ -42,8 +42,8 @@
                     <span>{{ad.price}} руб</span>
                 </div>
 
-                <button class="redButton">Показать телефон</button>
-                <button class="redButton">Подробнее о товаре</button>
+                <button value="{{ad.user.shops.first().phone}}" class="redButton">Показать телефон</button>
+                <a href="/ad/{{ad.id}}" class="redButton">Подробнее о товаре</a>
             </div>
         </div>
         {% endfor %}

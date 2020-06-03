@@ -1,0 +1,45 @@
+{% extends "skeleton.html" %}
+{% block content %}
+<div>
+   <h1>Объявление №{{ad.id}}</h1>
+   <div>
+    {% if ad.name %}
+     <div class=""><label>Название объявления</label><input type="text" value="{{ad.name_ads}}"></div>
+    {% endif %}
+    {% if ad.body %}
+     <div class=""><label>Описание</label><input type="text" value="{{ad.body}}"></div>
+    {% endif %}
+    {% if ad.mark_auto %}
+     <div class=""><label>Марка автомобиля</label><input type="text" value="{{ad.mark_auto}}"></div>
+    {% endif %}
+    {% if ad.model_auto %}
+     <div class=""><label>Модель автомобиля</label><input type="text" value="{{ad.model_auto}}"></div>
+    {% endif %}
+    {% if ad.year_auto %}
+     <div class=""><label>Год автомобиля</label><input type="text" value="{{ad.year_auto}}"></div>
+    {% endif %}
+    {% if ad.vin_auto %}
+     <div class=""><label>VIN автомобиля</label><input type="text" value="{{ad.vin_auto}}"></div>
+    {% endif %}
+    {% if ad.price %}
+     <div class=""><label>Цена</label><input type="text" value="{{ad.price}}"></div>
+    {% endif %}
+    {% if ad.image %}
+     <img src="{{ad.image}}"></img>
+    {% endif %}
+   </div>
+</div>
+{% endblock %}
+
+    id
+    name_ads
+    body
+    mark_auto
+    model_auto
+    year_auto
+    vin_auto
+    price
+    image
+    timestamp
+    user_id
+    user

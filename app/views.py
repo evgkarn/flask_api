@@ -441,12 +441,18 @@ def get_year(auto_name, auto_model):
 
 
 @app.route('/')
-def main():
+def get_main_html():
     ads = models.Post.query.all()
     return render_template('main.html', ads=ads)
 
 
 @app.route('/shop/<int:shop_id>')
-def get_shop(shop_id):
+def get_shop_html(shop_id):
     shop = models.Shop.query.get(shop_id)
     return render_template('shop.html', shop=shop)
+
+
+@app.route('/ad/<int:ad_id>')
+def get_ad_html(ad_id):
+    ad = models.Post.query.get(ad_id)
+    return render_template('ad.html', ad=ad)
