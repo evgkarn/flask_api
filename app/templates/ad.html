@@ -1,4 +1,5 @@
 {% extends "skeleton.html" %}
+{% block title %}{{ad.name_ads}}{% endblock %}
 {% block content %}
 <div>
    <h1>Объявление №{{ad.id}}</h1>
@@ -30,16 +31,3 @@
    </div>
 </div>
 {% endblock %}
-
-    id
-    name_ads
-    body
-    mark_auto
-    model_auto
-    year_auto
-    vin_auto
-    price
-    image
-    timestamp
-    user_id
-    user
