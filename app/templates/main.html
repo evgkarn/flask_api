@@ -19,7 +19,11 @@
         {% for ad in ads %}
         <div class="results-detail">
             <div class="results-ads-image">
+                {% if ad.image %}
                 <img src="{{ad.image}}" alt="{{ad.name_ads}}">
+                {% else %}
+                <img src="/static/not_found.jpg" alt="{{ad.name_ads}}"></img>
+                {% endif %}
             </div>
             <div class="results-ads-info">
                 <div class="ads-name">
