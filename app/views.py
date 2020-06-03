@@ -85,6 +85,8 @@ def uploaded_file(filename):
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
+    dd = ad.user.shops.all()
+    print(dd)
     new_ad_json = {
         'id': ad.id,
         'user_id': ad.user_id,
@@ -97,7 +99,8 @@ def ad_by_id(id_elem):
         'price': ad.price,
         'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
-        'date_create': ad.timestamp
+        'date_create': ad.timestamp,
+        'user': ad.user.shops.first(),
     }
     return new_ad_json
 
@@ -140,7 +143,8 @@ def get_user_ads(user_id):
             'vin_auto': post.vin_auto,
             'price': post.price,
             'image': post.image,
-            'url': url_for('get_ad', ad_id=post.id, _external=True)
+            'url': url_for('get_ad', ad_id=post.id, _external=True),
+            'user': post.user.shops.first().name
         })
     return jsonify({'ads': user_posts}), 201
 
@@ -377,7 +381,7 @@ def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-# Формирования словаря полей объявления для json ответа
+# Формирования словаря полей магазина для json ответа
 def shop_by_id(id_elem):
     ad = models.Shop.query.get(id_elem)
     new_ad_json = {
@@ -437,10 +441,12 @@ def get_year(auto_name, auto_model):
 
 
 @app.route('/')
-def main(name=None):
-    css_href = url_for('static', filename='app.min.css')
-    js_href = url_for('static', filename='app.min.js')
-    logo = url_for('static', filename='logo.png')
-    favicon = url_for('static', filename='favicon.png')
+def main():
     ads = models.Post.query.all()
-    return render_template('main.html', css_href=css_href, js_href=js_href, logo=logo, favicon=favicon, ads=ads)
+    return render_template('main.html', ads=ads)
+
+
+@app.route('/shop/<int:shop_id>')
+def get_shop(shop_id):
+    shop = models.Shop.query.get(shop_id)
+    return render_template('shop.html', shop=shop)

@@ -1,129 +1,52 @@
-<!DOCTYPE html>
-<html lang="">
-
-<head>
-
-	<meta charset="utf-8">
-	<title>Azato.ru Все автозапчасти города в одном месте.</title>
-	<meta name="description" content="Startup HTML template OptimizedHTML 5">
-	<link rel="icon" href="{{favicon}}">
-	<meta property="og:image" content="img/dest/preview.jpg">
-	<link rel="stylesheet" href="{{css_href}}">
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
-</head>
-
-<body>
-
-	<!-- CUSTOM HTML -->
-
-	<div class="Header">
-        <div class="container">
-            <div class="headerContainer" >
-            <div class="logoSection">
-            <img src="{{logo}}" alt="Azato.ru"/>
-            <span>Все автозапчасти Вашего города в одном месте</span>
+{% extends "skeleton.html" %}
+{% block content %}
+<div class="main-header">
+    <h1>Подбор автозапчастей</h1>
+</div>
+<form action="" class="search-form">
+    <input type="text" placeholder="Название/номер детали">
+    <select name="" id="carName">
+        <option value="">Марка автомобиля</option>
+    </select>
+    <select name="" id="carModel">
+        <option value="">Модель автомобиля</option>
+    </select>
+    <input type="submit" value="Поиск" class="redButton">
+</form>
+<div class="results">
+    <h2>Результаты поиска</h2>
+    <div class="results-blocks">
+        {% for ad in ads %}
+        <div class="results-detail">
+            <div class="results-ads-image">
+                <img src="{{ad.image}}" alt="{{ad.name_ads}}">
             </div>
-            <div class="city">
-                <span>Ваш город: <a href="">Иркутск</a></span>
-            </div>
-            <div class="navigationSection">
-            <nav>
-                <ul>
-                    <li><a href="./" >Главная</a> </li>
-                    <li><a  href="./page.html">О сервисе</a></li>
-                    <li><a href="./page.html">Магазинам</a></li>
-                </ul>
-                
-                
-            </nav>
-            </div>
-
-            <div class="authSection">
-                <a href="http://sablin-web.ru/azato/cabinet" target="_blank"><i class="fa fa-user" aria-hidden="true"></i> Личный кабинет</a>
-            </div>
-
-            </div>
-   
-        </div>
-	</div>
-	<div class="Main">
-        <div class="container">
-            <div class="main-header">
-                <h1>Подбор автозапчастей</h1>
-            </div>
-            <form action="" class="search-form">
-                <input type="text" placeholder="Название/номер детали">
-                <select name="" id="carName">
-                    <option value="">Марка автомобиля</option>
-                </select>
-                <select name="" id="carModel">
-                    <option value="">Модель автомобиля</option>
-                </select>
-                <input type="submit" value="Поиск" class="redButton">
-            </form>
-            <div class="results">
-                <h2>Результаты поиска</h2>
-                <div class="results-blocks">
-                    {% for ad in ads %}
-                    <div class="results-detail">
-                        <div class="results-ads-image">
-                            <img src="{{ad.image}}" alt="{{ad.name_ads}}">
-                        </div>
-                        <div class="results-ads-info">
-                            <div class="ads-name">
-                              <h3>{{ad.name_ads}}</h3>
-                            </div>
-                            <div class="ads-info">
-                                <p>{{ad.body}}</p>
-                              </div>
-                              <div class="ads-shop">
-                                <p>Продавец: <a href="">Ссылка на продавца</a></p>
-                              </div>
-                              <div class="ads-shop-adress">
-                                <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
-                              </div>
-                        </div>
-                        <div class="results-ads-more">
-                            <div class="ads-price">
-                                <span>{{ad.price}} руб</span>
-                            </div>
-                            
-                            <button class="redButton">Показать телефон</button>
-                            <button class="redButton">Подробнее о товаре</button>
-                        </div>
-                    </div>
-                    {% endfor %}
+            <div class="results-ads-info">
+                <div class="ads-name">
+                  <h3>{{ad.name_ads}}</h3>
                 </div>
+                <div class="ads-info">
+                    <p>{{ad.body}}</p>
+                  </div>
+                  <div class="ads-shop">
+                    <p>Продавец: <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
+                  </div>
+                  <div class="ads-shop-adress">
+                      {% if ad.user.shops.first().address %}
+                        <p>{{ad.user.shops.first().address}}</p>
+                      {% endif %}
+                  </div>
+            </div>
+            <div class="results-ads-more">
+                <div class="ads-price">
+                    <span>{{ad.price}} руб</span>
+                </div>
+
+                <button class="redButton">Показать телефон</button>
+                <button class="redButton">Подробнее о товаре</button>
             </div>
         </div>
-
-	</div>
-	<div class="Footer">
-        <div class="container">
-            <div class="footerInner">
-            <div class="FooterLogoSection">
-            <img src="{{logo}}" alt="Azato.ru"/>
-            <span>Все автозапчасти Вашего города в одном месте</span>
-            </div>
-            <div class="FooterNavigationSection">
-            <nav>
-                <ul>
-                    <li><a href="./">Главная</a> </li>
-                    <li><a href="./page.html">О сервисе</a></li>
-                    <li><a href="./page.html">Магазинам</a></li>
-                </ul>
-                
-                
-            </nav>
-            </div>
-            <div class="authSection">
-                <a href="./cabinet" target="_blank"><i class="fa fa-user" aria-hidden="true"></i> Личный кабинет</a>
-            </div>
-
-            </div>
-        </div>
-        </div>
-	<script src="{{js_href}}"></script>
-
-</body>
-</html>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

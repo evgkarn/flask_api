@@ -30,9 +30,10 @@ class Post(db.Model):
     image = db.Column(db.String(500), index=True, default=DEFAULT)
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User")
 
     def __repr__(self):
-        return '<Post %r>' % self.nameads
+        return '<Post %r>' % self.name_ads
 
 
 class Shop(db.Model):

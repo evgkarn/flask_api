@@ -1,0 +1,23 @@
+{% extends "skeleton.html" %}
+{% block content %}
+<div>
+   <h1>О Магазине</h1>
+   <div>
+    {% if shop.name %}
+     <div class=""><label>Название магазина</label><input type="text" value="{{shop.name}}"></div>
+    {% endif %}
+    {% if shop.body %}
+     <div class=""><label>Описание</label><input type="text" value="{{shop.body}}"></div>
+    {% endif %}
+    {% if shop.phone %}
+     <div class=""><label>Номер телефона</label><input type="text" value="{{shop.phone}}"></div>
+    {% endif %}
+    {% if shop.address %}
+     <div class=""><label>Адрес магазина</label><input type="text" value="{{shop.address}}"></div>
+    {% endif %}
+    {% if shop.image %}
+     <img src="{{shop.image}}"></img>
+    {% endif %}
+   </div>
+</div>
+{% endblock %}
