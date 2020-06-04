@@ -466,3 +466,11 @@ def get_about_html():
 @app.route('/partners')
 def get_partners_html():
     return render_template('partners.html')
+
+
+@app.route('/ip')
+def get_user_ip():
+    ip = request.headers.get('X-Real-IP')
+    return jsonify({'ip': ip}), 201
+
+
