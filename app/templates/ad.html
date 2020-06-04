@@ -1,35 +1,117 @@
 {% extends "skeleton.html" %}
 {% block title %}{{ad.name_ads}}{% endblock %}
 {% block content %}
-<div>
-   <h1>Объявление №{{ad.id}}</h1>
-   <div>
-    {% if ad.name %}
-     <div class=""><label>Название объявления</label><input type="text" value="{{ad.name_ads}}"></div>
-    {% endif %}
-    {% if ad.body %}
-     <div class=""><label>Описание</label><input type="text" value="{{ad.body}}"></div>
-    {% endif %}
-    {% if ad.mark_auto %}
-     <div class=""><label>Марка автомобиля</label><input type="text" value="{{ad.mark_auto}}"></div>
-    {% endif %}
-    {% if ad.model_auto %}
-     <div class=""><label>Модель автомобиля</label><input type="text" value="{{ad.model_auto}}"></div>
-    {% endif %}
-    {% if ad.year_auto %}
-     <div class=""><label>Год автомобиля</label><input type="text" value="{{ad.year_auto}}"></div>
-    {% endif %}
-    {% if ad.vin_auto %}
-     <div class=""><label>VIN автомобиля</label><input type="text" value="{{ad.vin_auto}}"></div>
-    {% endif %}
-    {% if ad.price %}
-     <div class=""><label>Цена</label><input type="text" value="{{ad.price}}"></div>
-    {% endif %}
-    {% if ad.image %}
-     <img src="{{ad.image}}"></img>
-    {% else %}
-    <img src="/static/not_found.jpg"></img>
-    {% endif %}
-   </div>
+<div class="ads-page">
+    <div class="content-area">
+        <div class="ads-page-container">
+
+            <div class="ads-page-photo">
+                {% if ad.image %}
+                 <img src="{{ad.image}}" alt="">
+                {% else %}
+                <img src="/static/not_found.jpg" alt="">
+                {% endif %}
+            </div>
+            <div class="ads-page-info">
+                <h1>{{ad.name_ads}}</h1>
+                <p><strong>Автомобиль:</strong> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</p>
+                <p><strong>Контактный телефон продавца:</strong> <a href="tel:{{ad.user.shops.first().phone}}">{{ad.user.shops.first().phone}}</a></p>
+                <p><strong>Адрес магазина:</strong> {{ad.user.shops.first().address}}</p>
+            </div>
+        </div>
+
+
+
+        <p><strong>Подробное описание детали:</strong>
+        {{ad.body}}
+        </p>
+        <hr/>
+        <div class="results">
+            <h2>Другие запчасти для Toyota Tundra 2012г.:</h2>
+            <div class="results-blocks">
+                <div class="results-detail">
+                    <div class="results-ads-image">
+                        <img src="/static/not_found.jpg" alt="Запчасть">
+                    </div>
+                    <div class="results-ads-info">
+                        <div class="ads-name">
+                          <h3> Коленчатый вал BMW M3</h3>
+                        </div>
+                        <div class="ads-info">
+                            <p>Описание детали для более полного ознакомления с ней</p>
+                          </div>
+                          <div class="ads-shop">
+                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
+                          </div>
+                          <div class="ads-shop-adress">
+                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
+                          </div>
+                    </div>
+                    <div class="results-ads-more">
+                        <div class="ads-price">
+                            <span>10 250.00 руб</span>
+                        </div>
+
+                        <button class="redButton">Показать телефон</button>
+                        <button class="redButton">Подробнее о товаре</button>
+                    </div>
+                </div>
+                <div class="results-detail">
+                    <div class="results-ads-image">
+                        <img src="/static/not_found.jpg" alt="Запчасть">
+                    </div>
+                    <div class="results-ads-info">
+                        <div class="ads-name">
+                          <h3> Коленчатый вал BMW M3</h3>
+                        </div>
+                        <div class="ads-info">
+                            <p>Описание детали для более полного ознакомления с ней</p>
+                          </div>
+                          <div class="ads-shop">
+                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
+                          </div>
+                          <div class="ads-shop-adress">
+                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
+                          </div>
+                    </div>
+                    <div class="results-ads-more">
+                        <div class="ads-price">
+                            <span>10 250.00 руб</span>
+                        </div>
+
+                        <button class="redButton">Показать телефон</button>
+                        <button class="redButton">Подробнее о товаре</button>
+                    </div>
+                </div>
+                <div class="results-detail">
+                    <div class="results-ads-image">
+                        <img src="/static/not_found.jpg" alt="Запчасть">
+                    </div>
+                    <div class="results-ads-info">
+                        <div class="ads-name">
+                          <h3> Коленчатый вал BMW M3</h3>
+                        </div>
+                        <div class="ads-info">
+                            <p>Описание детали для более полного ознакомления с ней</p>
+                          </div>
+                          <div class="ads-shop">
+                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
+                          </div>
+                          <div class="ads-shop-adress">
+                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
+                          </div>
+                    </div>
+                    <div class="results-ads-more">
+                        <div class="ads-price">
+                            <span>10 250.00 руб</span>
+                        </div>
+
+                        <button class="redButton">Показать телефон</button>
+                        <button class="redButton">Подробнее о товаре</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

@@ -1,26 +1,66 @@
 {% extends "skeleton.html" %}
 {% block title %}{{shop.name}}{% endblock %}
 {% block content %}
-<div>
-   <h1>О Магазине</h1>
-   <div>
-    {% if shop.name %}
-     <div class=""><label>Название магазина</label><input type="text" value="{{shop.name}}"></div>
-    {% endif %}
-    {% if shop.body %}
-     <div class=""><label>Описание</label><input type="text" value="{{shop.body}}"></div>
-    {% endif %}
-    {% if shop.phone %}
-     <div class=""><label>Номер телефона</label><input type="text" value="{{shop.phone}}"></div>
-    {% endif %}
-    {% if shop.address %}
-     <div class=""><label>Адрес магазина</label><input type="text" value="{{shop.address}}"></div>
-    {% endif %}
-    {% if shop.image %}
-     <img src="{{shop.image}}"></img>
-    {% else %}
-    <img src="/static/not_found.jpg"></img>
-    {% endif %}
-   </div>
+<div class="shop-page">
+    <div class="content-area">
+        <div class="shop-page-container">
+
+            <div class="shop-page-photo">
+                {% if shop.image %}
+                 <img src="{{shop.image}}" alt="{{shop.name}}"></img>
+                {% else %}
+                <img src="/static/not_found.jpg" alt="{{shop.name}}"></img>
+                {% endif %}
+            </div>
+            <div class="shop-page-info">
+                <h1>{{shop.name}}</h1>
+                <p><strong>Контактный телефон:</strong> <a href="tel:{{shop.phone}}">{{shop.phone}}</a></p>
+                <p><strong>Адрес магазина:</strong>{{shop.address}}</p>
+            </div>
+        </div>
+
+        <p><strong>О магазине:</strong>
+       {{shop.body}}
+        </p>
+        <hr/>
+        <div class="results">
+            <h2>Обьявления магазина</h2>
+            <div class="results-blocks">
+             {% for ad in shop.user.posts.all() %}
+                <div class="results-detail">
+                    <div class="results-ads-image">
+                        {% if shop.image %}
+                        <img src="{{shop.image}}" alt="{{shop.name}}"></img>
+                       {% else %}
+                       <img src="/static/not_found.jpg" alt="{{shop.name}}"></img>
+                       {% endif %}
+                    </div>
+                    <div class="results-ads-info">
+                        <div class="ads-name">
+                          <h3> {{ad.name_ads}}</h3>
+                        </div>
+                        <div class="ads-info">
+                            <p>{{ad.body}}</p>
+                          </div>
+                          <div class="ads-shop">
+                            <p>Продавец: <a href="/shop/{{shop.id}}">Ссылка на продавца</a></p>
+                          </div>
+                          <div class="ads-shop-adress">
+                            <p>{{shop.address}}</p>
+                          </div>
+                    </div>
+                    <div class="results-ads-more">
+                        <div class="ads-price">
+                            <span>{{ad.price}} руб</span>
+                        </div>
+
+                        <button class="redButton">Показать телефон</button>
+                        <a href="/ad/{{ad.id}}" class="redButton">Подробнее о товаре</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
 </div>
 {% endblock %}

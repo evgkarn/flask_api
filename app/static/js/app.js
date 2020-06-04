@@ -1,6 +1,21 @@
 document.addEventListener("DOMContentLoaded", function() {
 	let carName = document.querySelector('#carName');
 	let carModels =  document.querySelector('#carModel');
+	let cityIp =  document.querySelector('.cityIp');
+
+	async function getCity(){
+		let response = await  fetch('http://free.ipwhois.io/json/', {
+			method: 'GET'
+		}).then((res)=>{
+			return res.json()
+		}).then(res => {
+			cityIp.innerHTML = res.city
+			console.log(res.city)
+
+		} )
+	
+	}
+	getCity()
 	 // Получаем список автомобилей
 	async function getCars(){
 		let carsUrl = 'http://evgkarn.pythonanywhere.com/todo/api/v1.0/auto';
@@ -39,4 +54,10 @@ document.addEventListener("DOMContentLoaded", function() {
 		getModels()
 	})
 
+	let adsInfoText = document.querySelectorAll('.ads-info p');
+
+	for(let i = 0; i< adsInfoText.length; i++){
+		console.log(adsInfoText[i])
+		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
+	}
 });

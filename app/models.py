@@ -44,6 +44,7 @@ class Shop(db.Model):
     address = db.Column(db.String(400), index=True)
     image = db.Column(db.String(500), index=True, default=DEFAULT)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    user = db.relationship("User")
 
     def __repr__(self):
         return '<Shop %r>' % self.name
