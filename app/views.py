@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from app import app, models, db
 from flask import jsonify, abort, request, make_response, url_for, send_from_directory, render_template
 from flask_httpauth import HTTPBasicAuth
@@ -6,6 +7,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from config_local import SharedDataMiddleware
 from functools import wraps
+from sqlalchemy import desc
 import datetime
 import jwt
 import sys
@@ -442,7 +444,7 @@ def get_year(auto_name, auto_model):
 
 @app.route('/')
 def get_main_html():
-    ads = models.Post.query.all()
+    ads = models.Post.query.order_by(desc(models.Post.id)).all()
     return render_template('main.html', ads=ads)
 
 
@@ -455,9 +457,9 @@ def get_shop_html(shop_id):
 @app.route('/ad/<int:ad_id>')
 def get_ad_html(ad_id):
     ad = models.Post.query.get(ad_id)
-    recommendation = db.session.query(models.Post).filter_by(mark_auto=ad.mark_auto,
-                                                             model_auto=ad.model_auto,
-                                                             year_auto=ad.year_auto).all()
+    recommendation = db.session.query(models.Post).order_by(desc(models.Post.id)).filter_by(mark_auto=ad.mark_auto,
+                                                                                            model_auto=ad.model_auto,
+                                                                                            year_auto=ad.year_auto).all()
     return render_template('ad.html', ad=ad, recommendation=recommendation)
 
 
