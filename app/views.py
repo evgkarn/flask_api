@@ -455,7 +455,10 @@ def get_shop_html(shop_id):
 @app.route('/ad/<int:ad_id>')
 def get_ad_html(ad_id):
     ad = models.Post.query.get(ad_id)
-    return render_template('ad.html', ad=ad)
+    recommendation = db.session.query(models.Post).filter_by(mark_auto=ad.mark_auto,
+                                                             model_auto=ad.model_auto,
+                                                             year_auto=ad.year_auto).all()
+    return render_template('ad.html', ad=ad, recommendation=recommendation)
 
 
 @app.route('/about')
@@ -472,5 +475,3 @@ def get_partners_html():
 def get_user_ip():
     ip = request.headers.get('X-Real-IP')
     return jsonify({'ip': ip}), 201
-
-

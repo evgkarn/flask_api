@@ -29,87 +29,39 @@
         <div class="results">
             <h2>Другие запчасти для  {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}:</h2>
             <div class="results-blocks">
+             {% for ad in recommendation %}
                 <div class="results-detail">
                     <div class="results-ads-image">
-                        <img src="/static/not_found.jpg" alt="Запчасть">
+                        {% if ad.image %}
+                        <img src="{{ad.image}}" alt="{{shop.name}}"></img>
+                       {% else %}
+                       <img src="/static/not_found.jpg" alt="{{ad.name}}"></img>
+                       {% endif %}
                     </div>
                     <div class="results-ads-info">
                         <div class="ads-name">
-                          <h3> Коленчатый вал BMW M3</h3>
+                          <h3> {{ad.name_ads}}</h3>
                         </div>
                         <div class="ads-info">
-                            <p>Описание детали для более полного ознакомления с ней</p>
+                            <p>{{ad.body}}</p>
                           </div>
                           <div class="ads-shop">
-                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
+                            <p>Продавец: <a href="/shop/{{ad.user.shops.first().id}}">Ссылка на продавца</a></p>
                           </div>
                           <div class="ads-shop-adress">
-                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
+                            <p>{{ad.user.shops.first().address}}</p>
                           </div>
                     </div>
                     <div class="results-ads-more">
                         <div class="ads-price">
-                            <span>10 250.00 руб</span>
+                            <span>{{ad.price}} руб</span>
                         </div>
 
-                        <button class="redButton">Показать телефон</button>
-                        <button class="redButton">Подробнее о товаре</button>
+                        <button value="{{ad.user.shops.first().id}}" class="redButton">Показать телефон</button>
+                        <a href="/ad/{{ad.id}}" class="redButton">Подробнее о товаре</a>
                     </div>
                 </div>
-                <div class="results-detail">
-                    <div class="results-ads-image">
-                        <img src="/static/not_found.jpg" alt="Запчасть">
-                    </div>
-                    <div class="results-ads-info">
-                        <div class="ads-name">
-                          <h3> Коленчатый вал BMW M3</h3>
-                        </div>
-                        <div class="ads-info">
-                            <p>Описание детали для более полного ознакомления с ней</p>
-                          </div>
-                          <div class="ads-shop">
-                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
-                          </div>
-                          <div class="ads-shop-adress">
-                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
-                          </div>
-                    </div>
-                    <div class="results-ads-more">
-                        <div class="ads-price">
-                            <span>10 250.00 руб</span>
-                        </div>
-
-                        <button class="redButton">Показать телефон</button>
-                        <button class="redButton">Подробнее о товаре</button>
-                    </div>
-                </div>
-                <div class="results-detail">
-                    <div class="results-ads-image">
-                        <img src="/static/not_found.jpg" alt="Запчасть">
-                    </div>
-                    <div class="results-ads-info">
-                        <div class="ads-name">
-                          <h3> Коленчатый вал BMW M3</h3>
-                        </div>
-                        <div class="ads-info">
-                            <p>Описание детали для более полного ознакомления с ней</p>
-                          </div>
-                          <div class="ads-shop">
-                            <p>Продавец: <a href="">Ссылка на продавца</a></p>
-                          </div>
-                          <div class="ads-shop-adress">
-                            <p>Адрес магазина: г. Иркутск, ул. Байкальская 213</p>
-                          </div>
-                    </div>
-                    <div class="results-ads-more">
-                        <div class="ads-price">
-                            <span>10 250.00 руб</span>
-                        </div>
-
-                        <button class="redButton">Показать телефон</button>
-                        <button class="redButton">Подробнее о товаре</button>
-                    </div>
-                </div>
+             {% endfor %}
             </div>
         </div>
     </div>
