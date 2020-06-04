@@ -29,10 +29,10 @@
              {% for ad in shop.user.posts.all() %}
                 <div class="results-detail">
                     <div class="results-ads-image">
-                        {% if shop.image %}
-                        <img src="{{shop.image}}" alt="{{shop.name}}"></img>
+                        {% if ad.image %}
+                        <img src="{ad.image}}" alt="{{shop.name}}"></img>
                        {% else %}
-                       <img src="/static/not_found.jpg" alt="{{shop.name}}"></img>
+                       <img src="/static/not_found.jpg" alt="{{ad.name}}"></img>
                        {% endif %}
                     </div>
                     <div class="results-ads-info">
