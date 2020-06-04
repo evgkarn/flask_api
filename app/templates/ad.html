@@ -26,7 +26,7 @@
         {{ad.body}}
         </p>
         <hr/>
-        {% if recommendation %}
+        {% if len(recommendation) > 1 %}
         <div class="results">
             <h2>Другие запчасти для  {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}:</h2>
             <div class="results-blocks">
