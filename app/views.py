@@ -96,7 +96,7 @@ def ad_by_id(id_elem):
         'model_auto': ad.model_auto,
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
-        'series_auto': ad.auto_series,
+        'series_auto': ad.series,
         'modification_auto': ad.auto_modification,
         'generation_auto': ad.generation,
         'fuel_auto': ad.fuel,
