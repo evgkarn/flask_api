@@ -31,7 +31,7 @@ class Post(db.Model):
     engine = db.Column(db.String(300), index=True, default=DEFAULT)
     generation = db.Column(db.String(200), index=True, default=DEFAULT)
     series = db.Column(db.String(120), index=True, default=DEFAULT)
-    # modification = db.Column(db.String(120), index=True, default=DEFAULT)
+    modification = db.Column(db.String(120), index=True, default=DEFAULT)
     fuel = db.Column(db.String(120), index=True, default=DEFAULT)
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
