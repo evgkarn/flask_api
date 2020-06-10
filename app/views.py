@@ -5,7 +5,7 @@ from flask import jsonify, abort, request, make_response, url_for, send_from_dir
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-# from config_local import SharedDataMiddleware
+from config_local import SharedDataMiddleware
 from functools import wraps
 from sqlalchemy import desc
 import datetime
@@ -23,7 +23,7 @@ app.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
-# app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
+app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
