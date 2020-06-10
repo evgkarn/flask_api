@@ -104,7 +104,7 @@ def ad_by_id(id_elem):
         'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
         'date_create': ad.timestamp,
-        'user': ad.user.shops.first(),
+        'user': ad.user.shops.first().name,
     }
     return new_ad_json
 
