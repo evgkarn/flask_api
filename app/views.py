@@ -5,7 +5,7 @@ from flask import jsonify, abort, request, make_response, url_for, send_from_dir
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from config_local import SharedDataMiddleware
+# from config_local import SharedDataMiddleware
 from functools import wraps
 from sqlalchemy import desc
 import datetime
@@ -23,7 +23,7 @@ app.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
+# app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
@@ -87,8 +87,6 @@ def uploaded_file(filename):
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
-    dd = ad.user.shops.all()
-    print(dd)
     new_ad_json = {
         'id': ad.id,
         'user_id': ad.user_id,
@@ -98,6 +96,10 @@ def ad_by_id(id_elem):
         'model_auto': ad.model_auto,
         'year_auto': ad.year_auto,
         'vin_auto': ad.vin_auto,
+        'series_auto': ad.auto_series,
+        'modification_auto': ad.auto_modification,
+        'generation_auto': ad.generation,
+        'fuel_auto': ad.fuel,
         'price': ad.price,
         'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
@@ -144,6 +146,10 @@ def get_user_ads(user_id):
             'year_auto': post.year_auto,
             'vin_auto': post.vin_auto,
             'price': post.price,
+            'series_auto': post.series,
+            'modification_auto': post.modification,
+            'generation_auto': post.generation,
+            'fuel_auto': post.fuel,
             'image': post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
@@ -151,7 +157,7 @@ def get_user_ads(user_id):
     return jsonify({'ads': user_posts}), 201
 
 
-# Cоздание объявления
+# Создание объявления
 @app.route('/todo/api/v1.0/ads', methods=['POST'])
 # @token_required
 def create_ads():
@@ -176,6 +182,10 @@ def create_ads():
         year_auto=request.form['year_auto'],
         vin_auto=request.form['vin_auto'],
         price=request.form['price'],
+        series=request.form['series_auto'],
+        modification=request.form['modification_auto'],
+        generation=request.form['generation_auto'],
+        fuel=request.form['fuel_auto'],
         user_id=request.form['user_id'],
         image=image_ads,
         timestamp=datetime.datetime.utcnow()
@@ -203,6 +213,10 @@ def update_ad(ad_id):
     ad.year_auto = request.form.get('year_auto', ad.year_auto)
     ad.vin_auto = request.form.get('vin_auto', ad.vin_auto)
     ad.price = request.form.get('price', ad.price)
+    ad.auto_series = request.form.get('auto_series', ad.auto_series)
+    ad.auto_modification = request.form.get('auto_modification', ad.auto_modification)
+    ad.generation = request.form.get('generation', ad.generation)
+    ad.fuel = request.form.get('fuel', ad.fuel)
     db.session.commit()
     return jsonify(ad_by_id(ad_id)), 201
 
@@ -383,7 +397,7 @@ def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
 
 
-# Формирования словаря полей магазина для json ответа
+# Формирования словаря полей объявления для json ответа
 def shop_by_id(id_elem):
     ad = models.Shop.query.get(id_elem)
     new_ad_json = {
@@ -394,6 +408,10 @@ def shop_by_id(id_elem):
         'mark_auto': ad.mark_auto,
         'model_auto': ad.model_auto,
         'year_auto': ad.year_auto,
+        'series_auto': ad.auto_series,
+        'modification_auto': ad.auto_modification,
+        'generation_auto': ad.generation,
+        'fuel_auto': ad.fuel,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
         'image': ad.image,
@@ -440,6 +458,56 @@ def get_year(auto_name, auto_model):
         lt_auto.add(a.year)
     lt_auto = sorted(list(lt_auto))
     return jsonify({'year': lt_auto}), 201
+
+
+# Получить серию по году и по модели и марке авто
+@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
+# @token_required
+def get_series(auto_name, auto_model, auto_year):
+    auto = db.session.query(models.Auto).filter_by(name=auto_name, model=auto_model, year=auto_year).all()
+    if auto is None:
+        abort(404)
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.series)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'series': lt_auto}), 201
+
+
+# Получить модификацию по серии и по году и по модели и марке авто
+@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
+# @token_required
+def get_modification(auto_name, auto_model, auto_year, auto_series):
+    auto = db.session.query(models.Auto).filter_by(name=auto_name,
+                                                   model=auto_model,
+                                                   year=auto_year,
+                                                   series=auto_series).all()
+    if auto is None:
+        abort(404)
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.modification)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'modification': lt_auto}), 201
+
+
+# Получить топливо по модификации по серии и по году и по модели и марке авто
+@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>', methods=['GET'])
+# @token_required
+def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
+    auto = db.session.query(models.Auto).filter_by(name=auto_name,
+                                                   model=auto_model,
+                                                   year=auto_year,
+                                                   series=auto_series,
+                                                   modification=auto_modification).all()
+    if auto is None:
+        abort(404)
+    lt_auto = set()
+    for a in auto:
+        lt_auto.add(a.fuel)
+    lt_auto = sorted(list(lt_auto))
+    return jsonify({'fuel': lt_auto}), 201
+
 
 
 @app.route('/')

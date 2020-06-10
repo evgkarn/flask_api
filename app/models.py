@@ -28,6 +28,11 @@ class Post(db.Model):
     vin_auto = db.Column(db.String(64), index=True)
     price = db.Column(db.Integer, index=True)
     image = db.Column(db.String(500), index=True, default=DEFAULT)
+    engine = db.Column(db.String(300), index=True, default=DEFAULT)
+    generation = db.Column(db.String(200), index=True, default=DEFAULT)
+    series = db.Column(db.String(120), index=True, default=DEFAULT)
+    modification = db.Column(db.String(120), index=True, default=DEFAULT)
+    fuel = db.Column(db.String(120), index=True, default=DEFAULT)
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User")
@@ -52,9 +57,14 @@ class Shop(db.Model):
 
 class Auto(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
+    id_modification = db.Column(db.Integer, index=True)
     name = db.Column(db.String(120), index=True)
     model = db.Column(db.String(768), index=True)
+    generation = db.Column(db.String(200), index=True)
     year = db.Column(db.Integer, index=True)
+    series = db.Column(db.String(120), index=True)
+    modification = db.Column(db.String(120), index=True)
+    fuel = db.Column(db.String(120), index=True)
 
     def __repr__(self):
         return '<Auto %r>' % self.name
