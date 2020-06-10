@@ -100,6 +100,7 @@ def ad_by_id(id_elem):
         'modification_auto': ad.modification,
         'generation_auto': ad.generation,
         'fuel_auto': ad.fuel,
+        'engine_auto': ad.engine,
         'price': ad.price,
         'image': ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
@@ -150,6 +151,7 @@ def get_user_ads(user_id):
             'modification_auto': post.modification,
             'generation_auto': post.generation,
             'fuel_auto': post.fuel,
+            'engine_auto': post.engine,
             'image': post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
@@ -186,6 +188,7 @@ def create_ads():
         modification=request.form['modification_auto'],
         generation=request.form['generation_auto'],
         fuel=request.form['fuel_auto'],
+        engine=request.form['engine_auto'],
         user_id=request.form['user_id'],
         image=image_ads,
         timestamp=datetime.datetime.utcnow()
@@ -213,9 +216,10 @@ def update_ad(ad_id):
     ad.year_auto = request.form.get('year_auto', ad.year_auto)
     ad.vin_auto = request.form.get('vin_auto', ad.vin_auto)
     ad.price = request.form.get('price', ad.price)
-    ad.auto_series = request.form.get('auto_series', ad.auto_series)
-    ad.auto_modification = request.form.get('auto_modification', ad.auto_modification)
-    ad.generation = request.form.get('generation', ad.generation)
+    ad.auto_series = request.form.get('series_auto', ad.auto_series)
+    ad.auto_modification = request.form.get('modification_auto', ad.auto_modification)
+    ad.generation = request.form.get('generation_auto', ad.generation)
+    ad.engine_auto = request.form.get('engine_auto', ad.generation)
     ad.fuel = request.form.get('fuel', ad.fuel)
     db.session.commit()
     return jsonify(ad_by_id(ad_id)), 201
@@ -412,6 +416,7 @@ def shop_by_id(id_elem):
         'modification_auto': ad.auto_modification,
         'generation_auto': ad.generation,
         'fuel_auto': ad.fuel,
+        'engine_auto': ad.engine,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
         'image': ad.image,
