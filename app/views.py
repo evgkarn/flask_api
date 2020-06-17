@@ -6,9 +6,9 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from config_local import SharedDataMiddleware
+from config_local import apply_filters
 from functools import wraps
 from sqlalchemy import desc
-from sqlalchemy_filters import apply_filters
 import datetime
 import jwt
 import sys
