@@ -6,7 +6,6 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from config_local import SharedDataMiddleware
-from config_local import apply_filters
 from functools import wraps
 from sqlalchemy import desc
 import datetime
@@ -17,6 +16,7 @@ import config_local
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
+from sqlalchemy_filters import apply_filters
 
 auth = HTTPBasicAuth()
 app.config['JSON_AS_ASCII'] = False
