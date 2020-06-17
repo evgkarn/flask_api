@@ -560,6 +560,13 @@ def get_search_html():
         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
     if request.args.get('modification_auto'):
         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
+    if request.args.get('name'):
+        filter_spec.append({
+                'or': [
+                    {'field': 'name_ads', 'op': 'like', 'value': '%'+request.args.get('name')+'%'},
+                    {'field': 'body', 'op': 'like', 'value': '%'+request.args.get('name')+'%'},
+                ]
+            })
     query = models.Post.query
     filtered_query = apply_filters(query, filter_spec)
     return render_template('main.html', ads=filtered_query)
