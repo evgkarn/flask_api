@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from config_local import SharedDataMiddleware
 from functools import wraps
 from sqlalchemy import desc
+from sqlalchemy_filters import apply_filters
 import datetime
 import jwt
 import sys
@@ -546,7 +547,19 @@ def get_partners_html():
     return render_template('partners.html')
 
 
-@app.route('/ip')
-def get_user_ip():
-    ip = request.headers.get('X-Real-IP')
-    return jsonify({'ip': ip}), 201
+@app.route('/search')
+def get_search_html():
+    filter_spec = []
+    if request.args.get('mark_auto'):
+        filter_spec.append({'field': 'mark_auto', 'op': '==', 'value': request.args.get('mark_auto')})
+    if request.args.get('model_auto'):
+        filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
+    if request.args.get('year_auto'):
+        filter_spec.append({'field': 'year_auto', 'op': '==', 'value': request.args.get('year_auto')})
+    if request.args.get('series_auto'):
+        filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
+    if request.args.get('modification_auto'):
+        filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
+    query = models.Post.query
+    filtered_query = apply_filters(query, filter_spec)
+    return render_template('main.html', ads=filtered_query)
