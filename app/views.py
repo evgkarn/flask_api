@@ -561,10 +561,11 @@ def get_search_html():
     if request.args.get('modification_auto'):
         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
     if request.args.get('name'):
+        name_lower = request.args.get('name')
         filter_spec.append({
                 'or': [
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+request.args.get('name')+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+request.args.get('name')+'%'},
+                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
+                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
                 ]
             })
     query = models.Post.query
