@@ -58,7 +58,7 @@ class Shop(db.Model):
 class Auto(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
     id_modification = db.Column(db.Integer, index=True)
-    name = db.Column(db.String(120), index=True)
+
     model = db.Column(db.String(768), index=True)
     generation = db.Column(db.String(200), index=True)
     year = db.Column(db.Integer, index=True)

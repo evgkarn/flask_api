@@ -425,7 +425,7 @@ def shop_by_id(id_elem):
 @app.route('/todo/api/v1.0/auto', methods=['GET'])
 # @token_required
 def get_auto():
-    auto = models.Auto.query.all()
+    auto = models.Model.query.all()
     lt_auto = set()
     for a in auto:
         lt_auto.add(a.name)
