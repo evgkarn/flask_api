@@ -93,8 +93,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		let markAuto = searchForm.querySelector('#carName').value
 		let modelAuto = searchForm.querySelector('#carModel').value
 		window.location = `http://evgkarn.pythonanywhere.com/search?${name.length > 1 ? 'name=' + name : ''}
-		${markAuto.length > 1 ? '&mark_auto =' + markAuto : ''}
-		${modelAuto.length > 1 ? '&model_auto =' + modelAuto : ''}`
+		${markAuto.length > 1 ? '&mark_auto=' + markAuto : ''}
+		${modelAuto.length > 1 ? '&model_auto=' + modelAuto : ''}`
 	})
 
 	let adsInfoText = document.querySelectorAll('.ads-info p');
