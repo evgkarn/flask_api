@@ -436,8 +436,8 @@ def get_auto():
 @app.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
 def get_model(auto_name):
-    # model = db.session.query(models.Model).filter_by(name=auto_name).first()
-    auto = db.session.query(models.Auto).filter_by(id=auto_name).all()
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id).all()
     if auto is None:
         abort(404)
     lt_auto = set()
