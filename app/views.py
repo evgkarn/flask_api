@@ -426,10 +426,9 @@ def shop_by_id(id_elem):
 # @token_required
 def get_auto():
     auto = models.Model.query.all()
-    lt_auto = set()
+    lt_auto = []
     for a in auto:
         lt_auto.add(a.name)
-    lt_auto = sorted(list(lt_auto))
     return jsonify({'auto': lt_auto}), 201
 
 
