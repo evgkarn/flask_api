@@ -428,7 +428,7 @@ def get_auto():
     auto = models.Model.query.all()
     lt_auto = []
     for a in auto:
-        lt_auto.add(a.name)
+        lt_auto.append(a.name)
     return jsonify({'auto': lt_auto}), 201
 
 
