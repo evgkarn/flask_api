@@ -437,7 +437,8 @@ def get_auto():
 @app.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
 def get_model(auto_name):
-    auto = db.session.query(models.Auto).filter_by(name=auto_name).all()
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -451,7 +452,8 @@ def get_model(auto_name):
 @app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
 # @token_required
 def get_year(auto_name, auto_model):
-    auto = db.session.query(models.Auto).filter_by(name=auto_name, model=auto_model).all()
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -465,7 +467,8 @@ def get_year(auto_name, auto_model):
 @app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
 # @token_required
 def get_series(auto_name, auto_model, auto_year):
-    auto = db.session.query(models.Auto).filter_by(name=auto_name, model=auto_model, year=auto_year).all()
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model, year=auto_year).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -479,7 +482,8 @@ def get_series(auto_name, auto_model, auto_year):
 @app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
 # @token_required
 def get_modification(auto_name, auto_model, auto_year, auto_series):
-    auto = db.session.query(models.Auto).filter_by(name=auto_name,
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id,
                                                    model=auto_model,
                                                    year=auto_year,
                                                    series=auto_series).all()
@@ -496,7 +500,8 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
 @app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>', methods=['GET'])
 # @token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
-    auto = db.session.query(models.Auto).filter_by(name=auto_name,
+    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id,
                                                    model=auto_model,
                                                    year=auto_year,
                                                    series=auto_series,
