@@ -80,11 +80,6 @@ def upload_file():
         abort(404)
 
 
-@app.route('/todo/api/v1.0/upload/<filename>', methods=['GET'])
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
-
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
