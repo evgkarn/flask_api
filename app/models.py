@@ -68,3 +68,11 @@ class Auto(db.Model):
 
     def __repr__(self):
         return '<Auto %r>' % self.name
+
+
+class Model(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(120), index=True)
+
+    def __repr__(self):
+        return '<Model %r>' % self.name
