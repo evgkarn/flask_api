@@ -563,8 +563,8 @@ def get_search_html():
     if request.args.get('name'):
         filter_spec.append({
                 'or': [
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+request.args.get('name')+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+request.args.get('name')+'%'},
+                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+request.args.get('name').lower +'%'},
+                    {'field': 'body', 'op': 'ilike', 'value': '%'+request.args.get('name').lower +'%'},
                 ]
             })
     query = models.Post.query
