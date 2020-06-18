@@ -6,6 +6,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 
 	let url = String(window.location.href)
+	
+	// let url = `http://evgkarn.pythonanywhere.com/search?name=%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3&mark_auto=BMW&model_auto=1%20%D1%81%D0%B5%D1%80%D0%B8%D1%8F`
+	// console.log(decodeURIComponent('%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3'))
 	console.log(url.indexOf('&'))
 	async function formInfo(){
 		if (url.indexOf('&')>0){
@@ -16,15 +19,14 @@ document.addEventListener("DOMContentLoaded", function() {
 			for(let el of arrUrl){
 				el = el.split('=')
 				if(el[0] === 'name'){
-					document.querySelector('#detailName').value = el[1]
+					document.querySelector('#detailName').value = decodeURIComponent(el[1])
 				}else if(el[0] === 'mark_auto'){
-				console.log('mark auto')
 					await getCars()
-					document.querySelector('#carName').value = el[1]
+					document.querySelector('#carName').value = decodeURIComponent(el[1])
 				}else if(el[0] === 'model_auto'){
-                     console.log('model auto')
 					await getModels()
-					document.querySelector('#carModel').value = el[1]
+	
+					document.querySelector('#carModel').value = decodeURIComponent(el[1])
 				}				
 			}
 		}else{
@@ -100,7 +102,6 @@ document.addEventListener("DOMContentLoaded", function() {
 	let adsInfoText = document.querySelectorAll('.ads-info p');
 
 	for(let i = 0; i< adsInfoText.length; i++){
-		console.log(adsInfoText[i])
 		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 	}
 });
