@@ -564,7 +564,9 @@ def get_search_html():
         name_lower = request.args.get('name')
         filter_spec.append({
                 'or': [
+                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower+'%'},
                     {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
+                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower+'%'},
                     {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
                 ]
             })
