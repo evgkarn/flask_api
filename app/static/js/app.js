@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// console.log(decodeURIComponent('%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3'))
 	console.log(url.indexOf('&'))
 	async function formInfo(){
-		if (url.indexOf('&')>0){
+		if (url.indexOf('?')>0){
 			let arrUrl = url.split('?')
 			arrUrl.shift()
 			arrUrl = arrUrl.join('').split('&')
