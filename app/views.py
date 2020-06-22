@@ -69,7 +69,7 @@ def file_to_upload(file):
         suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         filename = "_".join([suffix, filename])
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return url_for('uploaded_file', filename=filename, _external=True)
+        return url_for('uploaded_file', filename=filename)
 
 
 # Загрузка фото
@@ -230,6 +230,7 @@ def delete_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
         abort(404)
+    os.remove(ad.image)
     db.session.delete(ad)
     db.session.commit()
     return jsonify({'result': True})
@@ -578,3 +579,4 @@ def get_search_html():
     query = models.Post.query
     filtered_query = apply_filters(query, filter_spec)
     return render_template('main.html', ads=filtered_query)
+
