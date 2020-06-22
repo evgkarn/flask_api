@@ -66,6 +66,8 @@ def allowed_file(filename):
 def file_to_upload(file):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
+        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+        filename = "_".join([filename, suffix])
         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
         return url_for('uploaded_file', filename=filename, _external=True)
 
@@ -496,7 +498,8 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
 
 
 # Получить топливо по модификации по серии и по году и по модели и марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>', methods=['GET'])
+@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>',
+           methods=['GET'])
 # @token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
@@ -512,7 +515,6 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
         lt_auto.add(a.fuel)
     lt_auto = sorted(list(lt_auto))
     return jsonify({'fuel': lt_auto}), 201
-
 
 
 @app.route('/')
@@ -562,17 +564,17 @@ def get_search_html():
     if request.args.get('name'):
         name_lower = request.args.get('name')
         filter_spec.append({
-                'or': [
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower+'%'},
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower.lower()+'%'},
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower.capitalize()+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower.capitalize()+'%'},
-                    {'field': 'name_ads', 'op': 'ilike', 'value': '%'+name_lower.upper()+'%'},
-                    {'field': 'body', 'op': 'ilike', 'value': '%'+name_lower.upper()+'%'},
-                ]
-            })
+            'or': [
+                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+            ]
+        })
     query = models.Post.query
     filtered_query = apply_filters(query, filter_spec)
     return render_template('main.html', ads=filtered_query)
