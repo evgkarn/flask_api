@@ -231,8 +231,8 @@ def delete_ad(ad_id):
     if ad is None:
         abort(404)
     if ad.image:
-        print(ad.image)
-        os.remove(ad.image[1:])
+        print(ad.image[33:])
+        os.remove(ad.image[33:])
     db.session.delete(ad)
     db.session.commit()
     return jsonify({'result': True})
