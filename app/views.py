@@ -232,7 +232,7 @@ def delete_ad(ad_id):
         abort(404)
     if ad.image:
         print(ad.image[34:])
-        print(os.getcwd())
+        print(os.path.dirname(os.path.abspath(__file__)))
         # os.remove('/home/evgkarn/flask_api/app/' + ad.image[34:])
     # db.session.delete(ad)
     # db.session.commit()
