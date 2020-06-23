@@ -6,6 +6,7 @@ from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
 from config_local import SharedDataMiddleware
+from config_local import SERVER_NAME
 from functools import wraps
 from sqlalchemy import desc
 import datetime
@@ -170,7 +171,7 @@ def create_ads():
         id_ad = 1
     if 'file' in request.files:
         file = request.files['file']
-        image_ads = file_to_upload(file)
+        image_ads = SERVER_NAME + file_to_upload(file)
     else:
         image_ads = ''
     new_ad = models.Post(
@@ -206,7 +207,7 @@ def update_ad(ad_id):
     if not request.form:
         abort(400)
     if 'file' in request.files:
-        ad.image = file_to_upload(request.files['file'])
+        ad.image = SERVER_NAME + file_to_upload(request.files['file'])
     ad.name_ads = request.form.get('name', ad.name_ads)
     ad.body = request.form.get('text', ad.body)
     ad.mark_auto = request.form.get('mark_auto', ad.mark_auto)
@@ -231,11 +232,9 @@ def delete_ad(ad_id):
     if ad is None:
         abort(404)
     if ad.image:
-        print(ad.image[34:])
-        print(os.path.dirname(os.path.abspath(__file__)))
-        # os.remove('/home/evgkarn/flask_api/app/' + ad.image[34:])
-    # db.session.delete(ad)
-    # db.session.commit()
+        os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
+    db.session.delete(ad)
+    db.session.commit()
     return jsonify({'result': True})
 
 
@@ -314,7 +313,7 @@ def create_user():
         id_shop = 1
     if 'file' in request.files:
         file = request.files['file']
-        image_shop = file_to_upload(file)
+        image_shop = SERVER_NAME + file_to_upload(file)
     else:
         image_shop = ''
     new_shop = models.Shop(
@@ -347,7 +346,7 @@ def update_user(user_id):
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if 'file' in request.files:
-            shop.image = file_to_upload(request.files['file'])
+            shop.image = SERVER_NAME + file_to_upload(request.files['file'])
         shop.name = request.form.get('name_shop', shop.name)
         shop.body = request.form.get('text_shop', shop.body)
         shop.phone = request.form.get('phone', shop.phone)
