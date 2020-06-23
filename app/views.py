@@ -230,7 +230,8 @@ def delete_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
         abort(404)
-    os.remove(ad.image)
+    if ad.image:
+        os.remove(ad.image)
     db.session.delete(ad)
     db.session.commit()
     return jsonify({'result': True})
