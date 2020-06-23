@@ -232,6 +232,7 @@ def delete_ad(ad_id):
         abort(404)
     if ad.image:
         print(ad.image[34:])
+        print(os.path.abspath(__file__))
         os.remove(ad.image[34:])
     db.session.delete(ad)
     db.session.commit()
