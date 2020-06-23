@@ -101,7 +101,7 @@ def ad_by_id(id_elem):
         'fuel_auto': ad.fuel,
         'engine_auto': ad.engine,
         'price': ad.price,
-        'image': ad.image,
+        'image': SERVER_NAME + ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
         'date_create': ad.timestamp,
         'user': ad.user.shops.first().name,
@@ -151,7 +151,7 @@ def get_user_ads(user_id):
             'generation_auto': post.generation,
             'fuel_auto': post.fuel,
             'engine_auto': post.engine,
-            'image': post.image,
+            'image': SERVER_NAME + post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
         })
@@ -171,7 +171,7 @@ def create_ads():
         id_ad = 1
     if 'file' in request.files:
         file = request.files['file']
-        image_ads = SERVER_NAME + file_to_upload(file)
+        image_ads = file_to_upload(file)
     else:
         image_ads = ''
     new_ad = models.Post(
@@ -207,7 +207,7 @@ def update_ad(ad_id):
     if not request.form:
         abort(400)
     if 'file' in request.files:
-        ad.image = SERVER_NAME + file_to_upload(request.files['file'])
+        ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.form.get('name', ad.name_ads)
     ad.body = request.form.get('text', ad.body)
     ad.mark_auto = request.form.get('mark_auto', ad.mark_auto)
@@ -248,7 +248,7 @@ def user_by_id(id_elem):
             'text': shop.body,
             'phone': shop.phone,
             'address': shop.address,
-            'image': shop.image
+            'image': SERVER_NAME + shop.image
         }
     new_user_json = {
         'id': user.id,
@@ -313,7 +313,7 @@ def create_user():
         id_shop = 1
     if 'file' in request.files:
         file = request.files['file']
-        image_shop = SERVER_NAME + file_to_upload(file)
+        image_shop = file_to_upload(file)
     else:
         image_shop = ''
     new_shop = models.Shop(
@@ -346,7 +346,7 @@ def update_user(user_id):
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if 'file' in request.files:
-            shop.image = SERVER_NAME + file_to_upload(request.files['file'])
+            shop.image = file_to_upload(request.files['file'])
         shop.name = request.form.get('name_shop', shop.name)
         shop.body = request.form.get('text_shop', shop.body)
         shop.phone = request.form.get('phone', shop.phone)
@@ -386,7 +386,7 @@ def auth_user():
                           'text': our_user.shops[0].body,
                           'address': our_user.shops[0].address,
                           'phone': our_user.shops[0].phone,
-                          'image': our_user.shops[0].image},
+                          'image': SERVER_NAME + our_user.shops[0].image},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
                 config_local.SECRET_KEY)
@@ -420,7 +420,7 @@ def shop_by_id(id_elem):
         'engine_auto': ad.engine,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
-        'image': ad.image,
+        'image': SERVER_NAME + ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
     return new_ad_json
