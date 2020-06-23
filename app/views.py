@@ -27,6 +27,8 @@ app.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
+print(os.path.abspath(os.curdir))
+
 
 def token_required(f):
     @wraps(f)
