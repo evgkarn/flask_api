@@ -362,6 +362,11 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
+    shop = models.Shop.query.filter_by(user_id=user_id).first()
+    if shop:
+        if shop.image:
+            os.remove(os.path.dirname(os.path.abspath(__file__)) + shop.image)
+    db.session.delete(shop)
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': True})
