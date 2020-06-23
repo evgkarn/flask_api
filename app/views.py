@@ -234,10 +234,10 @@ def delete_ad(ad_id):
         abort(404)
     if ad.image:
         print(ad.image[34:])
-        print(os.path.abspath(__file__))
-        os.remove('/home/evgkarn/flask_api/app/' + ad.image[34:])
-    db.session.delete(ad)
-    db.session.commit()
+        print(os.path.abspath(os.curdir))
+        # os.remove('/home/evgkarn/flask_api/app/' + ad.image[34:])
+    # db.session.delete(ad)
+    # db.session.commit()
     return jsonify({'result': True})
 
 
