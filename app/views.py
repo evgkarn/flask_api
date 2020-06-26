@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from app import app, models, db
+from app import application, models, db
 from flask import jsonify, abort, request, make_response, url_for, send_from_directory, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -20,12 +20,12 @@ from flask_cors import CORS
 from sqlalchemy_filters import apply_filters
 
 auth = HTTPBasicAuth()
-app.config['JSON_AS_ASCII'] = False
-app.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
-CORS(app, resources={r"/*": {"origins": "*"}})
+application.config['JSON_AS_ASCII'] = False
+application.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
+CORS(application, resources={r"/*": {"origins": "*"}})
 
-app.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
-app.wsgi_app = SharedDataMiddleware(app.wsgi_app, {'/upload': app.config['UPLOAD_FOLDER']})
+application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
+application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 
@@ -52,7 +52,7 @@ def token_required(f):
 
 
 # Возврат 404 ошибки в json
-@app.errorhandler(404)
+@application.errorhandler(404)
 def not_found(error):
     return make_response(jsonify({'error': 'Not found'}), 404)
 
@@ -74,7 +74,7 @@ def file_to_upload(file):
 
 
 # Загрузка фото
-@app.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
+@application.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
 def upload_file():
     if 'file' in request.files:
         file = request.files['file']
@@ -110,7 +110,7 @@ def ad_by_id(id_elem):
 
 
 # Получить все объявления
-@app.route('/todo/api/v1.0/ads', methods=['GET'])
+@application.route('/todo/api/v1.0/ads', methods=['GET'])
 # @token_required
 def get_ads():
     ads = models.Post.query.all()
@@ -121,7 +121,7 @@ def get_ads():
 
 
 # Получить объявление по id
-@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
+@application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
 # @token_required
 def get_ad(ad_id):
     ad = models.Post.query.get(ad_id)
@@ -131,7 +131,7 @@ def get_ad(ad_id):
 
 
 # Получить все объявления по id пользователя
-@app.route('/todo/api/v1.0/users/<int:user_id>/ads', methods=['GET'])
+@application.route('/todo/api/v1.0/users/<int:user_id>/ads', methods=['GET'])
 # @token_required
 def get_user_ads(user_id):
     user = models.User.query.get(user_id)
@@ -159,7 +159,7 @@ def get_user_ads(user_id):
 
 
 # Создание объявления
-@app.route('/todo/api/v1.0/ads', methods=['POST'])
+@application.route('/todo/api/v1.0/ads', methods=['POST'])
 # @token_required
 def create_ads():
     if not request.form or not 'text' in request.form:
@@ -198,7 +198,7 @@ def create_ads():
 
 
 # Изменение объявления
-@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
+@application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
 # @token_required
 def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
@@ -225,7 +225,7 @@ def update_ad(ad_id):
 
 
 # Удаление объявления
-@app.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['DELETE'])
+@application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['DELETE'])
 # @token_required
 def delete_ad(ad_id):
     ad = models.Post.query.get(ad_id)
@@ -265,7 +265,7 @@ def user_by_id(id_elem):
 
 
 # Получить всех пользователей
-@app.route('/todo/api/v1.0/users', methods=['GET'])
+@application.route('/todo/api/v1.0/users', methods=['GET'])
 # @token_required
 def get_users():
     users = models.User.query.all()
@@ -276,7 +276,7 @@ def get_users():
 
 
 # Получить пользователя по id
-@app.route('/todo/api/v1.0/users/<int:user_id>', methods=['GET'])
+@application.route('/todo/api/v1.0/users/<int:user_id>', methods=['GET'])
 # @token_required
 def get_user(user_id):
     user = models.User.query.get(user_id)
@@ -286,7 +286,7 @@ def get_user(user_id):
 
 
 # Создание пользователя
-@app.route('/todo/api/v1.0/users', methods=['POST'])
+@application.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
     if not request.form or not 'email' in request.form:
         abort(400)
@@ -331,7 +331,7 @@ def create_user():
 
 
 # Изменение пользователя
-@app.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
+@application.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
 @token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
@@ -356,7 +356,7 @@ def update_user(user_id):
 
 
 # Удаление пользователя
-@app.route('/todo/api/v1.0/users/<int:user_id>', methods=['DELETE'])
+@application.route('/todo/api/v1.0/users/<int:user_id>', methods=['DELETE'])
 @token_required
 def delete_user(user_id):
     user = models.User.query.get(user_id)
@@ -373,7 +373,7 @@ def delete_user(user_id):
 
 
 # Авторизация пользователя
-@app.route('/todo/api/v1.0/auth', methods=['POST'])
+@application.route('/todo/api/v1.0/auth', methods=['POST'])
 def auth_user():
     if not request.json or not 'email' in request.json:
         abort(400)
@@ -402,7 +402,7 @@ def auth_user():
         return jsonify({'error': 'Unknown user'})
 
 
-@app.route('/todo/api/v1.0/auth', methods=['GET', 'PUT', 'DELETE'])
+@application.route('/todo/api/v1.0/auth', methods=['GET', 'PUT', 'DELETE'])
 def auth_user_get():
     return make_response(jsonify({'error': 'Not found'}), 404)
 
@@ -432,7 +432,7 @@ def shop_by_id(id_elem):
 
 
 # Получить список марок авто
-@app.route('/todo/api/v1.0/auto', methods=['GET'])
+@application.route('/todo/api/v1.0/auto', methods=['GET'])
 # @token_required
 def get_auto():
     auto = models.Model.query.all()
@@ -443,7 +443,7 @@ def get_auto():
 
 
 # Получить список модель по марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
+@application.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
 def get_model(auto_name):
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
@@ -458,7 +458,7 @@ def get_model(auto_name):
 
 
 # Получить год по модели и марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
+@application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
 # @token_required
 def get_year(auto_name, auto_model):
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
@@ -473,7 +473,7 @@ def get_year(auto_name, auto_model):
 
 
 # Получить серию по году и по модели и марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
+@application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
 # @token_required
 def get_series(auto_name, auto_model, auto_year):
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
@@ -488,7 +488,7 @@ def get_series(auto_name, auto_model, auto_year):
 
 
 # Получить модификацию по серии и по году и по модели и марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
+@application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
 # @token_required
 def get_modification(auto_name, auto_model, auto_year, auto_series):
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
@@ -506,7 +506,7 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
 
 
 # Получить топливо по модификации по серии и по году и по модели и марке авто
-@app.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>',
+@application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>',
            methods=['GET'])
 # @token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
@@ -525,19 +525,19 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     return jsonify({'fuel': lt_auto}), 201
 
 
-@app.route('/')
+@application.route('/')
 def get_main_html():
     ads = models.Post.query.order_by(desc(models.Post.id)).all()
     return render_template('main.html', ads=ads)
 
 
-@app.route('/shop/<int:shop_id>')
+@application.route('/shop/<int:shop_id>')
 def get_shop_html(shop_id):
     shop = models.Shop.query.get(shop_id)
     return render_template('shop.html', shop=shop)
 
 
-@app.route('/ad/<int:ad_id>')
+@application.route('/ad/<int:ad_id>')
 def get_ad_html(ad_id):
     ad = models.Post.query.get(ad_id)
     recommendation = db.session.query(models.Post).order_by(desc(models.Post.id)).filter_by(mark_auto=ad.mark_auto,
@@ -546,17 +546,17 @@ def get_ad_html(ad_id):
     return render_template('ad.html', ad=ad, recommendation=recommendation)
 
 
-@app.route('/about')
+@application.route('/about')
 def get_about_html():
     return render_template('about.html')
 
 
-@app.route('/partners')
+@application.route('/partners')
 def get_partners_html():
     return render_template('partners.html')
 
 
-@app.route('/search')
+@application.route('/search')
 def get_search_html():
     filter_spec = []
     if request.args.get('mark_auto'):

@@ -1,9 +1,9 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-app = Flask(__name__)
-app.config.from_object('config')
-db = SQLAlchemy(app)
+application = Flask(__name__)
+application.config.from_object('config')
+db = SQLAlchemy(application)
 from app import views
 
 
