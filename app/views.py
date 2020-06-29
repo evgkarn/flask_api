@@ -9,6 +9,7 @@ from config_local import SharedDataMiddleware
 from config_local import SERVER_NAME
 from functools import wraps
 from sqlalchemy import desc
+from urllib.parse import unquote
 import datetime
 import jwt
 import sys
@@ -462,8 +463,8 @@ def get_model(auto_name):
 # @token_required
 def get_year(auto_name, auto_model):
     f = open('log.txt', 'w')
-    f.write(auto_name)
-    f.write(auto_model)
+    f.write(unquote(auto_name))
+    f.write(unquote(auto_model))
     f.close()
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model).all()
