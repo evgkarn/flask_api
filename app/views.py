@@ -447,7 +447,7 @@ def get_auto():
 @application.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
 def get_model(auto_name):
-    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id).all()
     if auto is None:
         abort(404)
@@ -462,12 +462,8 @@ def get_model(auto_name):
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
 # @token_required
 def get_year(auto_name, auto_model):
-    f = open('log.txt', 'w')
-    f.write(unquote(auto_name))
-    f.write(unquote(auto_model))
-    f.close()
-    model = db.session.query(models.Model).filter_by(name=auto_name).first()
-    auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model).all()
+    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model)).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -481,8 +477,8 @@ def get_year(auto_name, auto_model):
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
 # @token_required
 def get_series(auto_name, auto_model, auto_year):
-    model = db.session.query(models.Model).filter_by(name=auto_name).first()
-    auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model, year=auto_year).all()
+    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
+    auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model), year=unquote(auto_year)).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -496,11 +492,11 @@ def get_series(auto_name, auto_model, auto_year):
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
 # @token_required
 def get_modification(auto_name, auto_model, auto_year, auto_series):
-    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id,
-                                                   model=auto_model,
-                                                   year=auto_year,
-                                                   series=auto_series).all()
+                                                   model=unquote(auto_model),
+                                                   year=unquote(auto_year),
+                                                   series=unquote(auto_series)).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -515,12 +511,12 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
            methods=['GET'])
 # @token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
-    model = db.session.query(models.Model).filter_by(name=auto_name).first()
+    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id,
-                                                   model=auto_model,
-                                                   year=auto_year,
-                                                   series=auto_series,
-                                                   modification=auto_modification).all()
+                                                   model=unquote(auto_model),
+                                                   year=unquote(auto_year),
+                                                   series=unquote(auto_series),
+                                                   modification=unquote(auto_modification)).all()
     if auto is None:
         abort(404)
     lt_auto = set()
