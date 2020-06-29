@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let url = String(window.location.href)
 	
-	// let url = `http://evgkarn.pythonanywhere.com/search?name=%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3&mark_auto=BMW&model_auto=1%20%D1%81%D0%B5%D1%80%D0%B8%D1%8F`
+	// let url = `http://galiof.beget.tech/search?name=%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3&mark_auto=BMW&model_auto=1%20%D1%81%D0%B5%D1%80%D0%B8%D1%8F`
 	// console.log(decodeURIComponent('%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3'))
 	console.log(url.indexOf('&'))
 	async function formInfo(){
@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	getCity()
 	 // Получаем список автомобилей
 	async function getCars(){
-		let carsUrl = 'http://evgkarn.pythonanywhere.com/todo/api/v1.0/auto';
+		let carsUrl = 'http://galiof.beget.tech/todo/api/v1.0/auto';
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// Получаем список моделей
 	async function getModels(){
 		console.log(carName.value)
-		let carsUrl = `http://evgkarn.pythonanywhere.com/todo/api/v1.0/auto/${carName.value}`;
+		let carsUrl = `http://galiof.beget.tech/todo/api/v1.0/auto/${carName.value}`;
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		let name = searchForm.querySelector('#detailName').value
 		let markAuto = searchForm.querySelector('#carName').value
 		let modelAuto = searchForm.querySelector('#carModel').value
-		window.location = `http://evgkarn.pythonanywhere.com/search?${name.length > 1 ? 'name=' + name : ''}
+		window.location = `http://galiof.beget.tech/search?${name.length > 1 ? 'name=' + name : ''}
 		${markAuto.length > 1 ? '&mark_auto=' + markAuto : ''}
 		${modelAuto.length > 1 ? '&model_auto=' + modelAuto : ''}`
 	})
