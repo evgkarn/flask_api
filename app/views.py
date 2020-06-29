@@ -461,8 +461,10 @@ def get_model(auto_name):
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
 # @token_required
 def get_year(auto_name, auto_model):
-    print(auto_name)
-    print(auto_model)
+    f = open('log.txt', 'w')
+    f.write(auto_name)
+    f.write(auto_model)
+    f.close()
     model = db.session.query(models.Model).filter_by(name=auto_name).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=auto_model).all()
     if auto is None:
