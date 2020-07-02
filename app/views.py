@@ -74,16 +74,6 @@ def file_to_upload(file):
         return url_for('uploaded_file', filename=filename)
 
 
-# Загрузка фото
-@application.route('/todo/api/v1.0/upload', methods=['GET', 'POST'])
-def upload_file():
-    if 'file' in request.files:
-        file = request.files['file']
-        return jsonify({'image': file_to_upload(file)}), 201
-    else:
-        abort(404)
-
-
 # Формирования словаря полей объявления для json ответа
 def ad_by_id(id_elem):
     ad = models.Post.query.get(id_elem)
@@ -478,7 +468,8 @@ def get_year(auto_name, auto_model):
 # @token_required
 def get_series(auto_name, auto_model, auto_year):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
-    auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model), year=unquote(auto_year)).all()
+    auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model),
+                                                   year=unquote(auto_year)).all()
     if auto is None:
         abort(404)
     lt_auto = set()
@@ -508,7 +499,7 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
 
 # Получить топливо по модификации по серии и по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>',
-           methods=['GET'])
+                   methods=['GET'])
 # @token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
@@ -587,4 +578,3 @@ def get_search_html():
     query = models.Post.query
     filtered_query = apply_filters(query, filter_spec)
     return render_template('main.html', ads=filtered_query)
-
