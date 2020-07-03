@@ -18,7 +18,7 @@ import config_local
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
-from sqlalchemy_filters import apply_filters
+from sqlalchemy_filters import apply_filters, apply_pagination
 
 auth = HTTPBasicAuth()
 application.config['JSON_AS_ASCII'] = False
@@ -519,8 +519,15 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
 
 @application.route('/')
 def get_main_html():
-    ads = models.Post.query.order_by(desc(models.Post.id)).all()
-    return render_template('main.html', ads=ads)
+    ads = models.Post.query.order_by(desc(models.Post.id))
+    page = 1
+    page_size = 10
+    if request.args.get('page'):
+        page = int(request.args.get('page'))
+    if request.args.get('page_size'):
+        page_size = int(request.args.get('page_size'))
+    ads, pagination = apply_pagination(ads, page_number=page, page_size=page_size)
+    return render_template('main.html', ads=ads, pagination=pagination)
 
 
 @application.route('/shop/<int:shop_id>')
@@ -577,4 +584,11 @@ def get_search_html():
         })
     query = models.Post.query
     filtered_query = apply_filters(query, filter_spec)
-    return render_template('main.html', ads=filtered_query)
+    page = 1
+    page_size = 10
+    if request.args.get('page'):
+        page = int(request.args.get('page'))
+    if request.args.get('page_size'):
+        page_size = int(request.args.get('page_size'))
+    filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
+    return render_template('main.html', ads=filtered_query, pagination=pagination)

@@ -14,7 +14,7 @@
     <input type="submit" value="Поиск" class="redButton">
 </form>
 <div class="results">
-    <h2>Результаты поиска</h2>
+    <h2>Результаты поиска: {{pagination.total_results}}</h2>
     <div class="results-blocks">
         {% for ad in ads %}
         <div class="results-detail">
