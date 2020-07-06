@@ -50,7 +50,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	getCity()
 	 // Получаем список автомобилей
 	async function getCars(){
-		let carsUrl = 'http://galiof.beget.tech/todo/api/v1.0/auto';
+		let carsUrl = 'https://azato.ru/todo/api/v1.0/auto';
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
@@ -69,7 +69,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// Получаем список моделей
 	async function getModels(){
 		console.log(carName.value)
-		let carsUrl = `http://galiof.beget.tech/todo/api/v1.0/auto/${carName.value}`;
+		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}`;
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
@@ -94,7 +94,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		let name = searchForm.querySelector('#detailName').value
 		let markAuto = searchForm.querySelector('#carName').value
 		let modelAuto = searchForm.querySelector('#carModel').value
-		window.location = `http://galiof.beget.tech/search?${name.length > 1 ? 'name=' + name : ''}
+		window.location = `https://azato.ru/search?${name.length > 1 ? 'name=' + name : ''}
 		${markAuto.length > 1 ? '&mark_auto=' + markAuto : ''}
 		${modelAuto.length > 1 ? '&model_auto=' + modelAuto : ''}`
 	})
