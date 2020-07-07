@@ -70,7 +70,7 @@ def file_to_upload(file):
         filename = secure_filename(file.filename)
         suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         filename = "_".join([suffix, filename])
-        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        file.save(os.path.join(application.config['UPLOAD_FOLDER'], filename))
         return url_for('uploaded_file', filename=filename)
 
 
