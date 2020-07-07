@@ -20,6 +20,7 @@ class User(db.Model):
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
+    active = db.Column(db.SmallInteger, default=ROLE_USER)
     name_ads = db.Column(db.String(120), index=True)
     body = db.Column(db.String(768), index=True)
     mark_auto = db.Column(db.String(120), index=True)
@@ -46,6 +47,7 @@ class Shop(db.Model):
     name = db.Column(db.String(120), index=True)
     body = db.Column(db.String(768), index=True)
     phone = db.Column(db.Integer, index=True)
+    city = db.Column(db.String(400), index=True)
     address = db.Column(db.String(400), index=True)
     image = db.Column(db.String(500), index=True, default=DEFAULT)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
