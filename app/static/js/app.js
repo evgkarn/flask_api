@@ -87,7 +87,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	//Получение годов выпуска автомобилей
 
 	async function getYears(){
-		let carsUrl = `http://evgkarn.pythonanywhere.com/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
+		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
