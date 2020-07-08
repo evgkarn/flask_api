@@ -28,7 +28,11 @@ document.addEventListener("DOMContentLoaded", function() {
 					await getModels()
 	
 					document.querySelector('#carModel').value = decodeURIComponent(el[1])
-				}				
+				}else if(el[0] === 'year_auto'){
+					await getYears()
+	
+					document.querySelector('#carYear').value = decodeURIComponent(el[1])
+				}					
 			}
 		}else{
 			 getCars()
