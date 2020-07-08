@@ -200,8 +200,8 @@ def update_ad(ad_id):
         abort(404)
     if not request.form:
         abort(400)
-    # if 'file' in request.files:
-    #     ad.image = file_to_upload(request.files['file'])
+    if 'file' in request.files:
+        ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.form.get('name', ad.name_ads)
     ad.active = request.form.get('active', ad.active)
     ad.body = request.form.get('text', ad.body)
@@ -210,10 +210,10 @@ def update_ad(ad_id):
     ad.year_auto = request.form.get('year_auto', ad.year_auto)
     ad.vin_auto = request.form.get('vin_auto', ad.vin_auto)
     ad.price = request.form.get('price', ad.price)
-    ad.auto_series = request.form.get('series_auto', ad.auto_series)
-    ad.auto_modification = request.form.get('modification_auto', ad.auto_modification)
+    ad.series = request.form.get('series_auto', ad.series)
+    ad.modification = request.form.get('modification_auto', ad.modification)
     ad.generation = request.form.get('generation_auto', ad.generation)
-    ad.engine_auto = request.form.get('engine_auto', ad.generation)
+    ad.engine = request.form.get('engine_auto', ad.engine)
     ad.fuel = request.form.get('fuel_auto', ad.fuel)
     db.session.commit()
     return jsonify(ad_by_id(ad_id)), 201
