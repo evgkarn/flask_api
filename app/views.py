@@ -317,7 +317,7 @@ def create_user():
         name=request.form['name_shop'],
         body=request.form.get('text_shop', "Описание магазина не заполнено"),
         phone=request.form['phone'],
-        city=request.form.get('text_shop', "Иркутск"),
+        city=request.form.get('city', "Иркутск"),
         address=request.form.get('address', "Адрес магазина не заполнен"),
         image=image_shop,
         user_id=id_user
