@@ -549,16 +549,14 @@ def get_shop_html(shop_id):
 
 @application.route('/ad/<int:ad_id>')
 def get_ad_html(ad_id):
-    ad = models.Post.query.get(ad_id)
-    filter_spec = [{'field': 'active', 'op': '==', 'value': 1}]
-    filtered_query = apply_filters(ad, filter_spec)
+    ad = db.session.query(models.Post).order_by(desc(models.Post.id)).filter_by(id=ad_id, active=1).first()
+    if ad is None:
+        abort(404)
     recommendation = db.session.query(models.Post).order_by(desc(models.Post.id)).filter_by(mark_auto=ad.mark_auto,
                                                                                             model_auto=ad.model_auto,
                                                                                             year_auto=ad.year_auto,
                                                                                             active=1).all()
-    if filtered_query is None:
-        abort(404)
-    return render_template('ad.html', ad=filtered_query, recommendation=recommendation)
+    return render_template('ad.html', ad=ad, recommendation=recommendation)
 
 
 @application.route('/about')
