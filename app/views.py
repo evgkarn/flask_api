@@ -80,6 +80,7 @@ def ad_by_id(id_elem):
     new_ad_json = {
         'id': ad.id,
         'user_id': ad.user_id,
+        'active': ad.active,
         'name': ad.name_ads,
         'text': ad.body,
         'mark_auto': ad.mark_auto,
@@ -132,6 +133,7 @@ def get_user_ads(user_id):
         user_posts.append({
             'name': post.name_ads,
             'text': post.body,
+            'active': post.active,
             'mark_auto': post.mark_auto,
             'model_auto': post.model_auto,
             'year_auto': post.year_auto,
@@ -170,6 +172,7 @@ def create_ads():
         name_ads=request.form.get('name', ""),
         body=request.form.get('text', ""),
         mark_auto=request.form['mark_auto'],
+        active=request.form.get('active', 1),
         model_auto=request.form['model_auto'],
         year_auto=request.form['year_auto'],
         vin_auto=request.form.get('vin_auto', ""),
@@ -200,6 +203,7 @@ def update_ad(ad_id):
     if 'file' in request.files:
         ad.image = file_to_upload(request.files['file'])
     ad.name_ads = request.form.get('name', ad.name_ads)
+    ad.active = request.form.get('active', ad.active)
     ad.body = request.form.get('text', ad.body)
     ad.mark_auto = request.form.get('mark_auto', ad.mark_auto)
     ad.model_auto = request.form.get('model_auto', ad.model_auto)
@@ -238,6 +242,7 @@ def user_by_id(id_elem):
             'name': shop.name,
             'text': shop.body,
             'phone': shop.phone,
+            'city': shop.city,
             'address': shop.address,
             'image': SERVER_NAME + shop.image
         }
@@ -312,6 +317,7 @@ def create_user():
         name=request.form['name_shop'],
         body=request.form.get('text_shop', "Описание магазина не заполнено"),
         phone=request.form['phone'],
+        city=request.form.get('text_shop', "Иркутск"),
         address=request.form.get('address', "Адрес магазина не заполнен"),
         image=image_shop,
         user_id=id_user
@@ -341,6 +347,7 @@ def update_user(user_id):
         shop.name = request.form.get('name_shop', shop.name)
         shop.body = request.form.get('text_shop', shop.body)
         shop.phone = request.form.get('phone', shop.phone)
+        shop.city = request.form.get('city', shop.city)
         shop.address = request.form.get('address', shop.address)
     db.session.commit()
     return jsonify(user_by_id(user_id)), 201
@@ -380,6 +387,7 @@ def auth_user():
                  'ads': url_for('get_user_ads', user_id=our_user.id, _external=True),
                  'shop': {'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
+                          'city': our_user.shops[0].city,
                           'address': our_user.shops[0].address,
                           'phone': our_user.shops[0].phone,
                           'image': SERVER_NAME + our_user.shops[0].image},
@@ -406,6 +414,7 @@ def shop_by_id(id_elem):
         'user_id': ad.user_id,
         'name': ad.name_ads,
         'text': ad.body,
+        'active': ad.active,
         'mark_auto': ad.mark_auto,
         'model_auto': ad.model_auto,
         'year_auto': ad.year_auto,
