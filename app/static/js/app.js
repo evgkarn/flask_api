@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
 	let carName = document.querySelector('#carName');
 	let carModels =  document.querySelector('#carModel');
+	let carYear =  document.querySelector('#carYear');
 	let cityIp =  document.querySelector('.cityIp');
 	let searchForm = document.querySelector('.search-form');
 
@@ -82,21 +83,45 @@ document.addEventListener("DOMContentLoaded", function() {
 			carModels.innerHTML += modelOption[i];
 		}
 	}
+
+	//Получение годов выпуска автомобилей
+
+	async function getYears(){
+		let carsUrl = `http://evgkarn.pythonanywhere.com/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
+		let response = await fetch(carsUrl, {
+			method: 'GET'
+		});
+		carsYears = await response.json();
+		yearOption = [];
+		modelOption.push( carsModel.model.map((carModel)=>{
+			return `<option value='${carModel}'>${carModel} </option>`	
+		}))
+		for(let i = 0; i < modelOption.length; i++){
+			carYear.innerHTML += modelOption[i];
+		}
+
+	}
 	carName.addEventListener('change', (e)=>{
 		carModels.innerHTML = 'Выберите модель';
 
 		getModels()
 	})
+	carModels.addEventListener('change', (e)=>{
+		carModels.innerHTML = 'Выберите модель';
 
+		getYears()
+	})
 	//Поиск запчасти
 	searchForm.addEventListener('submit', (e)=>{
 		e.preventDefault();
 		let name = searchForm.querySelector('#detailName').value
 		let markAuto = searchForm.querySelector('#carName').value
 		let modelAuto = searchForm.querySelector('#carModel').value
+		let carYear = searchForm.querySelector('#carYear').value
 		window.location = `https://azato.ru/search?${name.length > 1 ? 'name=' + name : ''}
 		${markAuto.length > 1 ? '&mark_auto=' + markAuto : ''}
-		${modelAuto.length > 1 ? '&model_auto=' + modelAuto : ''}`
+		${modelAuto.length > 1 ? '&model_auto=' + modelAuto : ''}
+		${carYear.length > 1 ? '&year_auto=' + carYear : ''}`
 	})
 
 	let adsInfoText = document.querySelectorAll('.ads-info p');
