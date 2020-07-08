@@ -93,8 +93,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 		carsYears = await response.json();
 		yearOption = [];
-		yearOption.push( carsModel.model.map((carModel)=>{
-			return `<option value='${carModel}'>${carModel} </option>`	
+		yearOption.push( carsYears.year.map((carYear)=>{
+			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
 		for(let i = 0; i < yearOption.length; i++){
 			carYear.innerHTML += yearOption[i];
