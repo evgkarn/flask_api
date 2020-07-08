@@ -172,7 +172,7 @@ def create_ads():
         name_ads=request.form.get('name', ""),
         body=request.form.get('text', ""),
         mark_auto=request.form['mark_auto'],
-        active=request.form.get('active', 1),
+        active=request.form['active'],
         model_auto=request.form['model_auto'],
         year_auto=request.form['year_auto'],
         vin_auto=request.form.get('vin_auto', ""),

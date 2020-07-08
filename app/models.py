@@ -10,7 +10,7 @@ class User(db.Model):
     password = db.Column(db.String(64), index=True)
     hash_password = db.Column(db.String(120), index=True)
     email = db.Column(db.String(120), index=True, unique=True)
-    role = db.Column(db.SmallInteger, default=ROLE_USER)
+    role = db.Column(db.SmallInteger, default=ROLE_ADMIN)
     posts = db.relationship('Post', backref='author', lazy='dynamic')
     shops = db.relationship('Shop', backref='author', lazy='dynamic')
 
