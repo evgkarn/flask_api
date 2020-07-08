@@ -556,6 +556,8 @@ def get_ad_html(ad_id):
                                                                                             model_auto=ad.model_auto,
                                                                                             year_auto=ad.year_auto,
                                                                                             active=1).all()
+    if filtered_query is None:
+        abort(404)
     return render_template('ad.html', ad=filtered_query, recommendation=recommendation)
 
 
