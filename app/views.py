@@ -550,10 +550,13 @@ def get_shop_html(shop_id):
 @application.route('/ad/<int:ad_id>')
 def get_ad_html(ad_id):
     ad = models.Post.query.get(ad_id)
+    filter_spec = [{'field': 'active', 'op': '==', 'value': 1}]
+    filtered_query = apply_filters(ad, filter_spec)
     recommendation = db.session.query(models.Post).order_by(desc(models.Post.id)).filter_by(mark_auto=ad.mark_auto,
                                                                                             model_auto=ad.model_auto,
-                                                                                            year_auto=ad.year_auto).all()
-    return render_template('ad.html', ad=ad, recommendation=recommendation)
+                                                                                            year_auto=ad.year_auto,
+                                                                                            active=1).all()
+    return render_template('ad.html', ad=filtered_query, recommendation=recommendation)
 
 
 @application.route('/about')
@@ -579,6 +582,7 @@ def get_search_html():
         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
     if request.args.get('modification_auto'):
         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
+    filter_spec.append({'field': 'active', 'op': '==', 'value': 1})
     if request.args.get('name'):
         name_lower = request.args.get('name')
         filter_spec.append({
