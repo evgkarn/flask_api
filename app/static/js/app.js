@@ -107,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		getModels()
 	})
 	carModels.addEventListener('change', (e)=>{
-		carModels.innerHTML = 'Выберите модель';
+		carYear.innerHTML = 'Выберите модель';
 
 		getYears()
 	})
