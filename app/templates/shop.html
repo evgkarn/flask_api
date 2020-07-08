@@ -27,6 +27,7 @@
             <h2>Обьявления магазина</h2>
             <div class="results-blocks">
              {% for ad in shop.user.posts.all() %}
+                {% if ad.active == 1 %}
                 <div class="results-detail">
                     <div class="results-ads-image">
                         {% if ad.image %}
@@ -58,6 +59,9 @@
                         <a href="/ad/{{ad.id}}" class="redButton">Подробнее о товаре</a>
                     </div>
                 </div>
+                {% else %}
+                <div class="ads-info">У магазина нет активных объявлений</div>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
