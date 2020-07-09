@@ -37,6 +37,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User")
+    order = db.relationship('Order', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return '<Post %r>' % self.name_ads
@@ -52,9 +53,26 @@ class Shop(db.Model):
     image = db.Column(db.String(500), index=True, default=DEFAULT)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User")
+    orders = db.relationship('Order')
 
     def __repr__(self):
         return '<Shop %r>' % self.name
+
+
+class Order(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(120), index=True)
+    body = db.Column(db.String(768), index=True)
+    phone = db.Column(db.Integer, index=True)
+    email = db.Column(db.String(120), index=True, unique=True)
+    shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'))
+    shop = db.relationship("Shop")
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    post = db.relationship("Post")
+    timestamp = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<Order %r>' % self.name
 
 
 class Auto(db.Model):

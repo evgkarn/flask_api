@@ -233,6 +233,98 @@ def delete_ad(ad_id):
     return jsonify({'result': True})
 
 
+# Формирования словаря полей объявления для json ответа
+def order_by_id(id_elem):
+    order = models.Order.query.get(id_elem)
+    new_ad_json = {
+        'id': order.id,
+        'text': order.body,
+        'name': order.name,
+        'phone': order.phone,
+        'email': order.email,
+        'shop_id': order.shop_id,
+        'url': url_for('get_order', order_id=order.id, _external=True),
+        'date_create': order.timestamp,
+        'shop': order.shop.name,
+        'ad_id': order.post.id,
+        'ad_name': order.post.name_ads,
+    }
+    return new_ad_json
+
+# Получить заявку по id
+@application.route('/todo/api/v1.0/orders/<int:order_id>', methods=['GET'])
+# @token_required
+def get_order(order_id):
+    order = models.Post.query.get(order_id)
+    if order is None:
+        abort(404)
+    return jsonify({'ad': order_by_id(order_id)}), 201
+
+# Получить все заявки по id магазина
+@application.route('/todo/api/v1.0/shop/<int:shop_id>/orders', methods=['GET'])
+# @token_required
+def get_order_ads(user_id):
+    shop = models.Shop.query.get(user_id)
+    orders = shop.orders
+    shop_orders = []
+    for order in orders:
+        shop_orders.append({
+            'id': order.id,
+            'text': order.body,
+            'name': order.name,
+            'phone': order.phone,
+            'email': order.email,
+            'shop_id': order.shop_id,
+            'url': url_for('get_order', order_id=order.id, _external=True),
+            'date_create': order.timestamp,
+            'shop': order.shop.first().name,
+            'ad_id': order.post.first().id,
+            'ad_name': order.post.first().name,
+        })
+    return jsonify({'orders': shop_orders}), 201
+
+# Создание заявки
+@application.route('/todo/api/v1.0/order', methods=['POST'])
+# @token_required
+def create_order():
+    if not request.form or not 'text' in request.form:
+        abort(400)
+    order = models.Order.query.all()
+    if order:
+        id_order = order[-1].id + 1
+    else:
+        id_order = 1
+    new_order = models.Order(
+        id=id_order,
+        name=request.form.get('name', ""),
+        body=request.form.get('text', ""),
+        phone=request.form.get('phone', ""),
+        email=request.form.get('email', ""),
+        shop_id=request.form['shop_id'],
+        post_id=request.form['ad_id'],
+        timestamp=datetime.datetime.utcnow()
+    )
+    db.session.add(new_order)
+    db.session.commit()
+    return jsonify(order_by_id(id_order)), 201
+
+# Изменение заявки
+@application.route('/todo/api/v1.0/order/<int:order_id>', methods=['PUT'])
+# @token_required
+def update_order(order_id):
+    order = models.Order.query.get(order_id)
+    if order is None:
+        abort(404)
+    if not request.form:
+        abort(400)
+    order.name = request.form.get('name', order.name)
+    order.body = request.form.get('text', order.body)
+    order.phone = request.form.get('email', order.phone)
+    order.email = request.form.get('email', order.email)
+    db.session.commit()
+    return jsonify(order_by_id(order_id)), 201
+
+
 # Формирования словаря полей пользователя для json ответа
 def user_by_id(id_elem):
     user = models.User.query.get(id_elem)
