@@ -252,7 +252,7 @@ def order_by_id(id_elem):
     return new_ad_json
 
 # Получить заявку по id
-@application.route('/todo/api/v1.0/orders/<int:order_id>', methods=['GET'])
+@application.route('/todo/api/v1.0/order/<int:order_id>', methods=['GET'])
 # @token_required
 def get_order(order_id):
     order = models.Post.query.get(order_id)
