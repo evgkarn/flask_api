@@ -392,7 +392,7 @@ def auth_user():
                           'phone': our_user.shops[0].phone,
                           'image': SERVER_NAME + our_user.shops[0].image},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
-                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)},
+                 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
                 config_local.SECRET_KEY)
             return jsonify({'token': token.decode('UTF-8')}), 201
         else:
