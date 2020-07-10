@@ -246,8 +246,8 @@ def order_by_id(id_elem):
         'url': url_for('get_order', order_id=order.id, _external=True),
         'date_create': order.timestamp,
         'shop': order.shop.name,
-        'ad_id': order.post.firts().id,
-        'ad_name': order.post.firts().name_ads,
+        'ad_id': order.post.id,
+        'ad_name': order.post.name_ads,
     }
     return new_ad_json
 
@@ -263,8 +263,8 @@ def get_order(order_id):
 # Получить все заявки по id магазина
 @application.route('/todo/api/v1.0/shop/<int:shop_id>/orders', methods=['GET'])
 # @token_required
-def get_order_ads(user_id):
-    shop = models.Shop.query.get(user_id)
+def get_order_ads(shop_id):
+    shop = models.Shop.query.get(shop_id)
     orders = shop.orders
     shop_orders = []
     for order in orders:
@@ -277,9 +277,9 @@ def get_order_ads(user_id):
             'shop_id': order.shop_id,
             'url': url_for('get_order', order_id=order.id, _external=True),
             'date_create': order.timestamp,
-            'shop': order.shop.first().name,
-            'ad_id': order.post.first().id,
-            'ad_name': order.post.first().name,
+            'shop': order.shop.name,
+            'ad_id': order.post.id,
+            'ad_name': order.post.name_ads,
         })
     return jsonify({'orders': shop_orders}), 201
 
@@ -319,7 +319,7 @@ def update_order(order_id):
         abort(400)
     order.name = request.form.get('name', order.name)
     order.body = request.form.get('text', order.body)
-    order.phone = request.form.get('email', order.phone)
+    order.phone = request.form.get('phone', order.phone)
     order.email = request.form.get('email', order.email)
     db.session.commit()
     return jsonify(order_by_id(order_id)), 201
