@@ -287,8 +287,8 @@ def get_order_ads(shop_id):
 @application.route('/todo/api/v1.0/order', methods=['POST'])
 # @token_required
 def create_order():
-    # if not request.form or not 'text' in request.form:
-    #     abort(400)
+    if not request.form or not 'text' in request.form:
+        abort(400)
     order = models.Order.query.all()
     if order:
         id_order = order[-1].id + 1
