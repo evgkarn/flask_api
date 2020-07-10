@@ -163,21 +163,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		// Отправка заявки
 
 		async function putMessage(){
-			let formData = new FormData();
-			formData.append('shop_id', 15)
-			formData.append('ad_id', 53)
-			formData.append('name', document.querySelector('.top-form #name').value)
-			formData.append('phone', document.querySelector('.top-form #phone').value)
+			let dateData = new FormData();
+			dateData.append('shop_id', document.getElementById('#shop_id').value)
+			dateData.append('ad_id', document.getElementById('#ad_id').value)
+			dateData.append('name', document.querySelector('.top-form #name').value)
+			dateData.append('phone', document.querySelector('.top-form #phone').value)
 			dateData.append('email', 'ss')
 			dateData.append('text', 'dd')
-			let data = {
-				shop_id: 15,
-				ad_id: 53,
-				name: document.querySelector('.top-form #name').value,
-				phone: document.querySelector('.top-form #phone').value
-			}
+
 			console.log(data)
-			let response = await fetch('http://evgkarn.pythonanywhere.com/todo/api/v1.0/order', {
+			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
 				method: 'post',
 				body: dateData
 			}).then((res) =>{
