@@ -246,8 +246,8 @@ def order_by_id(id_elem):
         'url': url_for('get_order', order_id=order.id, _external=True),
         'date_create': order.timestamp,
         'shop': order.shop.name,
-        'ad_id': order.post.id,
-        'ad_name': order.post.name_ads,
+        'ad_id': order.post.firts().id,
+        'ad_name': order.post.firts().name_ads,
     }
     return new_ad_json
 
