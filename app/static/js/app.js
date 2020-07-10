@@ -8,52 +8,39 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let url = String(window.location.href)
 	
-	// let url = `http://galiof.beget.tech/search?name=%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3&mark_auto=BMW&model_auto=1%20%D1%81%D0%B5%D1%80%D0%B8%D1%8F`
-	// console.log(decodeURIComponent('%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3'))
-	console.log(url.indexOf('&'))
-	async function formInfo(){
-		if (url.indexOf('?')>0){
-			let arrUrl = url.split('?')
-			arrUrl.shift()
-			arrUrl = arrUrl.join('').split('&')
-					
-			for(let el of arrUrl){
-				el = el.split('=')
-				if(el[0] === 'name'){
-					document.querySelector('#detailName').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'mark_auto'){
-					await getCars()
-					document.querySelector('#carName').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'model_auto'){
-					await getModels()
 	
-					document.querySelector('#carModel').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'year_auto'){
-					await getYears()
-	
-					document.querySelector('#carYear').value = decodeURIComponent(el[1])
-				}					
+	if(carName){
+		console.log(url.indexOf('&'))
+		async function formInfo(){
+			if (url.indexOf('?')>0){
+				let arrUrl = url.split('?')
+				arrUrl.shift()
+				arrUrl = arrUrl.join('').split('&')
+						
+				for(let el of arrUrl){
+					el = el.split('=')
+					if(el[0] === 'name'){
+						document.querySelector('#detailName').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'mark_auto'){
+						await getCars()
+						document.querySelector('#carName').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'model_auto'){
+						await getModels()
+		
+						document.querySelector('#carModel').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'year_auto'){
+						await getYears()
+		
+						document.querySelector('#carYear').value = decodeURIComponent(el[1])
+					}					
+				}
+			}else{
+				 getCars()
 			}
-		}else{
-			 getCars()
 		}
-	}
-	formInfo()
-	// Получаем город пользователя
-	async function getCity(){
-		let response = await  fetch('http://free.ipwhois.io/json/?lang=ru', {
-			method: 'GET'
-		}).then((res)=>{
-			return res.json()
-		}).then(res => {
-			cityIp.innerHTML = res.city
-			console.log(res.city)
+		formInfo()
 
-		} )
-	
-	}
-	getCity()
-	 // Получаем список автомобилей
+		 // Получаем список автомобилей
 	async function getCars(){
 		let carsUrl = 'https://azato.ru/todo/api/v1.0/auto';
 		let response = await fetch(carsUrl, {
@@ -133,5 +120,70 @@ document.addEventListener("DOMContentLoaded", function() {
 	for(let i = 0; i< adsInfoText.length; i++){
 		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 	}
+	}
+
+	// Получаем город пользователя
+	// async function getCity(){
+	// 	let response = await  fetch('http://free.ipwhois.io/json/?lang=ru', {
+	// 		method: 'GET'
+	// 	}).then((res)=>{
+	// 		return res.json()
+	// 	}).then(res => {
+	// 		cityIp.innerHTML = res.city
+	// 		console.log(res.city)
+
+	// 	} )
+	
+	// }
+	// getCity()
+	
+
+		//Заказ консультации
+
+		let leftform = document.querySelector('.right-form-block'),
+		contactButton = document.querySelector('.send-message'),
+		formClose = document.querySelector('.form-close')
+		messageForm = document.querySelector('.top-form');
+
+		contactButton.addEventListener('click', function(e){
+			e.preventDefault();
+			leftform.classList.toggle('show-form');
+		});
+		formClose.addEventListener('click', function(e){
+			e.preventDefault();
+			leftform.classList.toggle('show-form');
+		});
+		messageForm.addEventListener('submit',(e)=>{
+			e.preventDefault();
+			console.log('Отправили!')
+			putMessage();
+		})
+
+		// Отправка заявки
+
+		async function putMessage(){
+			let formData = new FormData();
+			formData.append('shop_id', 15)
+			formData.append('ad_id', 53)
+			formData.append('name', document.querySelector('.top-form #name').value)
+			formData.append('phone', document.querySelector('.top-form #phone').value)
+			let data = {
+				shop_id: 15,
+				ad_id: 53,
+				name: document.querySelector('.top-form #name').value,
+				phone: document.querySelector('.top-form #phone').value
+			}
+			console.log(data)
+			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'form/multipart'
+				  },
+				body: formData
+			}).then((res) =>{
+				messageForm.innerHTML = '<h2>Ваш запрос отправлен</h2>'
+				console.log(res)
+			})
+		}
 });
 
