@@ -268,19 +268,6 @@ def get_order_ads(shop_id):
     orders = shop.orders
     shop_orders = []
     for order in orders:
-        f = open('text.txt', 'a')
-        for order in orders:
-            f.write(str(order.id))
-            f.write(str(order.name))
-            f.write(str(order.phone))
-            f.write(str(order.email))
-            f.write(str(order.shop_id))
-            f.write(str(url_for('get_order', order_id=order.id, _external=True)))
-            f.write(str(order.timestamp))
-            f.write(str(order.shop.name))
-            f.write(str(order.post.id))
-            f.write(str(order.post.name_ads))
-        f.close()
         shop_orders.append({
             'id': order.id,
             'text': order.body,
@@ -290,9 +277,9 @@ def get_order_ads(shop_id):
             'shop_id': order.shop_id,
             'url': url_for('get_order', order_id=order.id, _external=True),
             'date_create': order.timestamp,
-            'shop': order.shop.name,
-            'ad_id': order.post.id,
-            'ad_name': order.post.name_ads,
+            # 'shop': order.shop.name,
+            # 'ad_id': order.post.id,
+            # 'ad_name': order.post.name_ads,
         })
     return jsonify({'orders': shop_orders}), 201
 
