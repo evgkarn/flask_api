@@ -175,16 +175,14 @@ document.addEventListener("DOMContentLoaded", function() {
 				phone: document.querySelector('.top-form #phone').value
 			}
 			console.log(data)
-			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'form/multipart'
-				  },
-				body: formData
+			let response = await fetch('http://evgkarn.pythonanywhere.com/todo/api/v1.0/order', {
+				method: 'post',
+				body: dateData
 			}).then((res) =>{
 				messageForm.innerHTML = '<h2>Ваш запрос отправлен</h2>'
 				console.log(res)
 			})
+	
 		}
 });
 
