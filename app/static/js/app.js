@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function() {
 					el = el.split('=')
 					if(el[0] === 'name'){
 						document.querySelector('#detailName').value = decodeURIComponent(el[1])
+						await getCars()
 					}else if(el[0] === 'mark_auto'){
 						await getCars()
 						document.querySelector('#carName').value = decodeURIComponent(el[1])
