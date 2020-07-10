@@ -255,7 +255,7 @@ def order_by_id(id_elem):
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['GET'])
 # @token_required
 def get_order(order_id):
-    order = models.Post.query.get(order_id)
+    order = models.Order.query.get(order_id)
     if order is None:
         abort(404)
     return jsonify({'ad': order_by_id(order_id)}), 201
