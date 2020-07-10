@@ -8,52 +8,39 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let url = String(window.location.href)
 	
-	// let url = `http://galiof.beget.tech/search?name=%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3&mark_auto=BMW&model_auto=1%20%D1%81%D0%B5%D1%80%D0%B8%D1%8F`
-	// console.log(decodeURIComponent('%D0%9C%D0%BE%D0%BB%D0%B4%D0%B8%D0%BD%D0%B3'))
-	console.log(url.indexOf('&'))
-	async function formInfo(){
-		if (url.indexOf('?')>0){
-			let arrUrl = url.split('?')
-			arrUrl.shift()
-			arrUrl = arrUrl.join('').split('&')
-					
-			for(let el of arrUrl){
-				el = el.split('=')
-				if(el[0] === 'name'){
-					document.querySelector('#detailName').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'mark_auto'){
-					await getCars()
-					document.querySelector('#carName').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'model_auto'){
-					await getModels()
 	
-					document.querySelector('#carModel').value = decodeURIComponent(el[1])
-				}else if(el[0] === 'year_auto'){
-					await getYears()
-	
-					document.querySelector('#carYear').value = decodeURIComponent(el[1])
-				}					
+	if(carName){
+		console.log(url.indexOf('&'))
+		async function formInfo(){
+			if (url.indexOf('?')>0){
+				let arrUrl = url.split('?')
+				arrUrl.shift()
+				arrUrl = arrUrl.join('').split('&')
+						
+				for(let el of arrUrl){
+					el = el.split('=')
+					if(el[0] === 'name'){
+						document.querySelector('#detailName').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'mark_auto'){
+						await getCars()
+						document.querySelector('#carName').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'model_auto'){
+						await getModels()
+		
+						document.querySelector('#carModel').value = decodeURIComponent(el[1])
+					}else if(el[0] === 'year_auto'){
+						await getYears()
+		
+						document.querySelector('#carYear').value = decodeURIComponent(el[1])
+					}					
+				}
+			}else{
+				 getCars()
 			}
-		}else{
-			 getCars()
 		}
-	}
-	formInfo()
-	// Получаем город пользователя
-	async function getCity(){
-		let response = await  fetch('http://free.ipwhois.io/json/?lang=ru', {
-			method: 'GET'
-		}).then((res)=>{
-			return res.json()
-		}).then(res => {
-			cityIp.innerHTML = res.city
-			console.log(res.city)
+		formInfo()
 
-		} )
-	
-	}
-	getCity()
-	 // Получаем список автомобилей
+		 // Получаем список автомобилей
 	async function getCars(){
 		let carsUrl = 'https://azato.ru/todo/api/v1.0/auto';
 		let response = await fetch(carsUrl, {
@@ -133,6 +120,23 @@ document.addEventListener("DOMContentLoaded", function() {
 	for(let i = 0; i< adsInfoText.length; i++){
 		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 	}
+	}
+
+	// Получаем город пользователя
+	// async function getCity(){
+	// 	let response = await  fetch('http://free.ipwhois.io/json/?lang=ru', {
+	// 		method: 'GET'
+	// 	}).then((res)=>{
+	// 		return res.json()
+	// 	}).then(res => {
+	// 		cityIp.innerHTML = res.city
+	// 		console.log(res.city)
+
+	// 	} )
+	
+	// }
+	// getCity()
+	
 
 		//Заказ консультации
 
