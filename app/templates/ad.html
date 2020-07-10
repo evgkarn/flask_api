@@ -29,6 +29,8 @@
         {{ad.body}}
         </p>
         <hr/>
+        <input id="shop_id" type="hidden" value="{{ad.user.shops.first().id}}">
+        <input id="ad_id" type="hidden" value="{{ad.id}}">
         {% if recommendation|length > 1 %}
         <div class="results">
             <h2>Другие запчасти для  {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}:</h2>
