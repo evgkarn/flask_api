@@ -133,5 +133,53 @@ document.addEventListener("DOMContentLoaded", function() {
 	for(let i = 0; i< adsInfoText.length; i++){
 		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 	}
+
+		//Заказ консультации
+
+		let leftform = document.querySelector('.right-form-block'),
+		contactButton = document.querySelector('.send-message'),
+		formClose = document.querySelector('.form-close')
+		messageForm = document.querySelector('.top-form');
+
+		contactButton.addEventListener('click', function(e){
+			e.preventDefault();
+			leftform.classList.toggle('show-form');
+		});
+		formClose.addEventListener('click', function(e){
+			e.preventDefault();
+			leftform.classList.toggle('show-form');
+		});
+		messageForm.addEventListener('submit',(e)=>{
+			e.preventDefault();
+			console.log('Отправили!')
+			putMessage();
+		})
+
+		// Отправка заявки
+
+		async function putMessage(){
+			let formData = new FormData();
+			formData.append('shop_id', 15)
+			formData.append('ad_id', 53)
+			formData.append('name', document.querySelector('.top-form #name').value)
+			formData.append('phone', document.querySelector('.top-form #phone').value)
+			let data = {
+				shop_id: 15,
+				ad_id: 53,
+				name: document.querySelector('.top-form #name').value,
+				phone: document.querySelector('.top-form #phone').value
+			}
+			console.log(data)
+			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'form/multipart'
+				  },
+				body: formData
+			}).then((res) =>{
+				messageForm.innerHTML = '<h2>Ваш запрос отправлен</h2>'
+				console.log(res)
+			})
+		}
 });
 
