@@ -163,15 +163,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		// Отправка заявки
 
 		async function putMessage(){
-			let dateData = new FormData();
-			dateData.append('shop_id', document.getElementById('#shop_id').value)
-			dateData.append('ad_id', document.getElementById('#ad_id').value)
+
+			const dateData = new FormData();
+			dateData.append('shop_id', document.getElementById('shop_id').value)
+			dateData.append('ad_id', document.getElementById('ad_id').value)
 			dateData.append('name', document.querySelector('.top-form #name').value)
 			dateData.append('phone', document.querySelector('.top-form #phone').value)
 			dateData.append('email', 'ss')
 			dateData.append('text', 'dd')
 
-			console.log(data)
+			
 			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
 				method: 'post',
 				body: dateData
