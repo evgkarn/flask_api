@@ -168,6 +168,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			formData.append('ad_id', 53)
 			formData.append('name', document.querySelector('.top-form #name').value)
 			formData.append('phone', document.querySelector('.top-form #phone').value)
+			dateData.append('email', 'ss')
+			dateData.append('text', 'dd')
 			let data = {
 				shop_id: 15,
 				ad_id: 53,
