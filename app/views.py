@@ -266,6 +266,10 @@ def get_order(order_id):
 def get_order_ads(shop_id):
     shop = models.Shop.query.get(shop_id)
     orders = shop.orders
+    f = open('text.txt', 'a')
+    for order in orders:
+        f.write(str(order.id))
+    f.close()
     shop_orders = []
     for order in orders:
         shop_orders.append({
