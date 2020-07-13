@@ -236,6 +236,8 @@ def delete_ad(ad_id):
 # Формирования словаря полей объявления для json ответа
 def order_by_id(id_elem):
     order = models.Order.query.get(id_elem)
+    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    new_format = "%Y-%m-%d %H:%M:%S"
     new_ad_json = {
         'id': order.id,
         'text': order.body,
@@ -244,12 +246,13 @@ def order_by_id(id_elem):
         'email': order.email,
         'shop_id': order.shop_id,
         'url': url_for('get_order', order_id=order.id, _external=True),
-        'date_create': order.timestamp,
+        'date_create': d1.strftime(new_format),
         'shop': order.shop.name,
         'ad_id': order.post.id,
         'ad_name': order.post.name_ads,
     }
     return new_ad_json
+
 
 # Получить заявку по id
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['GET'])
@@ -258,7 +261,8 @@ def get_order(order_id):
     order = models.Order.query.get(order_id)
     if order is None:
         abort(404)
-    return jsonify({'ad': order_by_id(order_id)}), 201
+    return jsonify({'order': order_by_id(order_id)}), 201
+
 
 # Получить все заявки по id магазина
 @application.route('/todo/api/v1.0/shop/<int:shop_id>/orders', methods=['GET'])
@@ -268,6 +272,8 @@ def get_order_ads(shop_id):
     orders = shop.orders
     shop_orders = []
     for order in orders:
+        d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+        new_format = "%Y-%m-%d %H:%M:%S"
         shop_orders.append({
             'id': order.id,
             'text': order.body,
@@ -276,12 +282,13 @@ def get_order_ads(shop_id):
             'email': order.email,
             'shop_id': order.shop_id,
             'url': url_for('get_order', order_id=order.id, _external=True),
-            'date_create': order.timestamp,
+            'date_create': d1.strftime(new_format),
             'shop': order.shop.name,
             'ad_id': order.post_id,
             'ad_name': order.post.name_ads,
         })
     return jsonify({'orders': shop_orders}), 201
+
 
 # Создание заявки
 @application.route('/todo/api/v1.0/order', methods=['POST'])
@@ -307,6 +314,7 @@ def create_order():
     db.session.add(new_order)
     db.session.commit()
     return jsonify(order_by_id(id_order)), 201
+
 
 # Изменение заявки
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['PUT'])
@@ -477,7 +485,8 @@ def auth_user():
                  'id': our_user.id,
                  'role': our_user.role,
                  'ads': url_for('get_user_ads', user_id=our_user.id, _external=True),
-                 'shop': {'name': our_user.shops[0].name,
+                 'shop': {'id': our_user.shops[0].id,
+                          'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
                           'city': our_user.shops[0].city,
                           'address': our_user.shops[0].address,
