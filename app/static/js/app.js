@@ -169,8 +169,8 @@ document.addEventListener("DOMContentLoaded", function() {
 			dateData.append('ad_id', document.getElementById('ad_id').value)
 			dateData.append('name', document.querySelector('.top-form #name').value)
 			dateData.append('phone', document.querySelector('.top-form #phone').value)
-			dateData.append('email', 'ss')
-			dateData.append('text', 'dd')
+			dateData.append('email', document.querySelector('.top-form #email').value)
+			dateData.append('text', document.querySelector('.top-form #text').value)
 
 			
 			let response = await fetch('https://azato.ru/todo/api/v1.0/order', {
