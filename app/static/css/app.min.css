@@ -43,3 +43,19 @@
     transition: .5s all;
     margin-top: 8px;
 }
+.main-content{
+    text-align: left;
+    font-size: 18px;
+}
+.send-message{
+    padding: 5px 10px 9px;
+    border: 1px solid #f63e3e;
+    border-radius: 5px;
+    color: white;
+    background: #f63e3e;
+    transition: 0.5s all linear;
+}
+.send-message:hover{
+    color: #f63e3e;
+    background: transparent;
+}
