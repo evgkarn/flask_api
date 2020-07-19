@@ -720,7 +720,7 @@ def create_ads_from_csv():
     #     id_ad = ads[-1].id + 1
     # else:
     #     id_ad = 1
-    print(request.files)
+    print(request.files['fileex'])
     # if 'file' in request.files:
     #     file = request.files['fileex']
     #     # image_ads = file_to_upload(file)
