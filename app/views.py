@@ -15,6 +15,8 @@ import jwt
 import sys
 import os
 import config_local
+import csv
+import requests
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
@@ -27,7 +29,7 @@ CORS(application, resources={r"/*": {"origins": "*"}})
 
 application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'csv'}
 
 
 def token_required(f):
@@ -713,45 +715,59 @@ def get_search_html():
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
 def create_ads_from_csv():
-    # if not request.form:
-    #     abort(400)
-    # ads = models.Post.query.all()
-    # if ads:
-    #     id_ad = ads[-1].id + 1
-    # else:
-    #     id_ad = 1
-    print(request.files)
-    file = []
-    for a in request.files:
-        file.append(
-            {'file': a}
+    ads = models.Post.query.all()
+    if ads:
+        id_ad = ads[-1].id
+    else:
+        id_ad = 1
+    file_path = 'app'
+    if 'fileex' in request.files:
+        file = request.files['fileex']
+        file_path += str(file_to_upload(file))
+    else:
+        abort(400)
+    ads = []
+    if os.path.isfile(file_path):
+        with open(file_path, newline="") as csvfile:
+            reader = csv.DictReader(csvfile, delimiter=';')
+            for row in reader:
+                id_ad += 1
+                ads.append({
+                    'id': id_ad,
+                    'name_ads': row['Название объявления'],
+                    'body': row['Текст объявления'],
+                    'mark_auto': row['Марка авто'],
+                    'model_auto': row['Модель Авто'],
+                    'year_auto': row['Год авто'],
+                    'vin_auto': row['VIN/номер кузова'],
+                    'price': row['Цена'],
+                    'image': row['Картинка']
+                })
+    print(ads)
+    for ad in ads:
+        img = requests.get(ad['image']).content
+        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
+        filename = "_".join([suffix, 'upload_img.jpg'])
+        out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
+        out.write(img)
+        out.close()
+        image_path = url_for('uploaded_file', filename=filename)
+        id_ad += 1
+        new_ad = models.Post(
+            id=ad['id'],
+            name_ads=ad['name_ads'],
+            body=ad['body'],
+            mark_auto=ad['mark_auto'],
+            active=1,
+            model_auto=ad['model_auto'],
+            year_auto=ad['year_auto'],
+            vin_auto=ad['vin_auto'],
+            price=ad['price'],
+            user_id=request.form['user_id'],
+            image=image_path,
+            timestamp=datetime.datetime.utcnow()
         )
-    # if 'file' in request.files:
-    #     file = request.files['fileex']
-    #     # image_ads = file_to_upload(file)
-    # else:
-    #     pass
-    #     # image_ads = ''
-    # print(file)
-    # new_ad = models.Post(
-    #     id=id_ad,
-    #     name_ads=request.form.get('name', ""),
-    #     body=request.form.get('text', ""),
-    #     mark_auto=request.form['mark_auto'],
-    #     active=request.form.get('active', 1),
-    #     model_auto=request.form['model_auto'],
-    #     year_auto=request.form['year_auto'],
-    #     vin_auto=request.form.get('vin_auto', ""),
-    #     price=request.form['price'],
-    #     series=request.form.get('series_auto', ""),
-    #     modification=request.form.get('modification_auto', ""),
-    #     generation=request.form.get('generation_auto', ""),
-    #     fuel=request.form.get('fuel_auto', ""),
-    #     engine=request.form.get('engine_auto', ""),
-    #     user_id=request.form['user_id'],
-    #     image=image_ads,
-    #     timestamp=datetime.datetime.utcnow()
-    # )
-    # db.session.add(new_ad)
-    # db.session.commit()
-    return jsonify({'CSV': file}), 201
+        db.session.add(new_ad)
+    db.session.commit()
+    os.remove(file_path)
+    return jsonify({'CSV': file_path}), 201
