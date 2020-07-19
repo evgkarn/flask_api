@@ -721,6 +721,11 @@ def create_ads_from_csv():
     # else:
     #     id_ad = 1
     print(request.files)
+    file = []
+    for a in request.files:
+        file.append(
+            {'file': a}
+        )
     # if 'file' in request.files:
     #     file = request.files['fileex']
     #     # image_ads = file_to_upload(file)
@@ -749,4 +754,4 @@ def create_ads_from_csv():
     # )
     # db.session.add(new_ad)
     # db.session.commit()
-    return jsonify({'CSV': 'ok'}), 201
+    return jsonify({'CSV': file}), 201
