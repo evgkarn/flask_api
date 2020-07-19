@@ -713,8 +713,8 @@ def get_search_html():
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
 def create_ads_from_csv():
-    if not request.form:
-        abort(400)
+    # if not request.form:
+    #     abort(400)
     # ads = models.Post.query.all()
     # if ads:
     #     id_ad = ads[-1].id + 1
