@@ -721,6 +721,8 @@ def create_ads_from_csv():
     else:
         id_ad = 1
     file_path = 'app'
+    if not 'user_id' in request.form:
+        abort(400)
     if 'fileex' in request.files:
         file = request.files['fileex']
         file_path += str(file_to_upload(file))
