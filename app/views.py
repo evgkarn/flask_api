@@ -708,3 +708,45 @@ def get_search_html():
         page_size = int(request.args.get('page_size'))
     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
     return render_template('main.html', ads=filtered_query, pagination=pagination)
+
+# Создание объявлений из файла
+@application.route('/todo/api/v1.0/csv', methods=['POST'])
+# @token_required
+def create_ads_from_csv():
+    if not request.form:
+        abort(400)
+    # ads = models.Post.query.all()
+    # if ads:
+    #     id_ad = ads[-1].id + 1
+    # else:
+    #     id_ad = 1
+    print(request.files)
+    # if 'file' in request.files:
+    #     file = request.files['fileex']
+    #     # image_ads = file_to_upload(file)
+    # else:
+    #     pass
+    #     # image_ads = ''
+    # print(file)
+    # new_ad = models.Post(
+    #     id=id_ad,
+    #     name_ads=request.form.get('name', ""),
+    #     body=request.form.get('text', ""),
+    #     mark_auto=request.form['mark_auto'],
+    #     active=request.form.get('active', 1),
+    #     model_auto=request.form['model_auto'],
+    #     year_auto=request.form['year_auto'],
+    #     vin_auto=request.form.get('vin_auto', ""),
+    #     price=request.form['price'],
+    #     series=request.form.get('series_auto', ""),
+    #     modification=request.form.get('modification_auto', ""),
+    #     generation=request.form.get('generation_auto', ""),
+    #     fuel=request.form.get('fuel_auto', ""),
+    #     engine=request.form.get('engine_auto', ""),
+    #     user_id=request.form['user_id'],
+    #     image=image_ads,
+    #     timestamp=datetime.datetime.utcnow()
+    # )
+    # db.session.add(new_ad)
+    # db.session.commit()
+    return jsonify({'CSV': 'ok'}), 201
