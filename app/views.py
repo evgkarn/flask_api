@@ -720,7 +720,7 @@ def create_ads_from_csv():
         id_ad = ads[-1].id
     else:
         id_ad = 1
-    file_path = 'app'
+    file_path = config_local.APP_FOLDER
     if not 'user_id' in request.form:
         abort(400)
     if 'fileex' in request.files:
