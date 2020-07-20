@@ -730,7 +730,7 @@ def create_ads_from_csv():
         abort(400)
     ads = []
     if os.path.isfile(file_path):
-        with open(file_path, newline="") as csvfile:
+        with open(file_path, newline="", encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=';')
             for row in reader:
                 id_ad += 1
