@@ -348,6 +348,21 @@ def user_by_id(id_elem):
             'address': shop.address,
             'image': SERVER_NAME + shop.image
         }
+        token = jwt.encode(
+            {'user': user.email,
+             'id': user.id,
+             'role': user.role,
+             'ads': url_for('get_user_ads', user_id=user.id, _external=True),
+             'shop': {'id': shop.id,
+                      'name': shop.name,
+                      'text': shop.body,
+                      'city': shop.city,
+                      'address': shop.address,
+                      'phone': shop.phone,
+                      'image': SERVER_NAME + shop.image},
+             'url': url_for('get_user', user_id=user.id, _external=True),
+             'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
+            config_local.SECRET_KEY)
     new_user_json = {
         'id': user.id,
         'email': user.email,
@@ -359,6 +374,8 @@ def user_by_id(id_elem):
         new_user_json['ads'] = url_for('get_user_ads', user_id=user.id, _external=True)
     if shop:
         new_user_json['shop'] = user_shops
+    if token:
+        new_user_json['token'] = token.decode('UTF-8')
     return new_user_json
 
 
