@@ -5,11 +5,13 @@ from flask import jsonify, abort, request, make_response, url_for, send_from_dir
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
+from werkzeug.exceptions import HTTPException, abort, NotFound
 from config_local import SharedDataMiddleware
 from config_local import SERVER_NAME
 from functools import wraps
 from sqlalchemy import desc
 from urllib.parse import unquote
+import html
 import datetime
 import jwt
 import sys
@@ -17,6 +19,7 @@ import os
 import config_local
 import csv
 import requests
+import json
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
@@ -559,7 +562,7 @@ def get_auto():
     lt_auto = []
     for a in auto:
         lt_auto.append(a.name)
-    return jsonify({'auto': lt_auto}), 201
+    return jsonify({'auto': lt_auto})
 
 
 # Получить список модель по марке авто
@@ -567,6 +570,8 @@ def get_auto():
 # @token_required
 def get_model(auto_name):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
+    if model is None:
+        abort(404)
     auto = db.session.query(models.Auto).filter_by(name=model.id).all()
     if auto is None:
         abort(404)
@@ -574,7 +579,7 @@ def get_model(auto_name):
     for a in auto:
         lt_auto.add(a.model)
     lt_auto = sorted(list(lt_auto))
-    return jsonify({'model': lt_auto}), 201
+    return jsonify({'model': lt_auto})
 
 
 # Получить год по модели и марке авто
@@ -589,7 +594,7 @@ def get_year(auto_name, auto_model):
     for a in auto:
         lt_auto.add(a.year)
     lt_auto = sorted(list(lt_auto))
-    return jsonify({'year': lt_auto}), 201
+    return jsonify({'year': lt_auto})
 
 
 # Получить серию по году и по модели и марке авто
@@ -605,7 +610,7 @@ def get_series(auto_name, auto_model, auto_year):
     for a in auto:
         lt_auto.add(a.series)
     lt_auto = sorted(list(lt_auto))
-    return jsonify({'series': lt_auto}), 201
+    return jsonify({'series': lt_auto})
 
 
 # Получить модификацию по серии и по году и по модели и марке авто
@@ -623,7 +628,7 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
     for a in auto:
         lt_auto.add(a.modification)
     lt_auto = sorted(list(lt_auto))
-    return jsonify({'modification': lt_auto}), 201
+    return jsonify({'modification': lt_auto})
 
 
 # Получить топливо по модификации по серии и по году и по модели и марке авто
@@ -643,7 +648,7 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     for a in auto:
         lt_auto.add(a.fuel)
     lt_auto = sorted(list(lt_auto))
-    return jsonify({'fuel': lt_auto}), 201
+    return jsonify({'fuel': lt_auto})
 
 
 @application.route('/')
@@ -728,6 +733,7 @@ def get_search_html():
     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
     return render_template('main.html', ads=filtered_query, pagination=pagination)
 
+
 # Создание объявлений из файла
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
@@ -747,10 +753,103 @@ def create_ads_from_csv():
         abort(400)
     ads = []
     if os.path.isfile(file_path):
-        with open(file_path, newline="", encoding='utf-8') as csvfile:
+        with open(file_path, newline="", encoding='windows-1251') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=';')
+            error_log = []
+            count = 0
             for row in reader:
+                count += 1
                 id_ad += 1
+                if row['Название объявления']:
+                    row['Название объявления'] = html.escape(row['Название объявления'])
+                else:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Название объявления'],
+                        'text_error': 'Поле должно быть заполнено'
+                    })
+                    continue
+                if row['Текст объявления']:
+                    row['Текст объявления'] = html.escape(row['Текст объявления'])
+                else:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Текст объявления'],
+                        'text_error': 'Поле должно быть заполнено'
+                    })
+                    continue
+                if row['Марка авто']:
+                    try:
+                        res = json.loads(get_auto().get_data().decode("utf-8"))
+                    except NotFound:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Марка авто'],
+                            'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                        })
+                        continue
+                    if row['Марка авто'] in res['auto']:
+                        row['Марка авто'] = html.escape(row['Марка авто'])
+                    else:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Марка авто'],
+                            'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                        })
+                else:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Марка авто'],
+                        'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                    })
+                    continue
+                if row['Модель Авто']:
+                    try:
+                        res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
+                    except NotFound:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Модель Авто'],
+                            'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                        })
+                        continue
+                    if row['Модель Авто'] in res['model']:
+                        row['Модель Авто'] = html.escape(row['Модель Авто'])
+                    else:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Модель Авто'],
+                            'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                        })
+                        continue
+                else:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Модель Авто'],
+                        'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                    })
+                    continue
+                if not row['Год авто'].isdigit() and len(row['Год авто']) == 4:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Год авто'],
+                        'text_error': 'Год авто должен строго состоять из 4 цифр. См. руководство.'
+                    })
+                    continue
+                if len(row['VIN/номер кузова']) > 17:
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['VIN/номер кузова'],
+                        'text_error': 'VIN/номер кузова должен быть не более 17 символов. См. руководство.'
+                    })
+                    continue
+                if not row['Цена'].isdigit():
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Цена'],
+                        'text_error': 'Цена должна быть строго из цифр. См. руководство.'
+                    })
+                    continue
                 ads.append({
                     'id': id_ad,
                     'name_ads': row['Название объявления'],
@@ -762,15 +861,17 @@ def create_ads_from_csv():
                     'price': row['Цена'],
                     'image': row['Картинка']
                 })
-    print(ads)
     for ad in ads:
-        img = requests.get(ad['image']).content
-        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
-        filename = "_".join([suffix, 'upload_img.jpg'])
-        out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
-        out.write(img)
-        out.close()
-        image_path = url_for('uploaded_file', filename=filename)
+        if ad['image']:
+            img = requests.get(ad['image']).content
+            suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
+            filename = "_".join([suffix, 'upload_img.jpg'])
+            out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
+            out.write(img)
+            out.close()
+            image_path = url_for('uploaded_file', filename=filename)
+        else:
+            image_path = ''
         id_ad += 1
         new_ad = models.Post(
             id=ad['id'],
@@ -789,4 +890,8 @@ def create_ads_from_csv():
         db.session.add(new_ad)
     db.session.commit()
     os.remove(file_path)
-    return jsonify({'CSV': file_path}), 201
+    result = {'Всего строк': count,
+              'Загружено': len(ads),
+              'Ошибки': error_log
+              }
+    return jsonify(result), 201
