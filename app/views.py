@@ -5,7 +5,7 @@ from flask import jsonify, abort, request, make_response, url_for, send_from_dir
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
-from werkzeug.exceptions import HTTPException, abort, NotFound
+from werkzeug.exceptions import NotFound
 from config_local import SharedDataMiddleware
 from config_local import SERVER_NAME
 from functools import wraps
