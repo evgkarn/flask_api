@@ -789,7 +789,7 @@ def create_ads_from_csv():
                         })
                         continue
                     if row['Марка авто'] in res['auto']:
-                        row['Марка авто'] = html.escape(row['Марка авто'])
+                        pass
                     else:
                         error_log.append({
                             'number_row': count,
@@ -814,12 +814,12 @@ def create_ads_from_csv():
                         })
                         continue
                     if row['Модель Авто'] in res['model']:
-                        row['Модель Авто'] = html.escape(row['Модель Авто'])
+                        pass
                     else:
                         error_log.append({
                             'number_row': count,
                             'field': row['Модель Авто'],
-                            'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                         })
                         continue
                 else:
