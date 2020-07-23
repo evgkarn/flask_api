@@ -196,7 +196,7 @@ if(contactButton){
 				e.preventDefault();
 				const numb = phones[i].value;
 
-				this.innerText = numb;
+				phones[i].innerText = numb;
 				console.log(phones[i].value)
 			})
 		}
