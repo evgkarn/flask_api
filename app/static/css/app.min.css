@@ -15,9 +15,12 @@
             left: 80%;
             transform: rotateY(180deg);
         }
+        90%{
+
+            transform: rotateY(180deg);
+        }
         100%{
             left: 30px;
-            transform: rotateY(180deg);
         }
     }
     .animation-car{
