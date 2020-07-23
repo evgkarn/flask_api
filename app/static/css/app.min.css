@@ -8,10 +8,16 @@
 
     @keyframes run {
         0% {
-            left: 30px
+            left: 30px;
+        }
+        
+        50%{
+            left: 80%;
+            transform: rotateY(180deg);
         }
         100%{
-            left: 80%
+            left: 30px;
+            transform: rotateY(180deg);
         }
     }
     .animation-car{
