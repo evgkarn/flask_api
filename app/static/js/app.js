@@ -194,10 +194,10 @@ if(contactButton){
 		for(let i=0; i<phones.length; i++){
 			phones[i].addEventListener('click',(e)=>{
 				e.preventDefault();
-				const numb = this.value;
+				const numb = phones[i].value;
 
 				this.innerText = numb;
-				console.log(this.value)
+				console.log(phones[i].value)
 			})
 		}
 
