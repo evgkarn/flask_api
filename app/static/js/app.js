@@ -187,7 +187,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	// Получение телефонов по клику
 
 	let phones = document.querySelectorAll('.results-ads-more button')
-
+		console.log(phones)
 	if(phones){
 		for(let i=0; i<phones.length; i++){
 			phones[i].addEventListener('click',(e)=>{
