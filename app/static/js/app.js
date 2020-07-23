@@ -146,20 +146,22 @@ document.addEventListener("DOMContentLoaded", function() {
 		contactButton = document.querySelector('.send-message'),
 		formClose = document.querySelector('.form-close')
 		messageForm = document.querySelector('.top-form');
+if(contactButton){
+	contactButton.addEventListener('click', function(e){
+		e.preventDefault();
+		leftform.classList.toggle('show-form');
+	});
+	formClose.addEventListener('click', function(e){
+		e.preventDefault();
+		leftform.classList.toggle('show-form');
+	});
+	messageForm.addEventListener('submit',(e)=>{
+		e.preventDefault();
+		console.log('Отправили!')
+		putMessage();
+	})
+}
 
-		contactButton.addEventListener('click', function(e){
-			e.preventDefault();
-			leftform.classList.toggle('show-form');
-		});
-		formClose.addEventListener('click', function(e){
-			e.preventDefault();
-			leftform.classList.toggle('show-form');
-		});
-		messageForm.addEventListener('submit',(e)=>{
-			e.preventDefault();
-			console.log('Отправили!')
-			putMessage();
-		})
 
 		// Отправка заявки
 
