@@ -5,12 +5,14 @@ document.addEventListener("DOMContentLoaded", function() {
 	let carYear =  document.querySelector('#carYear');
 	let cityIp =  document.querySelector('.cityIp');
 	let searchForm = document.querySelector('.search-form');
-
+	let carImage = document.querySelector('.search-form img')
 
 	let url = String(window.location.href)
 	
 	
 	if(carName){
+
+
 		console.log(url.indexOf('&'))
 		async function formInfo(){
 			if (url.indexOf('?')>0){
@@ -201,6 +203,12 @@ if(contactButton){
 			})
 		}
 
+	}
+
+	if(searchForm){
+		carImage.addEventListener('click', ()=>{
+			carImage.classList.add('animation-car')
+		})
 	}
 });
 
