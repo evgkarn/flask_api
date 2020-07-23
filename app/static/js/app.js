@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function() {
+	
 	let carName = document.querySelector('#carName');
 	let carModels =  document.querySelector('#carModel');
 	let carYear =  document.querySelector('#carYear');
@@ -182,5 +183,22 @@ document.addEventListener("DOMContentLoaded", function() {
 			})
 	
 		}
+
+	// Получение телефонов по клику
+
+	let phones = document.querySelectorAll('.results-ads-more button')
+
+	if(phones){
+		for(let i=0; i<phones.length; i++){
+			phones[i].addEventListener('click',(e)=>{
+				e.preventDefault();
+				const numb = this.value;
+
+				this.innerText = numb;
+				console.log(this.value)
+			})
+		}
+
+	}
 });
 
