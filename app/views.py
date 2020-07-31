@@ -934,6 +934,7 @@ def create_pay():
         id_order = 1
     new_order = models.PayOrder(
         id=id_order,
+        status=0,
         amount=request.form.get('amount', 0),
         shop_id=request.form['shop_id'],
         timestamp=datetime.datetime.utcnow()
@@ -959,7 +960,7 @@ def create_pay():
         },
         "Receipt": {
             "EmailCompany": "sale@azato.ru",
-            "Taxation": "osn",
+            "Taxation": "usn_income_outcome",
             "Items": [
                 {
                     "Name": "Размещение объявления",
@@ -986,7 +987,7 @@ def create_pay():
     return jsonify(pay_json), 201
 
 
-# Создание заказа на оплату и получение ссылки
+# Подтверждение оплаты
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
 # @token_required
 def status_pay():

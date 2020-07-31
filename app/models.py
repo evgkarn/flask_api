@@ -80,6 +80,7 @@ class Order(db.Model):
 
 class PayOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True, unique=True)
+    status = db.Column(db.SmallInteger, default=ROLE_USER)
     amount = db.Column(db.Integer, index=True)
     shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'))
     shop = db.relationship("Shop")
