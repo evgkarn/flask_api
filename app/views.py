@@ -969,3 +969,13 @@ def create_pay():
     }
     print(pay_json)
     return jsonify(pay_json), 201
+
+# Создание заказа на оплату и получение ссылки
+@application.route('/todo/api/v1.0/pay_status', methods=['POST'])
+# @token_required
+def status_pay():
+    with open('status.txt', 'a') as fw:
+        json.dump(request.values, fw)
+        json.dump(request.json, fw)
+        json.dump(request.form, fw)
+    return jsonify({'test': 'ok'}), 201
