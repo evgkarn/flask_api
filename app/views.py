@@ -905,3 +905,67 @@ def create_ads_from_csv():
               'Ошибки': error_log
               }
     return jsonify(result), 201
+
+
+# Формирования словаря полей объявления для json ответа
+def pay_by_id(id_elem):
+    order = models.PayOrder.query.get(id_elem)
+    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    new_format = "%Y-%m-%d %H:%M:%S"
+    new_pay_json = {
+        'id': order.id,
+        'amount': order.amount,
+        'shop_id': order.shop_id,
+        'date_create': d1.strftime(new_format),
+    }
+    return new_pay_json
+
+
+# Создание заказа на оплату и получение ссылки
+@application.route('/todo/api/v1.0/pay', methods=['POST'])
+# @token_required
+def create_pay():
+    if not request.form or not 'shop_id' in request.form:
+        abort(400)
+    order = models.PayOrder.query.all()
+    if order:
+        id_order = order[-1].id + 1
+    else:
+        id_order = 1
+    new_order = models.PayOrder(
+        id=id_order,
+        amount=request.form.get('amount', 0),
+        shop_id=request.form['shop_id'],
+        timestamp=datetime.datetime.utcnow()
+    )
+    db.session.add(new_order)
+    db.session.commit()
+    order = models.PayOrder.query.get(id_order)
+    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    new_format = "%Y-%m-%d %H:%M:%S"
+
+    # Отправка запроса в банк
+    url = 'https://securepay.tinkoff.ru/v2/Init'
+    headers = {'Content-type': 'application/json',
+               'Accept': 'text/plain',
+               'Content-Encoding': 'utf-8'}
+    data = {
+        "TerminalKey": "1595411067598DEMO",
+        "Amount": order.amount * 100,
+        "OrderId": order.id,
+        "DATA": {
+            "Phone": order.shop.phone,
+            "Email": order.shop.user.email
+        }
+    }
+    answer = requests.post(url, data=json.dumps(data), headers=headers)
+    response = answer.json()
+    pay_json = {
+        'id': order.id,
+        'amount': order.amount,
+        'shop_id': order.shop_id,
+        'date_create': d1.strftime(new_format),
+        'Payment': response
+    }
+    print(pay_json)
+    return jsonify(pay_json), 201
