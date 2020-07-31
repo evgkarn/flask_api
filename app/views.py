@@ -977,4 +977,4 @@ def status_pay():
     file_path = config_local.APP_FOLDER + '/status.txt'
     with open(file_path, 'a') as fw:
         json.dump(request.json, fw)
-    return jsonify({'test': 'ok'}), 201
+    return 'ОК', 200
