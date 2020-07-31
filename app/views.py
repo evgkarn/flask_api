@@ -974,7 +974,7 @@ def create_pay():
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
 # @token_required
 def status_pay():
-    file_path = config_local.APP_FOLDER + 'status.txt'
+    file_path = config_local.APP_FOLDER + '/status.txt'
     with open(file_path, 'a') as fw:
         json.dump(request.values, fw)
         json.dump(request.json, fw)
