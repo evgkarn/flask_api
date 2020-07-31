@@ -976,7 +976,5 @@ def create_pay():
 def status_pay():
     file_path = config_local.APP_FOLDER + '/status.txt'
     with open(file_path, 'a') as fw:
-        json.dump(request.values, fw)
         json.dump(request.json, fw)
-        json.dump(request.form, fw)
     return jsonify({'test': 'ok'}), 201
