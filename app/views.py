@@ -991,7 +991,12 @@ def create_pay():
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
 # @token_required
 def status_pay():
-    file_path = config_local.APP_FOLDER + '/status.txt'
-    with open(file_path, 'a') as fw:
-        json.dump(request.json, fw)
+    if not request.form['Success'] is True:
+        abort(400)
+    order = models.PayOrder.query.get(request.form['OrderId'])
+    if request.form['Status'] == "CONFIRMED":
+        order.status = 1
+    if request.form['Status'] == "REFUNDED":
+        order.status = 0
+    db.session.commit()
     return make_response("OK", 200)
