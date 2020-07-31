@@ -956,6 +956,21 @@ def create_pay():
         "DATA": {
             "Phone": order.shop.phone,
             "Email": order.shop.user.email
+        },
+        "Receipt": {
+            "EmailCompany": "sale@azato.ru",
+            "Taxation": "osn",
+            "Items": [
+                {
+                    "Name": "Размещение объявления",
+                    "Price": order.amount * 100,
+                    "Quantity": 1.00,
+                    "Amount": order.amount * 100,
+                    "PaymentMethod": "full_prepayment",
+                    "PaymentObject": "service",
+                    "Tax": "vat20",
+                },
+            ]
         }
     }
     answer = requests.post(url, data=json.dumps(data), headers=headers)
@@ -969,6 +984,7 @@ def create_pay():
     }
     print(pay_json)
     return jsonify(pay_json), 201
+
 
 # Создание заказа на оплату и получение ссылки
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
