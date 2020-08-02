@@ -924,7 +924,7 @@ def pay_by_id(id_elem):
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
 # @token_required
 def create_pay():
-    if not request.json or not 'shop_id' in request.json:
+    if not request.form or not 'shop_id' in request.form:
         abort(400)
     order = models.PayOrder.query.all()
     if order:
@@ -934,8 +934,8 @@ def create_pay():
     new_order = models.PayOrder(
         id=id_order,
         status=0,
-        amount=request.json.get('amount', 0),
-        shop_id=request.json['shop_id'],
+        amount=request.form.get('amount', 0),
+        shop_id=request.form['shop_id'],
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_order)
