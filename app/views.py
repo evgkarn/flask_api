@@ -960,6 +960,8 @@ def create_pay():
         "Receipt": {
             "EmailCompany": "sale@azato.ru",
             "Taxation": "usn_income_outcome",
+            "Phone": order.shop.phone,
+            "Email": order.shop.user.email,
             "Items": [
                 {
                     "Name": "Размещение объявления",
