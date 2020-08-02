@@ -984,7 +984,6 @@ def create_pay():
         'date_create': d1.strftime(new_format),
         'Payment': response
     }
-    print(pay_json)
     return jsonify(pay_json), 201
 
 
@@ -1026,13 +1025,10 @@ def status_pay():
     if order.shop.pay_operation:
         balance = 0
         for pay in order.shop.pay_operation:
-            print(pay.type)
             if pay.type == "income":
                 balance += pay.amount
             elif pay.type == "expanse":
                 balance -= pay.amount
-        print(order.shop.user.balance)
-        print(balance)
         order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)
