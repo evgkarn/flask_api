@@ -956,22 +956,22 @@ def create_pay():
         "DATA": {
             "Phone": order.shop.phone,
             "Email": order.shop.user.email
-        },
-        "Receipt": {
-            "EmailCompany": "sale@azato.ru",
-            "Taxation": "usn_income_outcome",
-            "Items": [
-                {
-                    "Name": "Размещение объявления",
-                    "Price": order.amount * 100,
-                    "Quantity": 1.00,
-                    "Amount": order.amount * 100,
-                    "PaymentMethod": "full_prepayment",
-                    "PaymentObject": "service",
-                    "Tax": "vat20",
-                },
-            ]
         }
+        # "Receipt": {
+        #     "EmailCompany": "sale@azato.ru",
+        #     "Taxation": "usn_income_outcome",
+        #     "Items": [
+        #         {
+        #             "Name": "Размещение объявления",
+        #             "Price": order.amount * 100,
+        #             "Quantity": 1.00,
+        #             "Amount": order.amount * 100,
+        #             "PaymentMethod": "full_prepayment",
+        #             "PaymentObject": "service",
+        #             "Tax": "vat20",
+        #         },
+        #     ]
+        # }
     }
     answer = requests.post(url, data=json.dumps(data), headers=headers)
     response = answer.json()
