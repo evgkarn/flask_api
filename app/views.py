@@ -356,7 +356,7 @@ def user_by_id(id_elem):
              'id': user.id,
              'role': user.role,
              'status': user.status,
-             'balance': user.balance,
+             'balance': user.balance / 100,
              'ads': url_for('get_user_ads', user_id=user.id, _external=True),
              'shop': {'id': shop.id,
                       'name': shop.name,
@@ -373,7 +373,7 @@ def user_by_id(id_elem):
         'email': user.email,
         'role': user.role,
         'status': user.status,
-        'balance': user.balance,
+        'balance': user.balance / 100,
         'url': url_for('get_user', user_id=user.id, _external=True)
     }
     user_posts = models.Post.query.filter_by(user_id=id_elem).first()
@@ -426,7 +426,7 @@ def create_user():
         email=request.form['email'],
         role=request.form['role'],
         status=request.form.get('status', 'free'),
-        balance=request.form.get('balance', 0)
+        balance=0
     )
     db.session.add(new_user)
     db.session.commit()
@@ -469,7 +469,6 @@ def update_user(user_id):
     user.email = request.form.get('email', user.email)
     user.role = request.form.get('role', user.role)
     user.status = request.form.get('status', user.status)
-    user.balance = request.form.get('balance', user.balance)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if 'file' in request.files:
@@ -515,7 +514,7 @@ def auth_user():
                  'id': our_user.id,
                  'role': our_user.role,
                  'status': our_user.status,
-                 'balance': our_user.balance,
+                 'balance': our_user.balance / 100,
                  'ads': url_for('get_user_ads', user_id=our_user.id, _external=True),
                  'shop': {'id': our_user.shops[0].id,
                           'name': our_user.shops[0].name,
