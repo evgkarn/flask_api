@@ -925,7 +925,7 @@ def pay_by_id(id_elem):
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
 # @token_required
 def create_pay():
-    if not request.form or not 'shop_id' in request.form:
+    if not request.json or not 'shop_id' in request.json:
         abort(400)
     order = models.PayOrder.query.all()
     if order:
@@ -935,8 +935,8 @@ def create_pay():
     new_order = models.PayOrder(
         id=id_order,
         status=0,
-        amount=request.form.get('amount', 0),
-        shop_id=request.form['shop_id'],
+        amount=request.json.get('amount', 0),
+        shop_id=request.json['shop_id'],
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_order)
@@ -991,12 +991,47 @@ def create_pay():
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
 # @token_required
 def status_pay():
-    if not request.form['Success'] is True:
+    if not request.json['Success'] is True:
         abort(400)
-    order = models.PayOrder.query.get(request.form['OrderId'])
-    if request.form['Status'] == "CONFIRMED":
+    order = models.PayOrder.query.get(request.json['OrderId'])
+    pay_operation = models.PayOperation.query.all()
+    if pay_operation:
+        id_order = pay_operation[-1].id + 1
+    else:
+        id_order = 1
+    if request.json['Status'] == "CONFIRMED":
+        new_pay_operation = models.PayOperation(
+            id=id_order,
+            shop_id=order.shop_id,
+            type='income',
+            amount=request.json.get('Amount', 0),
+            comment=request.json['Status'],
+            timestamp=datetime.datetime.utcnow()
+        )
+        db.session.add(new_pay_operation)
         order.status = 1
-    if request.form['Status'] == "REFUNDED":
+    if request.json['Status'] == "REFUNDED":
+        new_pay_operation = models.PayOperation(
+            id=id_order,
+            shop_id=order.shop_id,
+            type='expanse',
+            amount=request.json.get('Amount', 0),
+            comment=request.json['Status'],
+            timestamp=datetime.datetime.utcnow()
+        )
+        db.session.add(new_pay_operation)
         order.status = 0
+    db.session.commit()
+    if order.shop.pay_operation:
+        balance = 0
+        for pay in order.shop.pay_operation:
+            print(pay.type)
+            if pay.type == "income":
+                balance += pay.amount
+            elif pay.type == "expanse":
+                balance -= pay.amount
+        print(order.shop.user.balance)
+        print(balance)
+        order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)

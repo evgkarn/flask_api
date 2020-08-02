@@ -57,6 +57,7 @@ class Shop(db.Model):
     user = db.relationship("User")
     orders = db.relationship('Order')
     pay_orders = db.relationship('PayOrder')
+    pay_operation = db.relationship('PayOperation')
 
     def __repr__(self):
         return '<Shop %r>' % self.name
@@ -87,7 +88,20 @@ class PayOrder(db.Model):
     timestamp = db.Column(db.DateTime)
 
     def __repr__(self):
-        return '<PayOrder %r>' % self.name
+        return '<PayOrder %r>' % self.id
+
+
+class PayOperation(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    shop_id = db.Column(db.Integer, db.ForeignKey('shop.id'))
+    shop = db.relationship("Shop")
+    type = db.Column(db.String(10), index=True)
+    amount = db.Column(db.Integer, index=True)
+    comment = db.Column(db.String(300), index=True)
+    timestamp = db.Column(db.DateTime)
+
+    def __repr__(self):
+        return '<PayOperation %r>' % self.id
 
 
 class Auto(db.Model):
