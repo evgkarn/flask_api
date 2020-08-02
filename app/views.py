@@ -968,7 +968,7 @@ def create_pay():
                     "Amount": order.amount * 100,
                     "PaymentMethod": "full_prepayment",
                     "PaymentObject": "service",
-                    "Tax": "vat20",
+                    "Tax": "vat20"
                 }
             ]
         }
