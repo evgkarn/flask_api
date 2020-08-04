@@ -87,7 +87,7 @@
                         {% endfor %}
                     {% endif %}
                 {% else %}
-                    {% for page in range(pagination.num_pages - 4, pagination.num_pages + 2) %}
+                    {% for page in range(pagination.num_pages - 4, pagination.num_pages + 1) %}
                         {% if page == pagination.page_number %}
                             <a class="active" href="/?page={{page}}">{{page}}</a>
                         {% else %}
