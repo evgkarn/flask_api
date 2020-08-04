@@ -121,8 +121,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let adsInfoText = document.querySelectorAll('.ads-info p');
 
+
 	for(let i = 0; i< adsInfoText.length; i++){
-		adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
+		adsInfoText[i].innerText.length > 40 ? adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}...` : adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 	}
 	}
 
