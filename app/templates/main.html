@@ -115,7 +115,6 @@
                 {% endif %}
                 {% if pagination.page_number <  pagination.num_pages - 3 %}
                     <a class="disabled" href="#">..</a>
-                    <a href="/?page={{pagination.num_pages}}">{{pagination.num_pages}}</a>
                 {% endif %}
                 {% if pagination.page_number <  pagination.num_pages %}
                     <a href="/?page={{pagination.page_number + 1}}">></a>
