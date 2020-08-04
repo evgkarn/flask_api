@@ -717,6 +717,7 @@ def get_search_html():
     if request.args.get('modification_auto'):
         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
     filter_spec.append({'field': 'active', 'op': '==', 'value': 1})
+    name_lower = ''
     if request.args.get('name'):
         name_lower = request.args.get('name')
         filter_spec.append({
@@ -740,7 +741,7 @@ def get_search_html():
     if request.args.get('page_size'):
         page_size = int(request.args.get('page_size'))
     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
-    return render_template('main.html', ads=filtered_query, pagination=pagination)
+    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower)
 
 
 # Создание объявлений из файла
