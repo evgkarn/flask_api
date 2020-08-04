@@ -69,13 +69,24 @@
                         {% endif %}
                     {% endfor %}
                 {% elif pagination.page_number + 2 < pagination.num_pages %}
-                    {% for page in range(pagination.page_number -2, pagination.page_number + 2) %}
-                        {% if page == pagination.page_number %}
-                            <a class="active" href="/?page={{page}}">{{page}}</a>
-                        {% else %}
-                            <a href="/?page={{page}}">{{page}}</a>
-                        {% endif %}
-                    {% endfor %}
+                    {% if pagination.page_number > 2 %}
+                        {% for page in range(pagination.page_number -2, pagination.page_number + 2) %}
+                            {% if page == pagination.page_number %}
+                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                            {% else %}
+                                <a href="/?page={{page}}">{{page}}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% else %}
+                        {% for page in range(pagination.page_number, pagination.page_number + 4) %}
+                            {% if page == pagination.page_number %}
+                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                            {% else %}
+                                <a href="/?page={{page}}">{{page}}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+
                 {% else %}
                     {% for page in range(pagination.num_pages - 4, pagination.num_pages + 1) %}
                         {% if page == pagination.page_number %}
@@ -88,7 +99,7 @@
 
                 {% if pagination.page_number <  pagination.num_pages %}
                     <a class="disabled" href="#">..</a>
-                    <a href="/?page={{pagination.page_number}}">{{pagination.num_pages}}</a>
+                    <a href="/?page={{pagination.num_pages}}">{{pagination.num_pages}}</a>
                     <a href="/?page={{pagination.page_number + 1}}">>></a>
                 {% endif %}
 <!--                <a href="#">{{pagination.page_size}}</a>-->
