@@ -69,8 +69,16 @@
                         {% endif %}
                     {% endfor %}
                 {% elif pagination.page_number + 2 < pagination.num_pages %}
-                    {% if pagination.page_number > 1 %}
+                    {% if pagination.page_number > 2 %}
                         {% for page in range(pagination.page_number -2, pagination.page_number + 3) %}
+                            {% if page == pagination.page_number %}
+                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                            {% else %}
+                                <a href="/?page={{page}}">{{page}}</a>
+                            {% endif %}
+                        {% endfor %}
+                    {% elif pagination.page_number == 2 %}
+                        {% for page in range(pagination.page_number -1, pagination.page_number + 3) %}
                             {% if page == pagination.page_number %}
                                 <a class="active" href="/?page={{page}}">{{page}}</a>
                             {% else %}
