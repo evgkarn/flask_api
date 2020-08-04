@@ -58,7 +58,7 @@
         <div class="center">
             <div class="pagination">
                 {% if pagination.page_number > 1 %}
-                    <a href="/?page={{pagination.page_number - 1}}"><<</a>
+                    <a href="/?page={{pagination.page_number - 1}}"><</a>
                 {% endif %}
                 {% if pagination.num_pages < 6 %}
                     {% for page in range(1, pagination.num_pages + 2) %}
@@ -96,10 +96,10 @@
                     {% endfor %}
                 {% endif %}
 
-                {% if pagination.page_number <  pagination.num_pages %}
+                {% if pagination.page_number <  pagination.num_pages - 2 %}
                     <a class="disabled" href="#">..</a>
                     <a href="/?page={{pagination.num_pages}}">{{pagination.num_pages}}</a>
-                    <a href="/?page={{pagination.page_number + 1}}">>></a>
+                    <a href="/?page={{pagination.page_number + 1}}">></a>
                 {% endif %}
 <!--                <a href="#">{{pagination.page_size}}</a>-->
 <!--                <a href="#">{{pagination.page_number}}</a>-->
