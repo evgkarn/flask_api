@@ -104,7 +104,12 @@
     text-decoration: none;
     border: 1px solid #ddd;
 }
-
+.pagination a.disabled{
+        pointer-events: none; 
+        cursor: not-allowed	; 
+        color: #888;
+        
+}
 .pagination a.active {
     background-color: #f63e3e;
     color: white;
