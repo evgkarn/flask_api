@@ -1021,6 +1021,17 @@ def status_pay():
         )
         db.session.add(new_pay_operation)
         order.status = 0
+    if request.json['Status'] == "PARTIAL_REFUNDED":
+        new_pay_operation = models.PayOperation(
+            id=id_order,
+            shop_id=order.shop_id,
+            type='expanse',
+            amount=request.json.get('Amount', 0),
+            comment=request.json['Status'],
+            timestamp=datetime.datetime.utcnow()
+        )
+        db.session.add(new_pay_operation)
+        order.status = 1
     db.session.commit()
     if order.shop.pay_operation:
         balance = 0
