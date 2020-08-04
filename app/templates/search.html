@@ -65,7 +65,7 @@
                     <a class="disabled" href="#">..</a>
                 {% endif %}
                 {% if pagination.num_pages < 6 %}
-                    {% for page in range(1, pagination.num_pages + 2) %}
+                    {% for page in range(1, pagination.num_pages + 1) %}
                         {% if page == pagination.page_number %}
                             <a class="active" href="/search?name={{search}}&page={{page}}">{{page}}</a>
                         {% else %}
