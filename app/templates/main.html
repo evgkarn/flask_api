@@ -62,6 +62,8 @@
                 {% endif %}
                 {% if pagination.page_number > 3 %}
                     <a href="/?page=1">1</a>
+                {% endif %}
+                {% if pagination.page_number > 4 %}
                     <a class="disabled" href="#">..</a>
                 {% endif %}
                 {% if pagination.num_pages < 6 %}
