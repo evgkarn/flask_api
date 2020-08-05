@@ -960,7 +960,7 @@ def create_pay():
         },
         "Receipt": {
             "EmailCompany": "sale@azato.ru",
-            "Taxation": "usn_income_outcome",
+            "Taxation": "usn_income",
             "Phone": order.shop.phone,
             "Email": order.shop.user.email,
             "Items": [
@@ -971,7 +971,7 @@ def create_pay():
                     "Amount": order.amount * 100,
                     "PaymentMethod": "full_prepayment",
                     "PaymentObject": "service",
-                    "Tax": "vat20"
+                    "Tax": "none"
                 }
             ]
         }
