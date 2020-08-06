@@ -20,6 +20,7 @@ import config_local
 import csv
 import requests
 import json
+import re
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
@@ -741,7 +742,8 @@ def get_search_html():
     if request.args.get('page_size'):
         page_size = int(request.args.get('page_size'))
     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
-    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower)
+    url = re.sub(r'&page=\d+', '', request.url)
+    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url)
 
 
 # Создание объявлений из файла
