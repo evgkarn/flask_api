@@ -743,10 +743,10 @@ def get_search_html():
         page_size = int(request.args.get('page_size'))
     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
     url = re.sub(r'.page=\d+', '', request.url)
-    if request.args and not request.args.get('page'):
-        url += '&'
-    else:
+    if len(request.args) == 1 and request.args.get('page') or not request.args:
         url += '?'
+    else:
+        url += '&'
     args = request.args
     return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url, args=args)
 
