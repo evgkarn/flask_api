@@ -704,6 +704,10 @@ def get_partners_html():
     return render_template('partners.html')
 
 
+@application.route('/oferta')
+def get_oferta_html():
+    return render_template('oferta.html')
+
 @application.route('/search')
 def get_search_html():
     filter_spec = []
