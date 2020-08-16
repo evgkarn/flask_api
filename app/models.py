@@ -9,7 +9,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     password = db.Column(db.String(64), index=True)
     hash_password = db.Column(db.String(120), index=True)
-    email = db.Column(db.String(120), index=True)
+    email = db.Column(db.String(120), index=True, unique=True)
     role = db.Column(db.SmallInteger, default=ROLE_ADMIN)
     status = db.Column(db.String(4), index=True)
     balance = db.Column(db.Integer, index=True)
