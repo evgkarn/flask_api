@@ -291,7 +291,7 @@ def get_order_ads(shop_id):
             'date_create': d1.strftime(new_format),
             'shop': order.shop.name,
             'ad_id': order.post_id,
-            'ad_name': order.post.name_ads,
+            'ad_name': order.post.first().name_ads,
         })
     return jsonify({'orders': shop_orders}), 201
 
