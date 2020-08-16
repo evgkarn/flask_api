@@ -254,8 +254,8 @@ def order_by_id(id_elem):
         'url': url_for('get_order', order_id=order.id, _external=True),
         'date_create': d1.strftime(new_format),
         'shop': order.shop.name,
-        'ad_id': order.post_id,
-        'ad_name': order.post_id,
+        'ad_id': order.post.id,
+        'ad_name': order.post.name_ads,
     }
     return new_ad_json
 
@@ -291,7 +291,7 @@ def get_order_ads(shop_id):
             'date_create': d1.strftime(new_format),
             'shop': order.shop.name,
             'ad_id': order.post_id,
-            'ad_name': order.post_id,
+            'ad_name': order.post.name_ads,
         })
     return jsonify({'orders': shop_orders}), 201
 
