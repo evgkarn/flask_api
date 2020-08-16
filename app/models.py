@@ -39,7 +39,7 @@ class Post(db.Model):
     timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User")
-    order = db.relationship('Order', backref='author', lazy='dynamic')
+    order = db.relationship('Order')
 
     def __repr__(self):
         return '<Post %r>' % self.name_ads
