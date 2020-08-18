@@ -242,7 +242,7 @@ def delete_ad(ad_id):
 # Формирования словаря полей объявления для json ответа
 def order_by_id(id_elem):
     order = models.Order.query.get(id_elem)
-    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    # d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
     new_format = "%Y-%m-%d %H:%M:%S"
     new_ad_json = {
         'id': order.id,
@@ -252,7 +252,7 @@ def order_by_id(id_elem):
         'email': order.email,
         'shop_id': order.shop_id,
         'url': url_for('get_order', order_id=order.id, _external=True),
-        'date_create': d1.strftime(new_format),
+        'date_create': order.timestamp,
         'shop': order.shop.name,
         'ad_id': order.post.id,
         'ad_name': order.post.name_ads,
@@ -278,7 +278,7 @@ def get_order_ads(shop_id):
     orders = shop.orders
     shop_orders = []
     for order in orders:
-        d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+        # d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
         new_format = "%Y-%m-%d %H:%M:%S"
         shop_orders.append({
             'id': order.id,
@@ -288,7 +288,7 @@ def get_order_ads(shop_id):
             'email': order.email,
             'shop_id': order.shop_id,
             'url': url_for('get_order', order_id=order.id, _external=True),
-            'date_create': d1.strftime(new_format),
+            'date_create': order.timestamp,
             'shop': order.shop.name,
             'ad_id': order.post_id,
             'ad_name': order.post.name_ads,
@@ -921,13 +921,13 @@ def create_ads_from_csv():
 # Формирования словаря полей объявления для json ответа
 def pay_by_id(id_elem):
     order = models.PayOrder.query.get(id_elem)
-    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    # d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
     new_format = "%Y-%m-%d %H:%M:%S"
     new_pay_json = {
         'id': order.id,
         'amount': order.amount,
         'shop_id': order.shop_id,
-        'date_create': d1.strftime(new_format),
+        'date_create': order.timestamp,
     }
     return new_pay_json
 
@@ -953,7 +953,7 @@ def create_pay():
     db.session.add(new_order)
     db.session.commit()
     order = models.PayOrder.query.get(id_order)
-    d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
+    # d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
     new_format = "%Y-%m-%d %H:%M:%S"
 
     # Отправка запроса в банк
@@ -993,7 +993,7 @@ def create_pay():
         'id': order.id,
         'amount': order.amount,
         'shop_id': order.shop_id,
-        'date_create': d1.strftime(new_format),
+        'date_create': order.timestamp,
         'Payment': response
     }
     return jsonify(pay_json), 201
