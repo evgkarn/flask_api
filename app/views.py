@@ -27,7 +27,7 @@ from flask_cors import CORS
 from sqlalchemy_filters import apply_filters, apply_pagination
 
 auth = HTTPBasicAuth()
-application.config["SQLALCHEMY_POOL_RECYCLE"] = 300
+application.config["SQLALCHEMY_POOL_RECYCLE"] = 30
 application.config['JSON_AS_ASCII'] = False
 application.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 CORS(application, resources={r"/*": {"origins": "*"}})
