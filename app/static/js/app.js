@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
 		console.log(url.indexOf('&'))
 		async function formInfo(){
-			if (url.indexOf('?')>0){
+			if (url.indexOf('search?')>0){
 				let arrUrl = url.split('?')
 				arrUrl.shift()
 				arrUrl = arrUrl.join('').split('&')
