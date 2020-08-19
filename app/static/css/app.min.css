@@ -132,3 +132,9 @@
 .center{
     text-align: center;
 }
+.footerInner .authSection{
+    display: block;
+}
+.footerInner .authSection h3, .footerInner .authSection h4 {
+    font-weight: 100;
+}
