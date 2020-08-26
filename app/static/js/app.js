@@ -90,6 +90,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		carsYears = await response.json();
 		yearOption = [];
 		
+		carYear.remove(0);
 		yearOption.push( carsYears.year.map((carYear)=>{
 			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
@@ -101,7 +102,8 @@ document.addEventListener("DOMContentLoaded", function() {
 	carName.addEventListener('change', (e)=>{
 		carModels.innerHTML = `<option>Загрузка моделей...</option>`;
 
-		getModels()
+		await getModels()
+		getYears()
 	})
 	carModels.addEventListener('change', (e)=>{
 		carYear.innerHTML = `<option>Загрузка годов...</option>`;
