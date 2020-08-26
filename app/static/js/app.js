@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			method: 'GET'
 		});
 		carsModel = await response.json();
-		modelOption = [];
+		carModels.options[0] = null;
 		modelOption.push( carsModel.model.map((carModel)=>{
 			return `<option value='${carModel}'>${carModel} </option>`	
 		}))
@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 		carsYears = await response.json();
 		yearOption = [];
+		
 		yearOption.push( carsYears.year.map((carYear)=>{
 			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
@@ -97,12 +98,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	}
 	carName.addEventListener('change', (e)=>{
-		carModels.innerHTML = `<option>Загрузка годов...</option>`;
+		carModels.innerHTML = `<option>Загрузка моделей...</option>`;
 
 		getModels()
 	})
 	carModels.addEventListener('change', (e)=>{
-		carYear.innerHTML = `<option>Загрузка моделей...</option>`;
+		carYear.innerHTML = `<option>Загрузка годов...</option>`;
 
 		getYears()
 	})
