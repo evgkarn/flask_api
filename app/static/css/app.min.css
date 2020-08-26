@@ -141,3 +141,10 @@
 a.redButton:hover{
     color: white
 }
+.ads-name a{
+    color: black;
+}
+.ads-name a:hover{
+    color: black;
+    text-decoration: none;
+}
