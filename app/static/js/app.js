@@ -101,9 +101,10 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	carName.addEventListener('change', (e)=>{
 		carModels.innerHTML = `<option>Загрузка моделей...</option>`;
-
-		await getModels()
-		getYears()
+		return async function(){
+			await getModels()
+			getYears()
+		}
 	})
 	carModels.addEventListener('change', (e)=>{
 		carYear.innerHTML = `<option>Загрузка годов...</option>`;
