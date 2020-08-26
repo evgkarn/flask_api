@@ -83,21 +83,21 @@ document.addEventListener("DOMContentLoaded", function() {
 	//Получение годов выпуска автомобилей
 
 	async function getYears(){
-		let carYearNew =  document.querySelector('#carYear');
+	
 		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
 		carsYears = await response.json();
 		yearOption = [];
-		for(let i = 0; i < carYearNew.length; i++){
+		for(let i = 0; i <= carYear.length; i++){
 			carYear.remove(i)
 		}
 		yearOption.push( carsYears.year.map((carYear)=>{
 			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
 		for(let i = 0; i < yearOption.length; i++){
-			carYearNew.innerHTML += yearOption[i];
+			carYear.innerHTML += yearOption[i];
 		}
 
 	}
