@@ -103,6 +103,9 @@ document.addEventListener("DOMContentLoaded", function() {
 	}
 	async function getAll(){
 		await getModels()
+		for(let i = 0; i < carYear.length; i++){
+			carYear.remove(i)
+		}
 		await getYears()
 	}
 	carName.addEventListener('change', (e)=>{
