@@ -60,7 +60,7 @@
                 {% if pagination.page_number > 1 %}
                     <a href="{{url}}page={{pagination.page_number - 1}}"><</a>
                 {% endif %}
-                {% if pagination.page_number > 4 %}
+                {% if pagination.page_number > 3 %}
                     <a href="{{url}}page=1">1</a>
                 {% endif %}
                 {% if pagination.page_number > 4 %}
@@ -113,7 +113,7 @@
                 {% if pagination.page_number <  pagination.num_pages - 3 %}
                     <a class="disabled" href="#">..</a>
                 {% endif %}
-                {% if pagination.page_number <  pagination.num_pages - 3 %}
+                {% if pagination.page_number <  pagination.num_pages - 2 %}
                     <a href="{{url}}page={{pagination.num_pages}}">{{pagination.num_pages}}</a>
                 {% endif %}
                 {% if pagination.page_number <  pagination.num_pages %}
