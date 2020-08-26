@@ -89,8 +89,9 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 		carsYears = await response.json();
 		yearOption = [];
-		
-		carYear.remove(0);
+		for(let i = 0; i< carYear.length; i++){
+			carYear.remove(i)
+		}
 		yearOption.push( carsYears.year.map((carYear)=>{
 			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
