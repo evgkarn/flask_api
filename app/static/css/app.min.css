@@ -138,3 +138,6 @@
 .footerInner .authSection h3, .footerInner .authSection h4 {
     font-weight: 100;
 }
+a.redButton:hover{
+    color: white
+}
