@@ -71,6 +71,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		});
 		carsModel = await response.json();
 		modelOption = [];
+		carModels.remove(0);
 		modelOption.push( carsModel.model.map((carModel)=>{
 			return `<option value='${carModel}'>${carModel} </option>`	
 		}))
@@ -82,12 +83,17 @@ document.addEventListener("DOMContentLoaded", function() {
 	//Получение годов выпуска автомобилей
 
 	async function getYears(){
+		let carYear =  document.querySelector('#carYear');
 		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
 		carsYears = await response.json();
 		yearOption = [];
+		var length = carYear.options.length;
+		for (i = length-1; i >= 0; i--) {
+  		carYear.options[i] = null;
+			}
 		yearOption.push( carsYears.year.map((carYear)=>{
 			return `<option value='${carYear}'>${carYear} </option>`	
 		}))
@@ -96,13 +102,16 @@ document.addEventListener("DOMContentLoaded", function() {
 		}
 
 	}
+	async function getAll(){
+		await getModels()
+		await getYears()
+	}
 	carName.addEventListener('change', (e)=>{
-		carModels.innerHTML = 'Выберите модель';
-
-		getModels()
+		carModels.innerHTML = `<option>Загрузка моделей...</option>`;
+		getAll()
 	})
 	carModels.addEventListener('change', (e)=>{
-		carYear.innerHTML = 'Выберите модель';
+		carYear.innerHTML = `<option>Загрузка годов...</option>`;
 
 		getYears()
 	})
