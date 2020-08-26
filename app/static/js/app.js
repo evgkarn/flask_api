@@ -70,6 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			method: 'GET'
 		});
 		carsModel = await response.json();
+		modelOption = [];
 		carModels.remove(0);
 		modelOption.push( carsModel.model.map((carModel)=>{
 			return `<option value='${carModel}'>${carModel} </option>`	
