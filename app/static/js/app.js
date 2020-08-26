@@ -97,12 +97,12 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	}
 	carName.addEventListener('change', (e)=>{
-		carModels.innerHTML = 'Загрузка моделей...';
+		carModels.innerHTML = `<option>Загрузка годов...</option>`;
 
 		getModels()
 	})
 	carModels.addEventListener('change', (e)=>{
-		carYear.innerHTML = 'Загрузка года выпуска...';
+		carYear.innerHTML = `<option>Загрузка моделей...</option>`;
 
 		getYears()
 	})
