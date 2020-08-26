@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from app import application, models, db
-from flask import jsonify, abort, request, make_response, url_for, send_from_directory, render_template
+from flask import jsonify, abort, request, make_response, url_for, current_app, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -709,6 +709,7 @@ def get_partners_html():
 def get_oferta_html():
     return render_template('oferta.html')
 
+
 @application.route('/search')
 def get_search_html():
     filter_spec = []
@@ -753,7 +754,8 @@ def get_search_html():
     else:
         url += '&'
     args = request.args
-    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url, args=args)
+    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url,
+                           args=args)
 
 
 # Создание объявлений из файла
@@ -1056,3 +1058,17 @@ def status_pay():
         order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)
+
+
+@application.route('/new_search', methods=['GET'])
+def search():
+    if request.args.get('q'):
+        print(request.args.get('q'))
+        page = request.args.get('page', 1, type=int)
+        posts, total = models.Post.search(request.args.get('q'), page, 10)
+        print(total)
+        print(posts.all())
+    args = request.args
+    url = re.sub(r'.page=\d+', '', request.url)
+    return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
+                           args=args)

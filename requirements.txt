@@ -26,4 +26,5 @@ SQLAlchemy-migrate==0.13.0
 flask_sqlalchemy==2.4.1
 numpy==1.18.4
 flask-cors==3.0.8
+elasticsearch
 
