@@ -853,18 +853,18 @@ def create_ads_from_csv():
                         'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                     })
                     continue
-                if not row['Год авто'].isdigit() and len(row['Год авто']) == 4:
+                if not row['Год'].isdigit() and len(row['Год']) == 4:
                     error_log.append({
                         'number_row': count,
-                        'field': row['Год авто'],
-                        'text_error': 'Год авто должен строго состоять из 4 цифр. См. руководство.'
+                        'field': row['Год'],
+                        'text_error': 'Год должен строго состоять из 4 цифр. См. руководство.'
                     })
                     continue
-                if len(row['VIN/номер кузова']) > 17:
+                if len(row['Кузов']) > 17:
                     error_log.append({
                         'number_row': count,
-                        'field': row['VIN/номер кузова'],
-                        'text_error': 'VIN/номер кузова должен быть не более 17 символов. См. руководство.'
+                        'field': row['Кузов'],
+                        'text_error': 'Номер кузова должен быть не более 17 символов. См. руководство.'
                     })
                     continue
                 if not row['Цена'].isdigit():
@@ -874,19 +874,54 @@ def create_ads_from_csv():
                         'text_error': 'Цена должна быть строго из цифр. См. руководство.'
                     })
                     continue
+                if row['Двигатель']:
+                    row['Двигатель'] = html.escape(row['Двигатель'])
+                else:
+                    row['Двигатель'] = ''
+                if row['Номер']:
+                    row['Номер'] = html.escape(row['Номер'])
+                else:
+                    row['Номер'] = ''
+                if row['Left-Right']:
+                    row['Left-Right'] = html.escape(row['Left-Right'])
+                else:
+                    row['Left-Right'] = ''
+                if row['Front-Back']:
+                    row['Front-Back'] = html.escape(row['Front-Back'])
+                else:
+                    row['Front-Back'] = ''
+                if row['Up-Down']:
+                    row['Up-Down'] = html.escape(row['Up-Down'])
+                else:
+                    row['Up-Down'] = ''
+                if row['Количество'] and not row['Количество'].isdigit():
+                    error_log.append({
+                        'number_row': count,
+                        'field': row['Количество'],
+                        'text_error': 'Количество должен строго состоять из цифр. См. руководство.'
+                    })
+                    continue
+                else:
+                    row['Количество'] = ''
                 ads.append({
                     'id': id_ad,
                     'name_ads': row['Название объявления'],
                     'body': row['Текст объявления'],
                     'mark_auto': row['Марка авто'],
                     'model_auto': row['Модель Авто'],
-                    'year_auto': row['Год авто'],
-                    'vin_auto': row['VIN/номер кузова'],
+                    'year_auto': row['Год'],
+                    'vin_auto': row['Кузов'],
                     'price': row['Цена'],
-                    'image': row['Картинка']
+                    'image': row['Фотография'],
+                    'engine': row['Двигатель'],
+                    'number': row['Номер'],
+                    'left_right': row['Left-Right'],
+                    'front_back': row['Front-Back'],
+                    'up_down': row['Up-Down'],
+                    'quantity': row['Количество']
                 })
     for ad in ads:
-        if ad['image']:
+        if ad['image'] and allowed_file(ad['image']):
             img = requests.get(ad['image']).content
             suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
             filename = "_".join([suffix, 'upload_img.jpg'])
@@ -899,10 +934,10 @@ def create_ads_from_csv():
         id_ad += 1
         new_ad = models.Post(
             id=ad['id'],
+            active=1,
             name_ads=ad['name_ads'],
             body=ad['body'],
             mark_auto=ad['mark_auto'],
-            active=1,
             model_auto=ad['model_auto'],
             year_auto=ad['year_auto'],
             vin_auto=ad['vin_auto'],
@@ -1060,15 +1095,15 @@ def status_pay():
     return make_response("OK", 200)
 
 
-@application.route('/new_search', methods=['GET'])
-def search():
-    if request.args.get('q'):
-        print(request.args.get('q'))
-        page = request.args.get('page', 1, type=int)
-        posts, total = models.Post.search(request.args.get('q'), page, 10)
-        print(total)
-        print(posts.all())
-    args = request.args
-    url = re.sub(r'.page=\d+', '', request.url)
-    return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
-                           args=args)
+# @application.route('/new_search', methods=['GET'])
+# def search():
+#     if request.args.get('q'):
+#         print(request.args.get('q'))
+#         page = request.args.get('page', 1, type=int)
+#         posts, total = models.Post.search(request.args.get('q'), page, 10)
+#         print(total)
+#         print(posts.all())
+#     args = request.args
+#     url = re.sub(r'.page=\d+', '', request.url)
+#     return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
+#                            args=args)
