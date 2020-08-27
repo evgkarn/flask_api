@@ -99,6 +99,11 @@ def ad_by_id(id_elem):
         'generation_auto': ad.generation,
         'fuel_auto': ad.fuel,
         'engine_auto': ad.engine,
+        'number': ad.number,
+        'left_right': ad.left_right,
+        'front_back': ad.front_back,
+        'up_down': ad.up_down,
+        'quantity': ad.quantity,
         'price': ad.price,
         'image': SERVER_NAME + ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
@@ -151,6 +156,11 @@ def get_user_ads(user_id):
             'generation_auto': post.generation,
             'fuel_auto': post.fuel,
             'engine_auto': post.engine,
+            'number': post.number,
+            'left_right': post.left_right,
+            'front_back': post.front_back,
+            'up_down': post.up_down,
+            'quantity': post.quantity,
             'image': SERVER_NAME + post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
@@ -189,6 +199,11 @@ def create_ads():
         generation=request.form.get('generation_auto', ""),
         fuel=request.form.get('fuel_auto', ""),
         engine=request.form.get('engine_auto', ""),
+        number=request.form.get('number', ""),
+        left_right=request.form.get('left_right', ""),
+        front_back=request.form.get('front_back', ""),
+        up_down=request.form.get('up_down', ""),
+        quantity=request.form.get('quantity', ""),
         user_id=request.form['user_id'],
         image=image_ads,
         timestamp=datetime.datetime.utcnow()
@@ -221,6 +236,11 @@ def update_ad(ad_id):
     ad.modification = request.form.get('modification_auto', ad.modification)
     ad.generation = request.form.get('generation_auto', ad.generation)
     ad.engine = request.form.get('engine_auto', ad.engine)
+    ad.number = request.form.get('number', ad.engine)
+    ad.left_right = request.form.get('left_right', ad.engine)
+    ad.front_back = request.form.get('front_back', ad.engine)
+    ad.up_down = request.form.get('up_down', ad.engine)
+    ad.quantity = request.form.get('quantity', ad.engine)
     ad.fuel = request.form.get('fuel_auto', ad.fuel)
     db.session.commit()
     return jsonify(ad_by_id(ad_id)), 201
@@ -559,6 +579,11 @@ def shop_by_id(id_elem):
         'engine_auto': ad.engine,
         'vin_auto': ad.vin_auto,
         'price': ad.price,
+        'number': ad.number,
+        'left_right': ad.left_right,
+        'front_back': ad.front_back,
+        'up_down': ad.up_down,
+        'quantity': ad.quantity,
         'image': SERVER_NAME + ad.image,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
