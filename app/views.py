@@ -795,6 +795,7 @@ def create_ads_from_csv():
     file_path = config_local.APP_FOLDER
     if not 'user_id' in request.form:
         abort(400)
+    print(request.files['fileex'])
     if 'fileex' in request.files:
         file = request.files['fileex']
         file_path += str(file_to_upload(file))
@@ -928,6 +929,23 @@ def create_ads_from_csv():
                     continue
                 else:
                     row['Количество'] = ''
+                if row['Фотография'] and allowed_file(row['Фотография']):
+                    try:
+                        img = row['Фотография']
+                    except requests.exceptions.ConnectionError:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Фотография'],
+                            'text_error': 'Фотография по ссылке не доступна.'
+                        })
+                        img = ''
+                else:
+                    error_log.append({
+                            'number_row': count,
+                            'field': row['Фотография'],
+                            'text_error': 'Не корректная ссылка на фотографию'
+                        })
+                    img = ''
                 ads.append({
                     'id': id_ad,
                     'name_ads': row['Название объявления'],
@@ -937,7 +955,7 @@ def create_ads_from_csv():
                     'year_auto': row['Год'],
                     'vin_auto': row['Кузов'],
                     'price': row['Цена'],
-                    'image': row['Фотография'],
+                    'image': img,
                     'engine': row['Двигатель'],
                     'number': row['Номер'],
                     'left_right': row['Left-Right'],
@@ -972,7 +990,7 @@ def create_ads_from_csv():
             timestamp=datetime.datetime.utcnow()
         )
         db.session.add(new_ad)
-    db.session.commit()
+        db.session.commit()
     os.remove(file_path)
     result = {'Всего строк': count,
               'Загружено': len(ads),
