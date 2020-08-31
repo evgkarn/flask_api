@@ -522,7 +522,7 @@ def delete_user(user_id):
 
 # Удаление всех объявление пользователя
 @application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['DELETE'])
-# @token_required
+@token_required
 def delete_ads_users(user_id):
     ads = models.Post.query.filter_by(user_id=user_id).all()
     if ads is None:
