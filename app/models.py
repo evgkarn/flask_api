@@ -178,3 +178,13 @@ class Model(db.Model):
 
     def __repr__(self):
         return '<Model %r>' % self.name
+
+
+class Rate(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    name = db.Column(db.String(64), index=True)
+    price = db.Column(db.Integer, index=True)
+    limit = db.Column(db.Integer, index=True)
+
+    def __repr__(self):
+        return '<Name %r>' % self.nickname
