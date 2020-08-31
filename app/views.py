@@ -520,6 +520,21 @@ def delete_user(user_id):
     db.session.commit()
     return jsonify({'result': True})
 
+# Удаление всех объявление пользователя
+@application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['DELETE'])
+@token_required
+def delete_ads_users(user_id):
+    ads = models.Post.query.filter_by(user_id=user_id).all()
+    if ads is None:
+        abort(404)
+    for ad in ads:
+        if ad.image:
+            if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + ad.image):
+                os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
+        db.session.delete(ad)
+        db.session.commit()
+    return jsonify({'result': True})
+
 
 # Авторизация пользователя
 @application.route('/todo/api/v1.0/auth', methods=['POST'])
