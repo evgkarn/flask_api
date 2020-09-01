@@ -254,7 +254,8 @@ def delete_ad(ad_id):
     if ad is None:
         abort(404)
     if ad.image:
-        os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
+        if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + ad.image):
+            os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
     db.session.delete(ad)
     db.session.commit()
     return jsonify({'result': True})
