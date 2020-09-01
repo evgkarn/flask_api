@@ -514,7 +514,8 @@ def delete_user(user_id):
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if shop.image:
-            os.remove(os.path.dirname(os.path.abspath(__file__)) + shop.image)
+            if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + shop.image):
+                os.remove(os.path.dirname(os.path.abspath(__file__)) + shop.image)
     db.session.delete(shop)
     db.session.delete(user)
     db.session.commit()
@@ -1097,7 +1098,6 @@ def create_pay():
 
 # Подтверждение оплаты
 @application.route('/todo/api/v1.0/pay_status', methods=['POST'])
-# @token_required
 def status_pay():
     if not request.json['Success'] is True:
         abort(400)
@@ -1150,6 +1150,44 @@ def status_pay():
                 balance -= pay.amount
         order.shop.user.balance = balance
     db.session.commit()
+    return make_response("OK", 200)
+
+
+@application.route('/todo/api/v1.0/rate', methods=['POST'])
+# @token_required
+def change_rate():
+    if not request.json or not 'user_id' in request.json or not 'rate' in request.json:
+        abort(400)
+    rate = models.Rate.query.filter_by(name=request.json['rate']).first()
+    user = models.User.query.get(request.json['user_id'])
+    error_log = {}
+    error_log['status']: 'error'
+    error_log['text']: 'Тариф успешно применён'
+    if rate.price < user.balance:
+        error_log['status']: 'error'
+        error_log['text']: 'Не достаточно средств на балансе'
+    elif len(user.posts) > rate.limit:
+        error_log['status']: 'error'
+        error_log['text']: 'Для текущего тарифа количество созданных объявлений должно быть не более ' + rate.limit
+    else:
+        pay_operation = models.PayOperation.query.all()
+        if pay_operation:
+            id_order = pay_operation[-1].id + 1
+        else:
+            id_order = 1
+        new_pay_operation = models.PayOperation(
+            id=id_order,
+            shop_id=user.shops.first(),
+            type='expanse',
+            amount=rate.price,
+            comment=request.json['Status'],
+            timestamp=datetime.datetime.utcnow()
+        )
+        db.session.add(new_pay_operation)
+
+
+
+
     return make_response("OK", 200)
 
 
