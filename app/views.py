@@ -362,7 +362,7 @@ def update_order(order_id):
 
 
 # Формирования словаря полей пользователя для json ответа
-def user_by_id(id_elem):
+def user_by_id(id_elem, error_log={}):
     user = models.User.query.get(id_elem)
     shop = models.Shop.query.filter_by(user_id=id_elem).first()
     if shop:
@@ -397,7 +397,8 @@ def user_by_id(id_elem):
         'role': user.role,
         'status': user.status,
         'balance': user.balance / 100,
-        'url': url_for('get_user', user_id=user.id, _external=True)
+        'url': url_for('get_user', user_id=user.id, _external=True),
+        'error': error_log
     }
     user_posts = models.Post.query.filter_by(user_id=id_elem).first()
     if user_posts:
@@ -480,7 +481,7 @@ def create_user():
 
 # Изменение пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-@token_required
+# @token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -489,9 +490,49 @@ def update_user(user_id):
         abort(400)
     if 'password' in request.form:
         user.hash_password = generate_password_hash(request.form['password'])
+    if 'status' in request.form:
+        rate = models.Rate.query.filter_by(name=request.form['status']).first()
+        if not rate:
+            abort(400)
+        user = models.User.query.get(user_id)
+        error_log = {'status': 'OK', 'text': None}
+        if request.form['status'] == user.status:
+            error_log['status'] = 'error'
+            error_log['text'] = 'Выбранный тариф равен текущему'
+        elif rate.price * 100 > user.balance:
+            error_log['status'] = 'error'
+            error_log['text'] = 'Не достаточно средств на балансе'
+        elif len(user.posts.all()) > rate.limit:
+            error_log['status'] = 'error'
+            error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(rate.limit)
+        elif error_log['status'] != 'error':
+            pay_operation = models.PayOperation.query.all()
+            if pay_operation:
+                id_order = pay_operation[-1].id + 1
+            else:
+                id_order = 1
+            new_pay_operation = models.PayOperation(
+                id=id_order,
+                shop_id=user.shops.first().id,
+                type='expanse',
+                amount=rate.price * 100,
+                comment=request.form['status'],
+                timestamp=datetime.datetime.utcnow()
+            )
+            db.session.add(new_pay_operation)
+            user.status = request.form['status']
+            db.session.commit()
+            if user.shops.first().pay_operation:
+                balance = 0
+                for pay in user.shops.first().pay_operation:
+                    if pay.type == "income":
+                        balance += pay.amount
+                    elif pay.type == "expanse":
+                        balance -= pay.amount
+                user.balance = balance
+            db.session.commit()
     user.email = request.form.get('email', user.email)
     user.role = request.form.get('role', user.role)
-    user.status = request.form.get('status', user.status)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if 'file' in request.files:
@@ -502,7 +543,7 @@ def update_user(user_id):
         shop.city = request.form.get('city', shop.city)
         shop.address = request.form.get('address', shop.address)
     db.session.commit()
-    return jsonify(user_by_id(user_id)), 201
+    return jsonify(user_by_id(user_id, error_log)), 201
 
 
 # Удаление пользователя
@@ -1023,7 +1064,7 @@ def pay_by_id(id_elem):
     new_format = "%Y-%m-%d %H:%M:%S"
     new_pay_json = {
         'id': order.id,
-        'amount': order.amount,
+        'amount': order.amount / 100,
         'shop_id': order.shop_id,
         'date_create': order.timestamp,
     }
@@ -1036,6 +1077,9 @@ def pay_by_id(id_elem):
 def create_pay():
     if not request.form or not 'shop_id' in request.form:
         abort(400)
+    amount = 0
+    if request.form['amount']:
+        amount = int(request.form['amount']) * 100
     order = models.PayOrder.query.all()
     if order:
         id_order = order[-1].id + 1
@@ -1044,7 +1088,7 @@ def create_pay():
     new_order = models.PayOrder(
         id=id_order,
         status=0,
-        amount=request.form.get('amount', 0),
+        amount=amount,
         shop_id=request.form['shop_id'],
         timestamp=datetime.datetime.utcnow()
     )
@@ -1089,7 +1133,7 @@ def create_pay():
     response = answer.json()
     pay_json = {
         'id': order.id,
-        'amount': order.amount,
+        'amount': order.amount / 100,
         'shop_id': order.shop_id,
         'date_create': order.timestamp,
         'Payment': response
@@ -1154,42 +1198,59 @@ def status_pay():
     return make_response("OK", 200)
 
 
-@application.route('/todo/api/v1.0/rate', methods=['POST'])
-# @token_required
-def change_rate():
-    if not request.json or not 'user_id' in request.json or not 'rate' in request.json:
-        abort(400)
-    rate = models.Rate.query.filter_by(name=request.json['rate']).first()
-    user = models.User.query.get(request.json['user_id'])
-    error_log = {}
-    error_log['status']: 'error'
-    error_log['text']: 'Тариф успешно применён'
-    if rate.price < user.balance:
-        error_log['status']: 'error'
-        error_log['text']: 'Не достаточно средств на балансе'
-    elif len(user.posts) > rate.limit:
-        error_log['status']: 'error'
-        error_log['text']: 'Для текущего тарифа количество созданных объявлений должно быть не более ' + rate.limit
-    else:
-        pay_operation = models.PayOperation.query.all()
-        if pay_operation:
-            id_order = pay_operation[-1].id + 1
-        else:
-            id_order = 1
-        new_pay_operation = models.PayOperation(
-            id=id_order,
-            shop_id=user.shops.first(),
-            type='expanse',
-            amount=rate.price,
-            comment=request.json['Status'],
-            timestamp=datetime.datetime.utcnow()
-        )
-        db.session.add(new_pay_operation)
-
-
-
-
-    return make_response("OK", 200)
+# @application.route('/todo/api/v1.0/rate', methods=['POST'])
+# # @token_required
+# def change_rate():
+#     if not request.json or not 'user_id' in request.json or not 'Status' in request.json:
+#         abort(400)
+#     rate = models.Rate.query.filter_by(name=request.json['Status']).first()
+#     if not rate:
+#         abort(400)
+#     user = models.User.query.get(request.json['user_id'])
+#     error_log = {'status': 'OK', 'text': None}
+#     if request.json['Status'] == user.status:
+#         error_log['status'] = 'error'
+#         error_log['text'] = 'Выбранный тариф равен текущему'
+#     elif rate.price * 100 > user.balance:
+#         error_log['status'] = 'error'
+#         error_log['text'] = 'Не достаточно средств на балансе'
+#     elif len(user.posts.all()) > rate.limit:
+#         error_log['status'] = 'error'
+#         error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + rate.limit
+#     elif error_log['status'] != 'error':
+#         pay_operation = models.PayOperation.query.all()
+#         if pay_operation:
+#             id_order = pay_operation[-1].id + 1
+#         else:
+#             id_order = 1
+#         new_pay_operation = models.PayOperation(
+#             id=id_order,
+#             shop_id=user.shops.first().id,
+#             type='expanse',
+#             amount=rate.price * 100,
+#             comment=request.json['Status'],
+#             timestamp=datetime.datetime.utcnow()
+#         )
+#         print(id_order)
+#         print(user.shops.first())
+#         print('expanse')
+#         print(rate.price * 100)
+#         print(user.balance)
+#         print(request.json['Status'])
+#         print(datetime.datetime.utcnow())
+#         db.session.add(new_pay_operation)
+#         user.status = request.json['Status']
+#         db.session.commit()
+#         if user.shops.first().pay_operation:
+#             balance = 0
+#             for pay in user.shops.first().pay_operation:
+#                 if pay.type == "income":
+#                     balance += pay.amount
+#                 elif pay.type == "expanse":
+#                     balance -= pay.amount
+#             user.balance = balance
+#         db.session.commit()
+#     return jsonify(error_log), 201
 
 
 # @application.route('/new_search', methods=['GET'])

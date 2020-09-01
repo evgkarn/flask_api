@@ -187,4 +187,4 @@ class Rate(db.Model):
     limit = db.Column(db.Integer, index=True)
 
     def __repr__(self):
-        return '<Name %r>' % self.nickname
+        return '<Name %r>' % self.name
