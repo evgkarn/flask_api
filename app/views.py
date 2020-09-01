@@ -490,12 +490,12 @@ def update_user(user_id):
         abort(400)
     if 'password' in request.form:
         user.hash_password = generate_password_hash(request.form['password'])
+    error_log = {'status': 'OK', 'text': None}
     if 'status' in request.form:
         rate = models.Rate.query.filter_by(name=request.form['status']).first()
         if not rate:
             abort(400)
         user = models.User.query.get(user_id)
-        error_log = {'status': 'OK', 'text': None}
         if request.form['status'] == user.status:
             error_log['status'] = 'error'
             error_log['text'] = 'Выбранный тариф равен текущему'
