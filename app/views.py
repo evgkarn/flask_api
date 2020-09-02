@@ -302,6 +302,12 @@ def get_order_ads(shop_id):
     for order in orders:
         # d1 = datetime.datetime.strptime(str(order.timestamp), "%Y-%m-%d %H:%M:%S.%f")
         new_format = "%Y-%m-%d %H:%M:%S"
+        order_post_id = ''
+        order_post_name = 'Объявление удалено'
+        if order.post:
+            order_post_id = order.post_id,
+            order_post_name = order.post.name_ads
+        print(order_post_id)
         shop_orders.append({
             'id': order.id,
             'text': order.body,
@@ -312,8 +318,8 @@ def get_order_ads(shop_id):
             'url': url_for('get_order', order_id=order.id, _external=True),
             'date_create': order.timestamp,
             'shop': order.shop.name,
-            'ad_id': order.post_id,
-            'ad_name': order.post.name_ads,
+            'ad_id': order_post_id,
+            'ad_name': order_post_name,
         })
     return jsonify({'orders': shop_orders}), 201
 
