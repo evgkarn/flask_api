@@ -82,34 +82,40 @@ def file_to_upload(file):
 
 
 # Формирования словаря полей объявления для json ответа
-def ad_by_id(id_elem):
+def ad_by_id(id_elem, error_log={}):
     ad = models.Post.query.get(id_elem)
-    new_ad_json = {
-        'id': ad.id,
-        'user_id': ad.user_id,
-        'active': ad.active,
-        'name': ad.name_ads,
-        'text': ad.body,
-        'mark_auto': ad.mark_auto,
-        'model_auto': ad.model_auto,
-        'year_auto': ad.year_auto,
-        'vin_auto': ad.vin_auto,
-        'series_auto': ad.series,
-        'modification_auto': ad.modification,
-        'generation_auto': ad.generation,
-        'fuel_auto': ad.fuel,
-        'engine_auto': ad.engine,
-        'number': ad.number,
-        'left_right': ad.left_right,
-        'front_back': ad.front_back,
-        'up_down': ad.up_down,
-        'quantity': ad.quantity,
-        'price': ad.price,
-        'image': SERVER_NAME + ad.image,
-        'url': url_for('get_ad', ad_id=ad.id, _external=True),
-        'date_create': ad.timestamp,
-        'user': ad.user.shops.first().name,
-    }
+    if ad:
+        new_ad_json = {
+            'id': ad.id,
+            'user_id': ad.user_id,
+            'active': ad.active,
+            'name': ad.name_ads,
+            'text': ad.body,
+            'mark_auto': ad.mark_auto,
+            'model_auto': ad.model_auto,
+            'year_auto': ad.year_auto,
+            'vin_auto': ad.vin_auto,
+            'series_auto': ad.series,
+            'modification_auto': ad.modification,
+            'generation_auto': ad.generation,
+            'fuel_auto': ad.fuel,
+            'engine_auto': ad.engine,
+            'number': ad.number,
+            'left_right': ad.left_right,
+            'front_back': ad.front_back,
+            'up_down': ad.up_down,
+            'quantity': ad.quantity,
+            'price': ad.price,
+            'image': SERVER_NAME + ad.image,
+            'url': url_for('get_ad', ad_id=ad.id, _external=True),
+            'date_create': ad.timestamp,
+            'user': ad.user.shops.first().name,
+            'error': error_log
+        }
+    else:
+        new_ad_json = {
+            'error': error_log
+        }
     return new_ad_json
 
 
@@ -172,9 +178,12 @@ def get_user_ads(user_id):
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
 # @token_required
 def create_ads():
-    if not request.form or not 'text' in request.form:
+    if not request.json or not 'text' in request.json:
         abort(400)
     ads = models.Post.query.all()
+    user = models.User.query.get(request.json['user_id'])
+    rate = models.Rate.query.filter_by(name=user.status).first()
+    ad_count = len(user.posts.all())
     if ads:
         id_ad = ads[-1].id + 1
     else:
@@ -184,33 +193,38 @@ def create_ads():
         image_ads = file_to_upload(file)
     else:
         image_ads = ''
-    new_ad = models.Post(
-        id=id_ad,
-        name_ads=request.form.get('name', ""),
-        body=request.form.get('text', ""),
-        mark_auto=request.form['mark_auto'],
-        active=request.form.get('active', 1),
-        model_auto=request.form['model_auto'],
-        year_auto=request.form['year_auto'],
-        vin_auto=request.form.get('vin_auto', ""),
-        price=request.form['price'],
-        series=request.form.get('series_auto', ""),
-        modification=request.form.get('modification_auto', ""),
-        generation=request.form.get('generation_auto', ""),
-        fuel=request.form.get('fuel_auto', ""),
-        engine=request.form.get('engine_auto', ""),
-        number=request.form.get('number', ""),
-        left_right=request.form.get('left_right', ""),
-        front_back=request.form.get('front_back', ""),
-        up_down=request.form.get('up_down', ""),
-        quantity=request.form.get('quantity', ""),
-        user_id=request.form['user_id'],
-        image=image_ads,
-        timestamp=datetime.datetime.utcnow()
-    )
-    db.session.add(new_ad)
-    db.session.commit()
-    return jsonify(ad_by_id(id_ad)), 201
+    error_log = {}
+    if ad_count < rate.limit:
+        new_ad = models.Post(
+            id=id_ad,
+            name_ads=request.json.get('name', ""),
+            body=request.json.get('text', ""),
+            mark_auto=request.json['mark_auto'],
+            active=request.json.get('active', 1),
+            model_auto=request.json['model_auto'],
+            year_auto=request.json['year_auto'],
+            vin_auto=request.json.get('vin_auto', ""),
+            price=request.json['price'],
+            series=request.json.get('series_auto', ""),
+            modification=request.json.get('modification_auto', ""),
+            generation=request.json.get('generation_auto', ""),
+            fuel=request.json.get('fuel_auto', ""),
+            engine=request.json.get('engine_auto', ""),
+            number=request.json.get('number', ""),
+            left_right=request.json.get('left_right', ""),
+            front_back=request.json.get('front_back', ""),
+            up_down=request.json.get('up_down', ""),
+            quantity=request.json.get('quantity', ""),
+            user_id=request.json['user_id'],
+            image=image_ads,
+            timestamp=datetime.datetime.utcnow()
+        )
+        db.session.add(new_ad)
+        db.session.commit()
+    else:
+        error_log['status'] = 'error'
+        error_log['text'] = 'Для текущего тарифа создано максимальное количество объявлений:   ' + str(ad_count)
+    return jsonify(ad_by_id(id_ad, error_log)), 201
 
 
 # Изменение объявления
