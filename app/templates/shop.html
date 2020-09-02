@@ -20,7 +20,7 @@
         </div>
 
         <p><strong>О магазине:</strong>
-       {{shop.body}}
+       {{shop.body.replace("\n", "<br>")|safe}}
         </p>
         <hr/>
         <div class="results">
