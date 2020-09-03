@@ -1101,7 +1101,7 @@ def pay_by_id(id_elem):
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
 # @token_required
 def create_pay():
-    if not request.form or not 'shop_id' in request.form:
+    if not request.form or 'shop_id' not in request.form:
         abort(400)
     amount = 0
     if request.form['amount']:
@@ -1131,7 +1131,7 @@ def create_pay():
                'Content-Encoding': 'utf-8'}
     data = {
         "TerminalKey": "1595411067598DEMO",
-        "Amount": order.amount * 100,
+        "Amount": order.amount,
         "OrderId": order.id,
         "DATA": {
             "Phone": order.shop.phone,
@@ -1145,9 +1145,9 @@ def create_pay():
             "Items": [
                 {
                     "Name": "Размещение объявления",
-                    "Price": order.amount * 100,
+                    "Price": order.amount,
                     "Quantity": 1.00,
-                    "Amount": order.amount * 100,
+                    "Amount": order.amount,
                     "PaymentMethod": "full_prepayment",
                     "PaymentObject": "service",
                     "Tax": "none"
