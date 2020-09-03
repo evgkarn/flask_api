@@ -178,10 +178,10 @@ def get_user_ads(user_id):
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
 # @token_required
 def create_ads():
-    if not request.json or not 'text' in request.json:
+    if not request.form or not 'text' in request.form:
         abort(400)
     ads = models.Post.query.all()
-    user = models.User.query.get(request.json['user_id'])
+    user = models.User.query.get(request.form['user_id'])
     rate = models.Rate.query.filter_by(name=user.status).first()
     ad_count = len(user.posts.all())
     if ads:
@@ -197,25 +197,25 @@ def create_ads():
     if ad_count < rate.limit:
         new_ad = models.Post(
             id=id_ad,
-            name_ads=request.json.get('name', ""),
-            body=request.json.get('text', ""),
-            mark_auto=request.json['mark_auto'],
-            active=request.json.get('active', 1),
-            model_auto=request.json['model_auto'],
-            year_auto=request.json['year_auto'],
-            vin_auto=request.json.get('vin_auto', ""),
-            price=request.json['price'],
-            series=request.json.get('series_auto', ""),
-            modification=request.json.get('modification_auto', ""),
-            generation=request.json.get('generation_auto', ""),
-            fuel=request.json.get('fuel_auto', ""),
-            engine=request.json.get('engine_auto', ""),
-            number=request.json.get('number', ""),
-            left_right=request.json.get('left_right', ""),
-            front_back=request.json.get('front_back', ""),
-            up_down=request.json.get('up_down', ""),
-            quantity=request.json.get('quantity', ""),
-            user_id=request.json['user_id'],
+            name_ads=request.form.get('name', ""),
+            body=request.form.get('text', ""),
+            mark_auto=request.form['mark_auto'],
+            active=request.form.get('active', 1),
+            model_auto=request.form['model_auto'],
+            year_auto=request.form['year_auto'],
+            vin_auto=request.form.get('vin_auto', ""),
+            price=request.form['price'],
+            series=request.form.get('series_auto', ""),
+            modification=request.form.get('modification_auto', ""),
+            generation=request.form.get('generation_auto', ""),
+            fuel=request.form.get('fuel_auto', ""),
+            engine=request.form.get('engine_auto', ""),
+            number=request.form.get('number', ""),
+            left_right=request.form.get('left_right', ""),
+            front_back=request.form.get('front_back', ""),
+            up_down=request.form.get('up_down', ""),
+            quantity=request.form.get('quantity', ""),
+            user_id=request.form['user_id'],
             image=image_ads,
             timestamp=datetime.datetime.utcnow()
         )
@@ -342,7 +342,7 @@ def get_order_ads(shop_id):
 @application.route('/todo/api/v1.0/order', methods=['POST'])
 # @token_required
 def create_order():
-    if not request.form or not 'ad_id' in request.form:
+    if not request.form or 'ad_id' not in request.form:
         abort(400)
     order = models.Order.query.all()
     if order:
@@ -382,9 +382,13 @@ def update_order(order_id):
 
 
 # Формирования словаря полей пользователя для json ответа
-def user_by_id(id_elem, error_log={}):
+def user_by_id(id_elem, error_log=None):
+    if error_log is None:
+        error_log = {}
     user = models.User.query.get(id_elem)
     shop = models.Shop.query.filter_by(user_id=id_elem).first()
+    user_shops = {}
+    token = {}
     if shop:
         user_shops = {
             'name': shop.name,
@@ -454,7 +458,7 @@ def get_user(user_id):
 # Создание пользователя
 @application.route('/todo/api/v1.0/users', methods=['POST'])
 def create_user():
-    if not request.form or not 'email' in request.form:
+    if not request.form or 'email' not in request.form:
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.form['email']).first()
     if our_user is not None:
@@ -524,7 +528,8 @@ def update_user(user_id):
             error_log['text'] = 'Не достаточно средств на балансе'
         elif len(user.posts.all()) > rate.limit:
             error_log['status'] = 'error'
-            error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(rate.limit)
+            error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(
+                rate.limit)
         elif error_log['status'] != 'error':
             pay_operation = models.PayOperation.query.all()
             if pay_operation:
@@ -582,6 +587,7 @@ def delete_user(user_id):
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': True})
+
 
 # Удаление всех объявление пользователя
 @application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['DELETE'])
@@ -1019,10 +1025,10 @@ def create_ads_from_csv():
                         img = ''
                 else:
                     error_log.append({
-                            'number_row': count,
-                            'field': row['Фотография'],
-                            'text_error': 'Не корректная ссылка на фотографию'
-                        })
+                        'number_row': count,
+                        'field': row['Фотография'],
+                        'text_error': 'Не корректная ссылка на фотографию'
+                    })
                     img = ''
                 ads.append({
                     'id': id_ad,
@@ -1216,7 +1222,6 @@ def status_pay():
         order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)
-
 
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
 # # @token_required
