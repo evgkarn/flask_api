@@ -877,78 +877,101 @@ def create_ads_from_csv():
     else:
         id_ad = 1
     file_path = config_local.APP_FOLDER
-    if not 'user_id' in request.form:
+    if 'user_id' not in request.form:
         abort(400)
-    print(request.files['fileex'])
     if 'fileex' in request.files:
         file = request.files['fileex']
         file_path += str(file_to_upload(file))
     else:
         abort(400)
     ads = []
+    error_log = []
+    user = models.User.query.get(request.form['user_id'])
+    rate = models.Rate.query.filter_by(name=user.status).first()
+    ad_count = len(user.posts.all())
+    print(ad_count)
+    print(rate.limit)
+    if ad_count >= rate.limit:
+        error_log.append({
+                'number_row': 1,
+                'field': 'Превышен лимит объявлений',
+                'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
+                    user.status) + '. Максимум: ' + str(rate.limit) + ' объявлений.'
+            })
+        result = {'Всего строк': 0,
+                  'Загружено': 0,
+                  'Ошибки': error_log
+                  }
+        return jsonify(result), 201
     if os.path.isfile(file_path):
         with open(file_path, newline="", encoding='windows-1251') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=';')
-            error_log = []
             count = 0
             for row in reader:
-                count += 1
-                id_ad += 1
-                if row['Название объявления']:
-                    row['Название объявления'] = html.escape(row['Название объявления'])
-                else:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Название объявления'],
-                        'text_error': 'Поле должно быть заполнено'
-                    })
-                    continue
-                if row['Текст объявления']:
-                    row['Текст объявления'] = html.escape(row['Текст объявления'])
-                else:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Текст объявления'],
-                        'text_error': 'Поле должно быть заполнено'
-                    })
-                    continue
-                if row['Марка авто']:
-                    try:
-                        res = json.loads(get_auto().get_data().decode("utf-8"))
-                    except NotFound:
+                if count < rate.limit:
+                    id_ad += 1
+                    if row['Название объявления']:
+                        row['Название объявления'] = html.escape(row['Название объявления'])
+                    else:
                         error_log.append({
                             'number_row': count,
-                            'field': row['Марка авто'],
-                            'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            'field': row['Название объявления'],
+                            'text_error': 'Поле должно быть заполнено'
                         })
                         continue
-                    if row['Марка авто'] in res['auto']:
-                        pass
+                    if row['Текст объявления']:
+                        row['Текст объявления'] = html.escape(row['Текст объявления'])
+                    else:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Текст объявления'],
+                            'text_error': 'Поле должно быть заполнено'
+                        })
+                        continue
+                    if row['Марка авто']:
+                        try:
+                            res = json.loads(get_auto().get_data().decode("utf-8"))
+                        except NotFound:
+                            error_log.append({
+                                'number_row': count,
+                                'field': row['Марка авто'],
+                                'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            })
+                            continue
+                        if row['Марка авто'] in res['auto']:
+                            pass
+                        else:
+                            error_log.append({
+                                'number_row': count,
+                                'field': row['Марка авто'],
+                                'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            })
                     else:
                         error_log.append({
                             'number_row': count,
                             'field': row['Марка авто'],
                             'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                         })
-                else:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Марка авто'],
-                        'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
-                    })
-                    continue
-                if row['Модель Авто']:
-                    try:
-                        res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
-                    except NotFound:
-                        error_log.append({
-                            'number_row': count,
-                            'field': row['Модель Авто'],
-                            'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
-                        })
                         continue
-                    if row['Модель Авто'] in res['model']:
-                        pass
+                    if row['Модель Авто']:
+                        try:
+                            res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
+                        except NotFound:
+                            error_log.append({
+                                'number_row': count,
+                                'field': row['Модель Авто'],
+                                'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            })
+                            continue
+                        if row['Модель Авто'] in res['model']:
+                            pass
+                        else:
+                            error_log.append({
+                                'number_row': count,
+                                'field': row['Модель Авто'],
+                                'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
+                            })
+                            continue
                     else:
                         error_log.append({
                             'number_row': count,
@@ -956,129 +979,138 @@ def create_ads_from_csv():
                             'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                         })
                         continue
-                else:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Модель Авто'],
-                        'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
-                    })
-                    continue
-                if not row['Год'].isdigit() and len(row['Год']) == 4:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Год'],
-                        'text_error': 'Год должен строго состоять из 4 цифр. См. руководство.'
-                    })
-                    continue
-                if len(row['Кузов']) > 17:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Кузов'],
-                        'text_error': 'Номер кузова должен быть не более 17 символов. См. руководство.'
-                    })
-                    continue
-                if not row['Цена'].isdigit():
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Цена'],
-                        'text_error': 'Цена должна быть строго из цифр. См. руководство.'
-                    })
-                    continue
-                if row['Двигатель']:
-                    row['Двигатель'] = html.escape(row['Двигатель'])
-                else:
-                    row['Двигатель'] = ''
-                if row['Номер']:
-                    row['Номер'] = html.escape(row['Номер'])
-                else:
-                    row['Номер'] = ''
-                if row['Left-Right']:
-                    row['Left-Right'] = html.escape(row['Left-Right'])
-                else:
-                    row['Left-Right'] = ''
-                if row['Front-Back']:
-                    row['Front-Back'] = html.escape(row['Front-Back'])
-                else:
-                    row['Front-Back'] = ''
-                if row['Up-Down']:
-                    row['Up-Down'] = html.escape(row['Up-Down'])
-                else:
-                    row['Up-Down'] = ''
-                if row['Количество'] and not row['Количество'].isdigit():
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Количество'],
-                        'text_error': 'Количество должен строго состоять из цифр. См. руководство.'
-                    })
-                    continue
-                else:
-                    row['Количество'] = ''
-                if row['Фотография'] and allowed_file(row['Фотография']):
-                    try:
-                        img = row['Фотография']
-                    except requests.exceptions.ConnectionError:
+                    if not row['Год'].isdigit() and len(row['Год']) == 4:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Год'],
+                            'text_error': 'Год должен строго состоять из 4 цифр. См. руководство.'
+                        })
+                        continue
+                    if len(row['Кузов']) > 17:
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Кузов'],
+                            'text_error': 'Номер кузова должен быть не более 17 символов. См. руководство.'
+                        })
+                        continue
+                    if not row['Цена'].isdigit():
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Цена'],
+                            'text_error': 'Цена должна быть строго из цифр. См. руководство.'
+                        })
+                        continue
+                    if row['Двигатель']:
+                        row['Двигатель'] = html.escape(row['Двигатель'])
+                    else:
+                        row['Двигатель'] = ''
+                    if row['Номер']:
+                        row['Номер'] = html.escape(row['Номер'])
+                    else:
+                        row['Номер'] = ''
+                    if row['Left-Right']:
+                        row['Left-Right'] = html.escape(row['Left-Right'])
+                    else:
+                        row['Left-Right'] = ''
+                    if row['Front-Back']:
+                        row['Front-Back'] = html.escape(row['Front-Back'])
+                    else:
+                        row['Front-Back'] = ''
+                    if row['Up-Down']:
+                        row['Up-Down'] = html.escape(row['Up-Down'])
+                    else:
+                        row['Up-Down'] = ''
+                    if row['Количество'] and not row['Количество'].isdigit():
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Количество'],
+                            'text_error': 'Количество должен строго состоять из цифр. См. руководство.'
+                        })
+                        continue
+                    else:
+                        row['Количество'] = ''
+                    if row['Фотография'] and allowed_file(row['Фотография']):
+                        try:
+                            img = row['Фотография']
+                        except requests.exceptions.ConnectionError:
+                            error_log.append({
+                                'number_row': count,
+                                'field': row['Фотография'],
+                                'text_error': 'Фотография по ссылке не доступна.'
+                            })
+                            img = ''
+                    else:
                         error_log.append({
                             'number_row': count,
                             'field': row['Фотография'],
-                            'text_error': 'Фотография по ссылке не доступна.'
+                            'text_error': 'Не корректная ссылка на фотографию'
                         })
                         img = ''
-                else:
-                    error_log.append({
-                        'number_row': count,
-                        'field': row['Фотография'],
-                        'text_error': 'Не корректная ссылка на фотографию'
+                    ads.append({
+                        'id': id_ad,
+                        'name_ads': row['Название объявления'],
+                        'body': row['Текст объявления'],
+                        'mark_auto': row['Марка авто'],
+                        'model_auto': row['Модель Авто'],
+                        'year_auto': row['Год'],
+                        'vin_auto': row['Кузов'],
+                        'price': row['Цена'],
+                        'image': img,
+                        'engine': row['Двигатель'],
+                        'number': row['Номер'],
+                        'left_right': row['Left-Right'],
+                        'front_back': row['Front-Back'],
+                        'up_down': row['Up-Down'],
+                        'quantity': row['Количество']
                     })
-                    img = ''
-                ads.append({
-                    'id': id_ad,
-                    'name_ads': row['Название объявления'],
-                    'body': row['Текст объявления'],
-                    'mark_auto': row['Марка авто'],
-                    'model_auto': row['Модель Авто'],
-                    'year_auto': row['Год'],
-                    'vin_auto': row['Кузов'],
-                    'price': row['Цена'],
-                    'image': img,
-                    'engine': row['Двигатель'],
-                    'number': row['Номер'],
-                    'left_right': row['Left-Right'],
-                    'front_back': row['Front-Back'],
-                    'up_down': row['Up-Down'],
-                    'quantity': row['Количество']
-                })
+                    count += 1
+                else:
+                    break
+    count_res = 0
     for ad in ads:
-        if ad['image'] and allowed_file(ad['image']):
-            img = requests.get(ad['image']).content
-            suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
-            filename = "_".join([suffix, 'upload_img.jpg'])
-            out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
-            out.write(img)
-            out.close()
-            image_path = url_for('uploaded_file', filename=filename)
+        ad_count = len(user.posts.all())
+        if ad_count < rate.limit:
+            count_res += 1
+            if ad['image'] and allowed_file(ad['image']):
+                img = requests.get(ad['image']).content
+                suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
+                filename = "_".join([suffix, 'upload_img.jpg'])
+                out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
+                out.write(img)
+                out.close()
+                image_path = url_for('uploaded_file', filename=filename)
+            else:
+                image_path = ''
+            id_ad += 1
+            new_ad = models.Post(
+                id=ad['id'],
+                active=1,
+                name_ads=ad['name_ads'],
+                body=ad['body'],
+                mark_auto=ad['mark_auto'],
+                model_auto=ad['model_auto'],
+                year_auto=ad['year_auto'],
+                vin_auto=ad['vin_auto'],
+                price=ad['price'],
+                user_id=request.form['user_id'],
+                image=image_path,
+                timestamp=datetime.datetime.utcnow()
+            )
+            db.session.add(new_ad)
+            db.session.commit()
         else:
-            image_path = ''
-        id_ad += 1
-        new_ad = models.Post(
-            id=ad['id'],
-            active=1,
-            name_ads=ad['name_ads'],
-            body=ad['body'],
-            mark_auto=ad['mark_auto'],
-            model_auto=ad['model_auto'],
-            year_auto=ad['year_auto'],
-            vin_auto=ad['vin_auto'],
-            price=ad['price'],
-            user_id=request.form['user_id'],
-            image=image_path,
-            timestamp=datetime.datetime.utcnow()
-        )
-        db.session.add(new_ad)
-        db.session.commit()
+            error_log.append({
+                'number_row': count,
+                'field': 'Превышен лимит объявлений',
+                'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
+                    user.status) + '. Максимум: ' + str(rate.limit) + 'объявлений.'
+            })
+            break
     os.remove(file_path)
-    result = {'Всего строк': count,
-              'Загружено': len(ads),
-              'Ошибки': error_log
+    result = {'Всего строк обработано по тарифу': count,
+              'Корректных': len(ads),
+              'Ошибки': error_log,
+              'Загружено с учётом лимита по тарифу': count_res
               }
     return jsonify(result), 201
 
