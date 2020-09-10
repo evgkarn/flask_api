@@ -151,3 +151,17 @@ a.redButton:hover{
 .banner{
     margin-bottom: 20px
 }
+.ban-section{
+    width: 25%;
+    padding: 0px 0px 0 12px;
+}
+.ban-section img{
+    border: 1px solid #a89f9f;
+}
+.results-blocks{
+    width: 75%;
+}
+.body-wrapper{
+    display: flex;
+    justify-content: space-between;
+}
