@@ -1,8 +1,5 @@
 {% extends "skeleton.html" %}
 {% block content %}
-<div class="banner">
-    <img src="../static/ban1.jpeg" alt="Автосервис TOP4SERVICE">
-</div>
 
 <div class="main-header">
     <h1>Подбор автозапчастей</h1>
@@ -23,6 +20,7 @@
 </form>
 <div class="results">
     <h2>Результаты поиска: {{pagination.total_results}}</h2>
+    <div class="body-wrapper">
     <div class="results-blocks">
         {% for ad in ads %}
         <div class="results-detail">
@@ -125,6 +123,15 @@
                 {% endif %}
             </div>
         </div>
-</div>
+
+
+
+    </div>
+    <div class="ad-section">
+        <a href="https://www.instagram.com/top4service/" target="_blank">
+        <img src="../static/banner2.jpeg" alt="top4service">
+        </a>
+    </div>
+    </div>
 </div>
 {% endblock %}
