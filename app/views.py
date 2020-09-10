@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from app import application, models, db
 from flask import jsonify, abort, request, make_response, url_for, current_app, render_template
 from flask_httpauth import HTTPBasicAuth
@@ -40,8 +39,8 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'csv'}
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
-        if not request.json or not 'token' in request.json:
-            if not request.form or not 'token' in request.form:
+        if not request.json or 'token' not in request.json:
+            if not request.form or 'token' not in request.form:
                 abort(400)
             else:
                 token = request.form.get('token')
@@ -194,6 +193,27 @@ def create_ads():
     else:
         image_ads = ''
     error_log = {}
+    filter_spec = []
+    unique = set()
+    if request.form.get('mark_auto'):
+        mark = models.Model.query.filter_by(name=request.form.get('mark_auto')).first()
+        print(mark.id)
+        filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
+    if request.form.get('model_auto'):
+        filter_spec.append({'field': 'model', 'op': '==', 'value': request.form.get('model_auto')})
+    if request.form.get('year_auto'):
+        filter_spec.append({'field': 'year', 'op': '==', 'value': request.form.get('year_auto')})
+    query = models.Auto.query
+    filtered_query = apply_filters(query, filter_spec)
+    for i in filtered_query.all():
+        unique.add(i.generation)
+    unique_list = sorted(list(unique))
+    generation_list = ''
+    for i in range(len(unique_list)):
+        if i + 1 != len(unique_list):
+            generation_list += str(unique_list[i]) + ', '
+        else:
+            generation_list += str(unique_list[i])
     if ad_count < rate.limit:
         new_ad = models.Post(
             id=id_ad,
@@ -207,7 +227,7 @@ def create_ads():
             price=request.form['price'],
             series=request.form.get('series_auto', ""),
             modification=request.form.get('modification_auto', ""),
-            generation=request.form.get('generation_auto', ""),
+            generation=generation_list,
             fuel=request.form.get('fuel_auto', ""),
             engine=request.form.get('engine_auto', ""),
             number=request.form.get('number', ""),
@@ -608,9 +628,9 @@ def delete_ads_users(user_id):
 # Авторизация пользователя
 @application.route('/todo/api/v1.0/auth', methods=['POST'])
 def auth_user():
-    if not request.json or not 'email' in request.json:
+    if not request.json or 'email' not in request.json:
         abort(400)
-    if not request.json or not 'password' in request.json:
+    if not request.json or 'password' not in request.json:
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
     if our_user is not None:
@@ -827,7 +847,28 @@ def get_search_html():
     if request.args.get('model_auto'):
         filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
     if request.args.get('year_auto'):
-        filter_spec.append({'field': 'year_auto', 'op': '==', 'value': request.args.get('year_auto')})
+        filter_year = []
+        unique = set()
+        if request.args.get('mark_auto'):
+            mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
+            print(mark.id)
+            filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
+        if request.args.get('model_auto'):
+            filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
+        if request.args.get('year_auto'):
+            filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
+            query = models.Auto.query
+            filtered_query_year = apply_filters(query, filter_year)
+            for i in filtered_query_year.all():
+                unique.add(i.generation)
+            unique_list = sorted(list(unique))
+            generation_list = ''
+            for i in range(len(unique_list)):
+                if i + 1 != len(unique_list):
+                    generation_list += str(unique_list[i]) + ', '
+                else:
+                    generation_list += str(unique_list[i])
+        filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
     if request.args.get('series_auto'):
         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
     if request.args.get('modification_auto'):
@@ -849,7 +890,9 @@ def get_search_html():
             ]
         })
     query = models.Post.query
+    print(filter_spec)
     filtered_query = apply_filters(query, filter_spec)
+    print(filtered_query.all())
     page = 1
     page_size = 10
     if request.args.get('page'):
@@ -893,11 +936,11 @@ def create_ads_from_csv():
     print(rate.limit)
     if ad_count >= rate.limit:
         error_log.append({
-                'number_row': 1,
-                'field': 'Превышен лимит объявлений',
-                'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
-                    user.status) + '. Максимум: ' + str(rate.limit) + ' объявлений.'
-            })
+            'number_row': 1,
+            'field': 'Превышен лимит объявлений',
+            'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
+                user.status) + '. Максимум: ' + str(rate.limit) + ' объявлений.'
+        })
         result = {'Всего строк': 0,
                   'Загружено': 0,
                   'Ошибки': error_log
@@ -1082,6 +1125,27 @@ def create_ads_from_csv():
             else:
                 image_path = ''
             id_ad += 1
+            filter_spec = []
+            unique = set()
+            if ad['mark_auto']:
+                mark = models.Model.query.filter_by(name=ad['mark_auto']).first()
+                print(mark.id)
+                filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
+            if ad['model_auto']:
+                filter_spec.append({'field': 'model', 'op': '==', 'value': ad['model_auto']})
+            if ad['year_auto']:
+                filter_spec.append({'field': 'year', 'op': '==', 'value': ad['year_auto']})
+            query = models.Auto.query
+            filtered_query = apply_filters(query, filter_spec)
+            for i in filtered_query.all():
+                unique.add(i.generation)
+            unique_list = sorted(list(unique))
+            generation_list = ''
+            for i in range(len(unique_list)):
+                if i + 1 != len(unique_list):
+                    generation_list += str(unique_list[i]) + ', '
+                else:
+                    generation_list += str(unique_list[i])
             new_ad = models.Post(
                 id=ad['id'],
                 active=1,
@@ -1091,6 +1155,7 @@ def create_ads_from_csv():
                 model_auto=ad['model_auto'],
                 year_auto=ad['year_auto'],
                 vin_auto=ad['vin_auto'],
+                generation=generation_list,
                 price=ad['price'],
                 user_id=request.form['user_id'],
                 image=image_path,
