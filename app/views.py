@@ -625,6 +625,23 @@ def delete_ads_users(user_id):
     return jsonify({'result': True})
 
 
+# Активация деактивация объявлений
+@application.route('/todo/api/v1.0/ads_active/<int:user_id>', methods=['PUT'])
+# @token_required
+def active_ads_users(user_id):
+    if not request.json or 'active' not in request.json:
+        abort(400)
+    if request.json['active'] != '0' and request.json['active'] != '1':
+        abort(400)
+    ads = models.Post.query.filter_by(user_id=user_id).all()
+    if ads is None:
+        abort(404)
+    for ad in ads:
+        ad.active = int(request.json['active'])
+        db.session.commit()
+    return jsonify({'result': True})
+
+
 # Авторизация пользователя
 @application.route('/todo/api/v1.0/auth', methods=['POST'])
 def auth_user():
@@ -1162,7 +1179,7 @@ def create_ads_from_csv():
                     generation_list += str(unique_list[i])
             new_ad = models.Post(
                 id=ad['id'],
-                active=1,
+                active=0,
                 name_ads=ad['name_ads'],
                 body=ad['body'],
                 mark_auto=ad['mark_auto'],
