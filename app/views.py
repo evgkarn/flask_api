@@ -911,6 +911,20 @@ def get_search_html():
 
 
 # Создание объявлений из файла
+@application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
+# @token_required
+def import_csv_file():
+    file_path = config_local.APP_FOLDER
+    if 'fileex' in request.files:
+        file = request.files['fileex']
+        new_file = str(file_to_upload(file))
+        file_path += new_file
+    else:
+        abort(400)
+    return jsonify({'file': new_file}), 201
+
+
+# Создание объявлений из файла
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
 def create_ads_from_csv():
@@ -922,9 +936,9 @@ def create_ads_from_csv():
     file_path = config_local.APP_FOLDER
     if 'user_id' not in request.form:
         abort(400)
-    if 'fileex' in request.files:
-        file = request.files['fileex']
-        file_path += str(file_to_upload(file))
+    if 'file_name' in request.form:
+        file = request.form['file_name']
+        file_path += file
     else:
         abort(400)
     ads = []
