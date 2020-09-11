@@ -120,7 +120,7 @@ def ad_by_id(id_elem, error_log={}):
 
 # Получить все объявления
 @application.route('/todo/api/v1.0/ads', methods=['GET'])
-# @token_required
+@token_required
 def get_ads():
     ads = models.Post.query.all()
     lt_ads = []
@@ -131,7 +131,7 @@ def get_ads():
 
 # Получить объявление по id
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
-# @token_required
+@token_required
 def get_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -141,7 +141,7 @@ def get_ad(ad_id):
 
 # Получить все объявления по id пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>/ads', methods=['GET'])
-# @token_required
+@token_required
 def get_user_ads(user_id):
     user = models.User.query.get(user_id)
     posts = user.posts
@@ -175,7 +175,7 @@ def get_user_ads(user_id):
 
 # Создание объявления
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
-# @token_required
+@token_required
 def create_ads():
     if not request.form or not 'text' in request.form:
         abort(400)
@@ -249,7 +249,7 @@ def create_ads():
 
 # Изменение объявления
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -282,7 +282,7 @@ def update_ad(ad_id):
 
 # Удаление объявления
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['DELETE'])
-# @token_required
+@token_required
 def delete_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -318,7 +318,7 @@ def order_by_id(id_elem):
 
 # Получить заявку по id
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['GET'])
-# @token_required
+@token_required
 def get_order(order_id):
     order = models.Order.query.get(order_id)
     if order is None:
@@ -328,7 +328,7 @@ def get_order(order_id):
 
 # Получить все заявки по id магазина
 @application.route('/todo/api/v1.0/shop/<int:shop_id>/orders', methods=['GET'])
-# @token_required
+@token_required
 def get_order_ads(shop_id):
     shop = models.Shop.query.get(shop_id)
     orders = shop.orders
@@ -360,7 +360,7 @@ def get_order_ads(shop_id):
 
 # Создание заявки
 @application.route('/todo/api/v1.0/order', methods=['POST'])
-# @token_required
+@token_required
 def create_order():
     if not request.form or 'ad_id' not in request.form:
         abort(400)
@@ -386,7 +386,7 @@ def create_order():
 
 # Изменение заявки
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_order(order_id):
     order = models.Order.query.get(order_id)
     if order is None:
@@ -456,7 +456,7 @@ def user_by_id(id_elem, error_log=None):
 
 # Получить всех пользователей
 @application.route('/todo/api/v1.0/users', methods=['GET'])
-# @token_required
+@token_required
 def get_users():
     users = models.User.query.all()
     lt_users = []
@@ -467,7 +467,7 @@ def get_users():
 
 # Получить пользователя по id
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['GET'])
-# @token_required
+@token_required
 def get_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -525,7 +525,7 @@ def create_user():
 
 # Изменение пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -627,17 +627,17 @@ def delete_ads_users(user_id):
 
 # Активация деактивация объявлений
 @application.route('/todo/api/v1.0/ads_active/<int:user_id>', methods=['PUT'])
-# @token_required
+@token_required
 def active_ads_users(user_id):
-    if not request.json or 'active' not in request.json:
+    if not request.form or 'active' not in request.form:
         abort(400)
-    if request.json['active'] != '0' and request.json['active'] != '1':
+    if request.form['active'] != '0' and request.form['active'] != '1':
         abort(400)
     ads = models.Post.query.filter_by(user_id=user_id).all()
     if ads is None:
         abort(404)
     for ad in ads:
-        ad.active = int(request.json['active'])
+        ad.active = int(request.form['active'])
         db.session.commit()
     return jsonify({'result': True})
 
@@ -713,7 +713,7 @@ def shop_by_id(id_elem):
 
 # Получить список марок авто
 @application.route('/todo/api/v1.0/auto', methods=['GET'])
-# @token_required
+@token_required
 def get_auto():
     auto = models.Model.query.all()
     lt_auto = []
@@ -724,7 +724,7 @@ def get_auto():
 
 # Получить список модель по марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
-# @token_required
+@token_required
 def get_model(auto_name):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     if model is None:
@@ -741,7 +741,7 @@ def get_model(auto_name):
 
 # Получить год по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
-# @token_required
+@token_required
 def get_year(auto_name, auto_model):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model)).all()
@@ -756,7 +756,7 @@ def get_year(auto_name, auto_model):
 
 # Получить серию по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
-# @token_required
+@token_required
 def get_series(auto_name, auto_model, auto_year):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model),
@@ -772,7 +772,7 @@ def get_series(auto_name, auto_model, auto_year):
 
 # Получить модификацию по серии и по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
-# @token_required
+@token_required
 def get_modification(auto_name, auto_model, auto_year, auto_series):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id,
@@ -791,7 +791,7 @@ def get_modification(auto_name, auto_model, auto_year, auto_series):
 # Получить топливо по модификации по серии и по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>/<auto_modification>',
                    methods=['GET'])
-# @token_required
+@token_required
 def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id,
@@ -929,7 +929,7 @@ def get_search_html():
 
 # Скачивание файла объявлений
 @application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
-# @token_required
+@token_required
 def import_csv_file():
     file_path = config_local.APP_FOLDER
     if 'fileex' in request.files:
@@ -943,7 +943,7 @@ def import_csv_file():
 
 # Создание объявлений из файла
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
-# @token_required
+@token_required
 def create_ads_from_csv():
     ads = models.Post.query.all()
     if ads:
@@ -1227,7 +1227,7 @@ def pay_by_id(id_elem):
 
 # Создание заказа на оплату и получение ссылки
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
-# @token_required
+@token_required
 def create_pay():
     if not request.form or 'shop_id' not in request.form:
         abort(400)
