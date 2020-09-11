@@ -927,7 +927,7 @@ def get_search_html():
                            args=args)
 
 
-# Создание объявлений из файла
+# Скачивание файла объявлений
 @application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
 # @token_required
 def import_csv_file():
