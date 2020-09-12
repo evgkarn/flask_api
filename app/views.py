@@ -123,7 +123,7 @@ def ad_by_id(id_elem, error_log={}):
 
 # Получить все объявления
 @application.route('/todo/api/v1.0/ads', methods=['GET'])
-@token_required
+# @token_required
 def get_ads():
     ads = models.Post.query.all()
     lt_ads = []
@@ -134,7 +134,7 @@ def get_ads():
 
 # Получить объявление по id
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['GET'])
-@token_required
+# @token_required
 def get_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -144,7 +144,7 @@ def get_ad(ad_id):
 
 # Получить все объявления по id пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>/ads', methods=['GET'])
-@token_required
+# @token_required
 def get_user_ads(user_id):
     user = models.User.query.get(user_id)
     posts = user.posts
@@ -321,7 +321,7 @@ def order_by_id(id_elem):
 
 # Получить заявку по id
 @application.route('/todo/api/v1.0/order/<int:order_id>', methods=['GET'])
-@token_required
+# @token_required
 def get_order(order_id):
     order = models.Order.query.get(order_id)
     if order is None:
@@ -331,7 +331,7 @@ def get_order(order_id):
 
 # Получить все заявки по id магазина
 @application.route('/todo/api/v1.0/shop/<int:shop_id>/orders', methods=['GET'])
-@token_required
+# @token_required
 def get_order_ads(shop_id):
     shop = models.Shop.query.get(shop_id)
     orders = shop.orders
@@ -459,7 +459,7 @@ def user_by_id(id_elem, error_log=None):
 
 # Получить всех пользователей
 @application.route('/todo/api/v1.0/users', methods=['GET'])
-@token_required
+# @token_required
 def get_users():
     users = models.User.query.all()
     lt_users = []
@@ -470,7 +470,7 @@ def get_users():
 
 # Получить пользователя по id
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['GET'])
-@token_required
+# @token_required
 def get_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -716,7 +716,7 @@ def shop_by_id(id_elem):
 
 # Получить список марок авто
 @application.route('/todo/api/v1.0/auto', methods=['GET'])
-@token_required
+# @token_required
 def get_auto():
     auto = models.Model.query.all()
     lt_auto = []
@@ -727,7 +727,7 @@ def get_auto():
 
 # Получить список модель по марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
-@token_required
+# @token_required
 def get_model(auto_name):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     if model is None:
@@ -744,7 +744,7 @@ def get_model(auto_name):
 
 # Получить год по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>', methods=['GET'])
-@token_required
+# @token_required
 def get_year(auto_name, auto_model):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model)).all()
@@ -759,7 +759,7 @@ def get_year(auto_name, auto_model):
 
 # Получить серию по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>', methods=['GET'])
-@token_required
+# @token_required
 def get_series(auto_name, auto_model, auto_year):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id, model=unquote(auto_model),
@@ -775,7 +775,7 @@ def get_series(auto_name, auto_model, auto_year):
 
 # Получить модификацию по серии и по году и по модели и марке авто
 @application.route('/todo/api/v1.0/auto/<auto_name>/<auto_model>/<auto_year>/<auto_series>', methods=['GET'])
-@token_required
+# @token_required
 def get_modification(auto_name, auto_model, auto_year, auto_series):
     model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
     auto = db.session.query(models.Auto).filter_by(name=model.id,
