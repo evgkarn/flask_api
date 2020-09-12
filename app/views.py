@@ -41,7 +41,7 @@ def token_required(f):
     def decorated(*args, **kwargs):
         if not request.json or 'token' not in request.json:
             if not request.form or 'token' not in request.form:
-                if not request.args.get('token'):
+                if not request.args or 'token' in request.args:
                     abort(400)
                 else:
                     token = request.args.get('token')
