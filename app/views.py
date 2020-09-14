@@ -548,7 +548,7 @@ def update_user(user_id):
             error_log['text'] = 'Выбранный тариф равен текущему'
         elif rate.price * 100 > user.balance:
             error_log['status'] = 'error'
-            error_log['text'] = 'Не достаточно средств на балансе'
+            error_log['text'] = 'Недостаточно средств на балансе'
         elif len(user.posts.all()) > rate.limit:
             error_log['status'] = 'error'
             error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(
@@ -1201,7 +1201,7 @@ def create_ads_from_csv():
             error_log.append({
                 'number_row': count,
                 'field': 'Превышен лимит объявлений',
-                'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
+                'text_error': 'Создано максимальное количество объявлений по тарифу: ' + str(
                     user.status) + '. Максимум: ' + str(rate.limit) + 'объявлений.'
             })
             break
