@@ -19,6 +19,9 @@
                 <p><strong>Контактный телефон продавца:</strong> <a href="tel:{{ad.user.shops.first().phone}}">{{ad.user.shops.first().phone}}</a></p>
                 <p><strong>Адрес магазина:</strong> {{ad.user.shops.first().address}}</p>
                 <p><strong>Цена:</strong> {{ad.price}} ₽</p>
+                {% if ad.number %}
+                    <p><strong>Номер детали:</strong> {{ad.number}}</p>
+                {% endif %}
                 <a href="" class="send-message">Задать вопрос продавцу</a>
             </div>
         </div>
