@@ -901,12 +901,16 @@ def get_search_html():
             'or': [
                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower + '%'},
                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower + '%'},
                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
             ]
         })
     query = models.Post.query
