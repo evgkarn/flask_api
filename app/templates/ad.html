@@ -18,10 +18,11 @@
                 <p><strong>Продавец:</strong> <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                 <p><strong>Контактный телефон продавца:</strong> <a href="tel:{{ad.user.shops.first().phone}}">{{ad.user.shops.first().phone}}</a></p>
                 <p><strong>Адрес магазина:</strong> {{ad.user.shops.first().address}}</p>
-                <p><strong>Цена:</strong> {{ad.price}} ₽</p>
                 {% if ad.number %}
-                    <p><strong>Номер детали:</strong> {{ad.number}}</p>
+                <p><strong>Номер детали:</strong> {{ad.number}}</p>
                 {% endif %}
+                <p class="ad-price"><strong>Цена:</strong> {{ad.price}} ₽</p>
+              
                 <a href="" class="send-message">Задать вопрос продавцу</a>
             </div>
         </div>
