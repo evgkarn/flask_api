@@ -23,7 +23,7 @@ import re
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
-from sqlalchemy_filters import apply_filters, apply_pagination
+from sqlalchemy_filters import apply_filters, apply_pagination, apply_sort
 
 auth = HTTPBasicAuth()
 application.config["SQLALCHEMY_POOL_RECYCLE"] = 30
@@ -869,6 +869,7 @@ def get_search_html():
     if request.args.get('year_auto'):
         filter_year = []
         unique = set()
+        generation_list = ''
         if request.args.get('mark_auto'):
             mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
             print(mark.id)
@@ -882,7 +883,6 @@ def get_search_html():
             for i in filtered_query_year.all():
                 unique.add(i.generation)
             unique_list = sorted(list(unique))
-            generation_list = ''
             for i in range(len(unique_list)):
                 if i + 1 != len(unique_list):
                     generation_list += str(unique_list[i]) + ', '
@@ -914,9 +914,27 @@ def get_search_html():
             ]
         })
     query = models.Post.query
-    print(filter_spec)
-    filtered_query = apply_filters(query, filter_spec)
-    print(filtered_query.all())
+    sort_spec = [
+        {'field': 'timestamp', 'direction': 'desc'}
+    ]
+    filtered_query = apply_sort(query, sort_spec)
+    if request.args.get('sort') and request.args.get('sort') == 'price':
+        if request.args.get('method') and request.args.get('method') == "asc":
+            sort_spec = [
+                {'field': 'price', 'direction': 'asc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+        elif request.args.get('method') and request.args.get('method') == "desc":
+            sort_spec = [
+                {'field': 'price', 'direction': 'desc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+        else:
+            sort_spec = [
+                {'field': 'price', 'direction': 'desc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+    filtered_query = apply_filters(filtered_query, filter_spec)
     page = 1
     page_size = 10
     if request.args.get('page'):
