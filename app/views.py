@@ -641,7 +641,7 @@ def active_ads_users(user_id):
         abort(404)
     for ad in ads:
         ad.active = int(request.form['active'])
-        db.session.commit()
+    db.session.commit()
     return jsonify({'result': True})
 
 
