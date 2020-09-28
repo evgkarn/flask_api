@@ -1378,6 +1378,8 @@ def status_pay():
     db.session.commit()
     return make_response("OK", 200)
 
+
+# Заготовка для поиска после перехода на VPS
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
 # # @token_required
 # def change_rate():
