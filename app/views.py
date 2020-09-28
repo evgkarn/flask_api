@@ -624,7 +624,7 @@ def delete_ads_users(user_id):
             if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + ad.image):
                 os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
         db.session.delete(ad)
-        db.session.commit()
+    db.session.commit()
     return jsonify({'result': True})
 
 
