@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import application, models, db
-from flask import jsonify, abort, request, make_response, url_for, current_app, render_template
+from flask import jsonify, abort, request, make_response, url_for, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -84,7 +84,9 @@ def file_to_upload(file):
 
 
 # Формирования словаря полей объявления для json ответа
-def ad_by_id(id_elem, error_log={}):
+def ad_by_id(id_elem, error_log=None):
+    if error_log is None:
+        error_log = {}
     ad = models.Post.query.get(id_elem)
     if ad:
         new_ad_json = {
@@ -180,7 +182,7 @@ def get_user_ads(user_id):
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
 @token_required
 def create_ads():
-    if not request.form or not 'text' in request.form:
+    if not request.form or 'text' not in request.form:
         abort(400)
     ads = models.Post.query.all()
     user = models.User.query.get(request.form['user_id'])
@@ -1283,7 +1285,7 @@ def create_pay():
                'Accept': 'text/plain',
                'Content-Encoding': 'utf-8'}
     data = {
-        "TerminalKey": "1595411067598DEMO",
+        "TerminalKey": config_local.TERMINAL_KEY,
         "Amount": order.amount,
         "OrderId": order.id,
         "DATA": {
