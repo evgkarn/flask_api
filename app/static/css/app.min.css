@@ -51,6 +51,7 @@
 }
 .search-form input[type=text], select{
     width: 230px;
+    border-radius: 5px;
 }
 .search-form img{
     position: absolute;
