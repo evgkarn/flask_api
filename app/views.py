@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import application, models, db
-from flask import jsonify, abort, request, make_response, url_for, current_app, render_template
+from flask import jsonify, abort, request, make_response, url_for, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -23,7 +23,7 @@ import re
 
 sys.path.append(config_local.PATH)
 from flask_cors import CORS
-from sqlalchemy_filters import apply_filters, apply_pagination
+from sqlalchemy_filters import apply_filters, apply_pagination, apply_sort
 
 auth = HTTPBasicAuth()
 application.config["SQLALCHEMY_POOL_RECYCLE"] = 30
@@ -84,7 +84,9 @@ def file_to_upload(file):
 
 
 # Формирования словаря полей объявления для json ответа
-def ad_by_id(id_elem, error_log={}):
+def ad_by_id(id_elem, error_log=None):
+    if error_log is None:
+        error_log = {}
     ad = models.Post.query.get(id_elem)
     if ad:
         new_ad_json = {
@@ -180,7 +182,7 @@ def get_user_ads(user_id):
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
 @token_required
 def create_ads():
-    if not request.form or not 'text' in request.form:
+    if not request.form or 'text' not in request.form:
         abort(400)
     ads = models.Post.query.all()
     user = models.User.query.get(request.form['user_id'])
@@ -624,7 +626,7 @@ def delete_ads_users(user_id):
             if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + ad.image):
                 os.remove(os.path.dirname(os.path.abspath(__file__)) + ad.image)
         db.session.delete(ad)
-        db.session.commit()
+    db.session.commit()
     return jsonify({'result': True})
 
 
@@ -641,7 +643,7 @@ def active_ads_users(user_id):
         abort(404)
     for ad in ads:
         ad.active = int(request.form['active'])
-        db.session.commit()
+    db.session.commit()
     return jsonify({'result': True})
 
 
@@ -869,6 +871,7 @@ def get_search_html():
     if request.args.get('year_auto'):
         filter_year = []
         unique = set()
+        generation_list = ''
         if request.args.get('mark_auto'):
             mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
             print(mark.id)
@@ -882,7 +885,6 @@ def get_search_html():
             for i in filtered_query_year.all():
                 unique.add(i.generation)
             unique_list = sorted(list(unique))
-            generation_list = ''
             for i in range(len(unique_list)):
                 if i + 1 != len(unique_list):
                     generation_list += str(unique_list[i]) + ', '
@@ -914,9 +916,27 @@ def get_search_html():
             ]
         })
     query = models.Post.query
-    print(filter_spec)
-    filtered_query = apply_filters(query, filter_spec)
-    print(filtered_query.all())
+    sort_spec = [
+        {'field': 'timestamp', 'direction': 'desc'}
+    ]
+    filtered_query = apply_sort(query, sort_spec)
+    if request.args.get('sort') and request.args.get('sort') == 'price':
+        if request.args.get('method') and request.args.get('method') == "asc":
+            sort_spec = [
+                {'field': 'price', 'direction': 'asc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+        elif request.args.get('method') and request.args.get('method') == "desc":
+            sort_spec = [
+                {'field': 'price', 'direction': 'desc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+        else:
+            sort_spec = [
+                {'field': 'price', 'direction': 'desc'}
+            ]
+            filtered_query = apply_sort(query, sort_spec)
+    filtered_query = apply_filters(filtered_query, filter_spec)
     page = 1
     page_size = 10
     if request.args.get('page'):
@@ -1265,7 +1285,7 @@ def create_pay():
                'Accept': 'text/plain',
                'Content-Encoding': 'utf-8'}
     data = {
-        "TerminalKey": "1595411067598DEMO",
+        "TerminalKey": config_local.TERMINAL_KEY,
         "Amount": order.amount,
         "OrderId": order.id,
         "DATA": {
@@ -1358,6 +1378,8 @@ def status_pay():
     db.session.commit()
     return make_response("OK", 200)
 
+
+# Заготовка для поиска после перехода на VPS
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
 # # @token_required
 # def change_rate():
