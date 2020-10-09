@@ -33,7 +33,7 @@ CORS(application, resources={r"/*": {"origins": "*"}})
 
 application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'csv'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'csv'}
 
 
 def token_required(f):
