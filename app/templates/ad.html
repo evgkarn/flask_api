@@ -54,10 +54,10 @@
                     </div>
                     <div class="results-ads-info">
                         <div class="ads-name">
-                          <h3> {{ad_rec.name_ads}}</h3>
+                          <h3> {{ad_rec.name_ads|safe}}</h3>
                         </div>
                         <div class="ads-info">
-                            <p>{{ad_rec.body}}</p>
+                            <p>{{ad_rec.body|safe}}</p>
                           </div>
                           <div class="ads-shop">
                             <p>Продавец: <a href="/shop/{{ad_rec.user.shops.first().id}}">{{ad_rec.user.shops.first().name}}</a></p>
