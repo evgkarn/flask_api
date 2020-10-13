@@ -13,7 +13,7 @@
                 {% endif %}
             </div>
             <div class="ads-page-info">
-                <h1>{{ad.name_ads}}</h1>
+                <h1>{{ad.name_ads|safe}}</h1>
                 <div class="inner-ad-info">
                 <p><strong>Автомобиль:</strong> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</p>
                 <p><strong>Продавец:</strong> <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
@@ -33,7 +33,7 @@
 
 
         <p><strong>Подробное описание детали:</strong>
-        {{ad.body}}
+        {{ad.body|safe}}
         </p>
         <hr/>
         <input id="shop_id" type="hidden" value="{{ad.user.shops.first().id}}">
