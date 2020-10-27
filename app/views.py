@@ -10,6 +10,8 @@ from config_local import SERVER_NAME
 from functools import wraps
 from sqlalchemy import desc
 from urllib.parse import unquote
+from flask_mail import Mail, Message
+from threading import Thread
 import html
 import datetime
 import jwt
@@ -35,6 +37,14 @@ application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'csv'}
 
+application.config['MAIL_SERVER'] = config_local.MAIL_SERVER
+application.config['MAIL_PORT'] = config_local.MAIL_PORT
+application.config['MAIL_USE_TLS'] = config_local.MAIL_USE_TLS
+application.config['MAIL_USERNAME'] = config_local.MAIL_USERNAME
+application.config['MAIL_DEFAULT_SENDER'] = config_local.MAIL_DEFAULT_SENDER
+application.config['MAIL_PASSWORD'] = config_local.MAIL_PASSWORD
+mail = Mail(application)
+
 
 def token_required(f):
     @wraps(f)
@@ -59,6 +69,19 @@ def token_required(f):
         return f(*args, **kwargs)
 
     return decorated
+
+# Отправка email
+def async_send_mail(app, msg):
+    with app.app_context():
+        mail.send(msg)
+
+
+def send_mail(subject, recipient, template, **kwargs):
+    msg = Message(subject, sender=application.config['MAIL_DEFAULT_SENDER'], recipients=[recipient])
+    msg.html = render_template(template, **kwargs)
+    thr = Thread(target=async_send_mail, args=[application, msg])
+    thr.start()
+    return thr
 
 
 # Возврат 404 ошибки в json
@@ -525,6 +548,8 @@ def create_user():
     )
     db.session.add(new_shop)
     db.session.commit()
+    send_mail("Данные при регистрации", request.form['email'], "mail/new_user.html", login=request.form['email'],
+                                                                                      password=request.form['password'])
     return jsonify(user_by_id(id_user)), 201
 
 
@@ -1377,7 +1402,6 @@ def status_pay():
         order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)
-
 
 # Заготовка для поиска после перехода на VPS
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
