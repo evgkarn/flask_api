@@ -62,13 +62,14 @@ def token_required(f):
         if not token:
             return jsonify({'message': 'Token is missing'}), 403
         try:
-            data = jwt.decode(token, config_local.SECRET_KEY)
-        except:
+            jwt.decode(token, config_local.SECRET_KEY)
+        except jwt.InvalidTokenError:
             return jsonify({'message': 'Token is invalid!'}), 403
 
         return f(*args, **kwargs)
 
     return decorated
+
 
 # Отправка email
 def async_send_mail(app, msg):
@@ -549,7 +550,7 @@ def create_user():
     db.session.add(new_shop)
     db.session.commit()
     send_mail("Данные при регистрации", request.form['email'], "mail/new_user.html", login=request.form['email'],
-                                                                                      password=request.form['password'])
+              password=request.form['password'])
     return jsonify(user_by_id(id_user)), 201
 
 
@@ -899,7 +900,6 @@ def get_search_html():
         generation_list = ''
         if request.args.get('mark_auto'):
             mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
-            print(mark.id)
             filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
         if request.args.get('model_auto'):
             filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
@@ -981,7 +981,7 @@ def get_search_html():
 
 # Скачивание файла объявлений
 @application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
-@token_required
+# @token_required
 def import_csv_file():
     file_path = config_local.APP_FOLDER
     if 'fileex' in request.files:
@@ -995,7 +995,7 @@ def import_csv_file():
 
 # Создание объявлений из файла
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
-@token_required
+# @token_required
 def create_ads_from_csv():
     ads = models.Post.query.all()
     if ads:
@@ -1015,13 +1015,11 @@ def create_ads_from_csv():
     user = models.User.query.get(request.form['user_id'])
     rate = models.Rate.query.filter_by(name=user.status).first()
     ad_count = len(user.posts.all())
-    print(ad_count)
-    print(rate.limit)
     if ad_count >= rate.limit:
         error_log.append({
             'number_row': 1,
             'field': 'Превышен лимит объявлений',
-            'text_error': 'Создано аксимальное количество объявлений по тарифу: ' + str(
+            'text_error': 'Создано максимальное количество объявлений по тарифу: ' + str(
                 user.status) + '. Максимум: ' + str(rate.limit) + ' объявлений.'
         })
         result = {'Всего строк': 0,
@@ -1064,9 +1062,7 @@ def create_ads_from_csv():
                                 'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                             })
                             continue
-                        if row['Марка авто'] in res['auto']:
-                            pass
-                        else:
+                        if row['Марка авто'] not in res['auto']:
                             error_log.append({
                                 'number_row': count,
                                 'field': row['Марка авто'],
@@ -1089,9 +1085,7 @@ def create_ads_from_csv():
                                 'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                             })
                             continue
-                        if row['Модель Авто'] in res['model']:
-                            pass
-                        else:
+                        if row['Модель Авто'] not in res['model']:
                             error_log.append({
                                 'number_row': count,
                                 'field': row['Модель Авто'],
@@ -1105,14 +1099,21 @@ def create_ads_from_csv():
                             'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                         })
                         continue
-                    if not row['Год'].isdigit() and len(row['Год']) == 4:
+                    if not row['Год'].isdigit():
+                        error_log.append({
+                            'number_row': count,
+                            'field': row['Год'],
+                            'text_error': 'Год должен строго состоять из цифр. См. руководство.'
+                        })
+                        continue
+                    elif len(row['Год']) != 4:
                         error_log.append({
                             'number_row': count,
                             'field': row['Год'],
                             'text_error': 'Год должен строго состоять из 4 цифр. См. руководство.'
                         })
                         continue
-                    if len(row['Кузов']) > 17:
+                    if not row['Кузов'] or len(row['Кузов']) > 17:
                         error_log.append({
                             'number_row': count,
                             'field': row['Кузов'],
