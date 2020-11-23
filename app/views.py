@@ -893,29 +893,31 @@ def get_search_html():
     if request.args.get('mark_auto'):
         filter_spec.append({'field': 'mark_auto', 'op': '==', 'value': request.args.get('mark_auto')})
     if request.args.get('model_auto'):
-        filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
+        if request.args.get('model_auto') != 'all':
+            filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
     if request.args.get('year_auto'):
-        filter_year = []
-        unique = set()
-        generation_list = ''
-        if request.args.get('mark_auto'):
-            mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
-            filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
-        if request.args.get('model_auto'):
-            filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
-        if request.args.get('year_auto'):
-            filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
-            query = models.Auto.query
-            filtered_query_year = apply_filters(query, filter_year)
-            for i in filtered_query_year.all():
-                unique.add(i.generation)
-            unique_list = sorted(list(unique))
-            for i in range(len(unique_list)):
-                if i + 1 != len(unique_list):
-                    generation_list += str(unique_list[i]) + ', '
-                else:
-                    generation_list += str(unique_list[i])
-        filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
+        if request.args.get('year_auto') != 'all':
+            filter_year = []
+            unique = set()
+            generation_list = ''
+            if request.args.get('mark_auto'):
+                mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
+                filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
+            if request.args.get('model_auto'):
+                filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
+            if request.args.get('year_auto'):
+                filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
+                query = models.Auto.query
+                filtered_query_year = apply_filters(query, filter_year)
+                for i in filtered_query_year.all():
+                    unique.add(i.generation)
+                unique_list = sorted(list(unique))
+                for i in range(len(unique_list)):
+                    if i + 1 != len(unique_list):
+                        generation_list += str(unique_list[i]) + ', '
+                    else:
+                        generation_list += str(unique_list[i])
+            filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
     if request.args.get('series_auto'):
         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
     if request.args.get('modification_auto'):
