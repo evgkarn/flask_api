@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			method: 'GET'
 		});
 		carsModel = await response.json();
-		modelOption = [];
+		modelOption = [`<option value='all'>Все</option>`];
 		carModels.remove(0);
 		modelOption.push( carsModel.model.map((carModel)=>{
 			return `<option value='${carModel}'>${carModel} </option>`	
@@ -89,7 +89,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			method: 'GET'
 		});
 		carsYears = await response.json();
-		yearOption = [];
+		yearOption = [`<option value='all'>Все</option>`];
 		var length = carYear.options.length;
 		for (i = length-1; i >= 0; i--) {
   		carYear.options[i] = null;
