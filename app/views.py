@@ -1101,27 +1101,14 @@ def create_ads_from_csv():
                             'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                         })
                         continue
-                    if not row['Год'].isdigit():
-                        error_log.append({
-                            'number_row': count,
-                            'field': row['Год'],
-                            'text_error': 'Год должен строго состоять из цифр. См. руководство.'
-                        })
-                        continue
-                    elif len(row['Год']) != 4:
-                        error_log.append({
-                            'number_row': count,
-                            'field': row['Год'],
-                            'text_error': 'Год должен строго состоять из 4 цифр. См. руководство.'
-                        })
-                        continue
-                    if not row['Кузов'] or len(row['Кузов']) > 17:
-                        error_log.append({
-                            'number_row': count,
-                            'field': row['Кузов'],
-                            'text_error': 'Номер кузова должен быть не более 17 символов. См. руководство.'
-                        })
-                        continue
+                    if row['Год']:
+                        row['Год'] = html.escape(row['Год'])
+                    else:
+                        row['Год'] = ''
+                    if row['Кузов']:
+                        row['Кузов'] = html.escape(row['Кузов'])
+                    else:
+                        row['Кузов'] = ''
                     if not row['Цена'].isdigit():
                         error_log.append({
                             'number_row': count,
