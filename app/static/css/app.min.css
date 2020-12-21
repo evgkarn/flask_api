@@ -177,3 +177,31 @@ a.redButton:hover{
     line-height: 11px;
     margin-top: 26px;
 }
+
+@media screen and (min-width: 1160px) {
+    .container {
+      width: 950px;
+
+    }
+    .search-form input[type=text], select {
+        width: 189px;
+        font-size: 13px;
+    }
+    .results-detail .ads-name {
+        font-size: 13px;
+    }
+    .redButton {
+        padding: 8px 20px;
+        border-radius: 5px;
+      
+    }
+    .results-detail .results-ads-more button {
+        width: 170px;
+        margin-bottom: 10px;
+        font-size: 13px;
+    }
+    .results-detail {
+   
+        height: 195px;
+    }
+  }
