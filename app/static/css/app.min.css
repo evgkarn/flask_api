@@ -198,10 +198,13 @@ a.redButton:hover{
     .results-detail .results-ads-more button {
         width: 170px;
         margin-bottom: 10px;
-        font-size: 13px;
+        font-size: 12px;
     }
     .results-detail {
    
         height: 195px;
+    }
+    .results-ads-more a{
+        font-size: 12px;
     }
   }
