@@ -86,12 +86,15 @@
     font-size: 18px;
 }
 .send-message{
-    padding: 5px 10px 9px;
-    border: 1px solid #f63e3e;
-    border-radius: 5px;
-    color: white;
-    background: #f63e3e;
+    padding: 4px 9px 7px;
+    border: 3px solid #f63e3e;
+    border-radius: 0px;
+    color: #f63e3e;
+    background: #ffffff;
     transition: 0.5s all linear;
+    text-transform: lowercase;
+    margin-top: 10px;
+    display: inline-block;
 }
 .send-message:hover{
     color: #f63e3e;
