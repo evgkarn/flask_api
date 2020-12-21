@@ -172,6 +172,12 @@ a.redButton:hover{
 .ad-price{
     font-size: 24px;
     text-transform: uppercase;
+    background: #f63e3e;
+    color: white;
+    display: block;
+    padding: 0 20px;
+    width: 199px;
+    border-radius: 6px;
 }
 .inner-ad-info{
     line-height: 11px;

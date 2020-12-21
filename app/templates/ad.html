@@ -13,7 +13,13 @@
                 {% endif %}
             </div>
             <div class="ads-page-info">
-                <h1>{{ad.name_ads|safe}}</h1>
+                <div class="ad-name">
+                    <h1>{{ad.name_ads|safe}}</h1>
+                    <div class="ad-price">
+                        <p><strong>Цена:</strong> {{ad.price}} ₽</p>
+                        </div>
+                </div>
+            
                 <div class="inner-ad-info">
                 <p><strong>Автомобиль:</strong> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</p>
                 <p><strong>Продавец:</strong> <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
@@ -23,9 +29,7 @@
                 <p><strong>Номер детали:</strong> {{ad.number}}</p>
                 {% endif %}
                 </div>
-                <div class="ad-price">
-                <p><strong>Цена:</strong> {{ad.price}} ₽</p>
-                </div>
+               
                 <a href="" class="send-message">Задать вопрос продавцу</a>
             </div>
         </div>
