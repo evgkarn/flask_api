@@ -178,7 +178,7 @@ a.redButton:hover{
     margin-top: 26px;
 }
 
-@media screen and (min-width: 1160px) {
+@media screen and (max-width: 1160px) {
     .container {
       width: 950px;
 
