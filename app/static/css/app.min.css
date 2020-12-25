@@ -179,7 +179,7 @@ a.redButton:hover{
     color: white;
     display: inline-flex;
     padding: 0 20px;
-    width: 199px;
+    width: auto;
     border-radius: 6px;
 }
 .inner-ad-info{
