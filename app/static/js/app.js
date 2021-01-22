@@ -11,9 +11,13 @@ document.addEventListener("DOMContentLoaded", function() {
 	
 	// Уменьшаем размер описания
 	let adsInfoText = document.querySelectorAll('.ads-info p');
+	let adsNameText = document.querySelectorAll('.ads-name h3 a')
 	if(adsInfoText){
 		for(let i = 0; i< adsInfoText.length; i++){
 			adsInfoText[i].innerText.length > 40 ? adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}...` : adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
+		}
+		for(let i = 0; i< adsNameText.length; i++){
+			adsNameText[i].innerText.length > 40 ? adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,40)}...` : adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,40)}`
 		}
 	}
 
