@@ -9,6 +9,16 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	let url = String(window.location.href)
 	
+	// Уменьшаем размер описания
+	let adsInfoText = document.querySelectorAll('.ads-info p');
+	if(adsInfoText){
+		for(let i = 0; i< adsInfoText.length; i++){
+			adsInfoText[i].innerText.length > 40 ? adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}...` : adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
+		}
+	}
+
+
+
 	
 	if(carName){
 
@@ -128,12 +138,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		${carYear.length > 1 ? '&year_auto=' + carYear : ''}`
 	})
 
-	let adsInfoText = document.querySelectorAll('.ads-info p');
-
-
-	for(let i = 0; i< adsInfoText.length; i++){
-		adsInfoText[i].innerText.length > 40 ? adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}...` : adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
-	}
+	
 	}
 
 	// Получаем город пользователя
