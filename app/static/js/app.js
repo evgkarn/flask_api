@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function() {
 			adsInfoText[i].innerText.length > 40 ? adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}...` : adsInfoText[i].innerText = `${adsInfoText[i].textContent.substr(0,60)}`
 		}
 		for(let i = 0; i< adsNameText.length; i++){
-			adsNameText[i].innerText.length > 40 ? adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,40)}...` : adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,40)}`
+			adsNameText[i].innerText.length > 40 ? adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,30)}...` : adsNameText[i].innerText = `${adsNameText[i].textContent.substr(0,40)}`
 		}
 	}
 
