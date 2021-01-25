@@ -389,7 +389,6 @@ def get_order_ads(shop_id):
 
 # Создание заявки
 @application.route('/todo/api/v1.0/order', methods=['POST'])
-@token_required
 def create_order():
     if not request.form or 'ad_id' not in request.form:
         abort(400)
