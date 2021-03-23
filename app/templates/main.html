@@ -19,10 +19,10 @@
     <input type="submit" value="Поиск" class="redButton">
 </form>
 <div class="results">
-    <h2>Результаты поиска: {{pagination.total_results}}</h2>
+    <h2>Результаты поиска: </h2>
     <div class="body-wrapper">
     <div class="results-blocks">
-        {% for ad in ads %}
+        {% for ad in ads.items %}
         <div class="results-detail">
             <div class="results-ads-image">
                 {% if ad.image %}
@@ -61,70 +61,71 @@
         {% endfor %}
         <div class="center">
             <div class="pagination">
-                {% if pagination.page_number > 1 %}
-                    <a href="/?page={{pagination.page_number - 1}}"><</a>
+                {% if ads.page > 1 %}
+                    <a href="{{ url_for('get_main_html', page=ads.page - 1) }}"><</a>
                 {% endif %}
-                {% if pagination.page_number > 4 %}
-                    <a href="/?page=1">1</a>
+                {% if ads.page > 3 %}
+                    <a href="{{ url_for('get_main_html', page=1) }}">1</a>
                 {% endif %}
-                {% if pagination.page_number > 4 %}
+                {% if ads.page > 4 %}
                     <a class="disabled" href="#">..</a>
                 {% endif %}
-                {% if pagination.num_pages < 6 %}
-                    {% for page in range(1, pagination.num_pages + 1) %}
-                        {% if page == pagination.page_number %}
-                            <a class="active" href="/?page={{page}}">{{page}}</a>
+                {% if ads.pages < 6 %}
+                    {% for page in range(1, ads.pages + 1) %}
+                        {% if page == ads.page %}
+                            <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                         {% else %}
-                            <a href="/?page={{page}}">{{page}}</a>
+                            <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                         {% endif %}
                     {% endfor %}
-                {% elif pagination.page_number + 2 < pagination.num_pages %}
-                    {% if pagination.page_number > 2 %}
-                        {% for page in range(pagination.page_number -2, pagination.page_number + 3) %}
-                            {% if page == pagination.page_number %}
-                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                {% elif ads.page + 2 < ads.pages %}
+                    {% if ads.page > 2 %}
+                        {% for page in range(ads.page -2, ads.page + 3) %}
+                            {% if page == ads.page %}
+                                <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% else %}
-                                <a href="/?page={{page}}">{{page}}</a>
+                                <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% endif %}
                         {% endfor %}
-                    {% elif pagination.page_number == 2 %}
-                        {% for page in range(pagination.page_number -1, pagination.page_number + 3) %}
-                            {% if page == pagination.page_number %}
-                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                    {% elif ads.page == 2 %}
+                        {% for page in range(ads.page -1, ads.page + 3) %}
+                            {% if page == ads.page %}
+                                <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% else %}
-                                <a href="/?page={{page}}">{{page}}</a>
+                                <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% endif %}
                         {% endfor %}
                     {% else %}
-                        {% for page in range(pagination.page_number, pagination.page_number + 5) %}
-                            {% if page == pagination.page_number %}
-                                <a class="active" href="/?page={{page}}">{{page}}</a>
+                        {% for page in range(ads.page, ads.page + 5) %}
+                            {% if page == ads.page %}
+                                <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% else %}
-                                <a href="/?page={{page}}">{{page}}</a>
+                                <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                             {% endif %}
                         {% endfor %}
                     {% endif %}
                 {% else %}
-                    {% for page in range(pagination.num_pages - 4, pagination.num_pages + 1) %}
-                        {% if page == pagination.page_number %}
-                            <a class="active" href="/?page={{page}}">{{page}}</a>
+                    {% for page in range(ads.pages - 4, ads.pages + 1) %}
+                        {% if page == ads.page %}
+                            <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                         {% else %}
-                            <a href="/?page={{page}}">{{page}}</a>
+                            <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
 
-                {% if pagination.page_number <  pagination.num_pages - 3 %}
+                {% if ads.page <  ads.pages - 3 %}
                     <a class="disabled" href="#">..</a>
                 {% endif %}
-                {% if pagination.page_number <  pagination.num_pages - 3 %}
-                    <a href="/?page={{pagination.num_pages}}">{{pagination.num_pages}}</a>
+                {% if ads.page <  ads.pages - 2 %}
+                    <a href="{{ url_for('get_main_html', page=ads.pages) }}">{{ads.pages}}</a>
                 {% endif %}
-                {% if pagination.page_number <  pagination.num_pages %}
-                    <a href="/?page={{pagination.page_number + 1}}">></a>
+                {% if ads.page <  ads.pages %}
+                    <a href="{{ url_for('get_main_html', page=ads.page + 1) }}">></a>
                 {% endif %}
             </div>
         </div>
+
 
 
 

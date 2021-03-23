@@ -838,19 +838,14 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
     return jsonify({'fuel': lt_auto})
 
 
-@application.route('/')
-def get_main_html():
-    ads = models.Post.query.order_by(desc(models.Post.id))
-    filter_spec = [{'field': 'active', 'op': '==', 'value': 1}]
-    filtered_query = apply_filters(ads, filter_spec)
-    page = 1
-    page_size = 10
-    if request.args.get('page'):
-        page = int(request.args.get('page'))
-    if request.args.get('page_size'):
-        page_size = int(request.args.get('page_size'))
-    filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
-    return render_template('main.html', ads=filtered_query, pagination=pagination)
+@application.route('/', methods=['GET'], defaults={"page": 1})
+@application.route('/<int:page>', methods=['GET'])
+def get_main_html(page):
+    page = page
+    per_page = 10
+    ads = models.Post.query.order_by(desc(models.Post.id)).paginate(page, per_page, error_out=False)
+    print(ads)
+    return render_template('main.html', ads=ads)
 
 
 @application.route('/shop/<int:shop_id>')
