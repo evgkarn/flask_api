@@ -843,8 +843,7 @@ def get_fuel(auto_name, auto_model, auto_year, auto_series, auto_modification):
 def get_main_html(page):
     page = page
     per_page = 10
-    ads = models.Post.query.order_by(desc(models.Post.id)).paginate(page, per_page, error_out=False)
-    print(ads)
+    ads = models.Post.query.order_by(desc(models.Post.id)).filter_by(active=1).paginate(page, per_page, error_out=False)
     return render_template('main.html', ads=ads)
 
 
