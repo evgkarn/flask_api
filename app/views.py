@@ -462,7 +462,7 @@ def user_by_id(id_elem, error_log=None):
                       'image': SERVER_NAME + shop.image},
              'url': url_for('get_user', user_id=user.id, _external=True),
              'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
-            config_local.SECRET_KEY)
+            config_local.SECRET_KEY, algorithm="HS256")
     new_user_json = {
         'id': user.id,
         'email': user.email,
