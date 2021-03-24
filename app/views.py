@@ -62,7 +62,7 @@ def token_required(f):
         if not token:
             return jsonify({'message': 'Token is missing'}), 403
         try:
-            jwt.decode(token, config_local.SECRET_KEY)
+            jwt.decode(token, config_local.SECRET_KEY, algorithms=["HS256"])
         except jwt.InvalidTokenError:
             return jsonify({'message': 'Token is invalid!'}), 403
 
@@ -698,7 +698,7 @@ def auth_user():
                           'image': SERVER_NAME + our_user.shops[0].image},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
-                config_local.SECRET_KEY)
+                config_local.SECRET_KEY, algorithms=["HS256"])
             return jsonify({'token': token.encode().decode('UTF-8')}), 201
         else:
             return jsonify({'error': 'Unauthorized access'})
