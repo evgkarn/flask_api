@@ -699,7 +699,7 @@ def auth_user():
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
                 config_local.SECRET_KEY)
-            return jsonify({'token': token}), 201
+            return jsonify({'token': token.encode().decode('UTF-8')}), 201
         else:
             return jsonify({'error': 'Unauthorized access'})
     else:
