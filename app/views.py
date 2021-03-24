@@ -478,7 +478,7 @@ def user_by_id(id_elem, error_log=None):
     if shop:
         new_user_json['shop'] = user_shops
     if token:
-        new_user_json['token'] = token.decode('UTF-8')
+        new_user_json['token'] = token.encode().decode('UTF-8')
     return new_user_json
 
 
@@ -1049,7 +1049,7 @@ def create_ads_from_csv():
                         continue
                     if row['Марка авто']:
                         try:
-                            res = json.loads(get_auto().get_data().decode("utf-8"))
+                            res = json.loads(get_auto().get_data().encode().decode("utf-8"))
                         except NotFound:
                             error_log.append({
                                 'number_row': count,
@@ -1072,7 +1072,7 @@ def create_ads_from_csv():
                         continue
                     if row['Модель Авто']:
                         try:
-                            res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
+                            res = json.loads(get_model(row['Марка авто']).get_data().encode().decode("utf-8"))
                         except NotFound:
                             error_log.append({
                                 'number_row': count,
