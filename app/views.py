@@ -112,6 +112,9 @@ def ad_by_id(id_elem, error_log=None):
     if error_log is None:
         error_log = {}
     ad = models.Post.query.get(id_elem)
+    img = ''
+    if ad.image:
+        img = SERVER_NAME + ad.image
     if ad:
         new_ad_json = {
             'id': ad.id,
@@ -134,7 +137,7 @@ def ad_by_id(id_elem, error_log=None):
             'up_down': ad.up_down,
             'quantity': ad.quantity,
             'price': ad.price,
-            'image': SERVER_NAME + ad.image,
+            'image': img,
             'url': url_for('get_ad', ad_id=ad.id, _external=True),
             'date_create': ad.timestamp,
             'user': ad.user.shops.first().name,
@@ -441,6 +444,9 @@ def user_by_id(id_elem, error_log=None):
     shop = models.Shop.query.filter_by(user_id=id_elem).first()
     user_shops = {}
     token = {}
+    img = ''
+    if shop.image:
+        img = SERVER_NAME + shop.image
     if shop:
         user_shops = {
             'name': shop.name,
@@ -448,7 +454,7 @@ def user_by_id(id_elem, error_log=None):
             'phone': shop.phone,
             'city': shop.city,
             'address': shop.address,
-            'image': SERVER_NAME + shop.image
+            'image': img
         }
         token = jwt.encode(
             {'user': user.email,
@@ -463,7 +469,7 @@ def user_by_id(id_elem, error_log=None):
                       'city': shop.city,
                       'address': shop.address,
                       'phone': shop.phone,
-                      'image': SERVER_NAME + shop.image},
+                      'image': img},
              'url': url_for('get_user', user_id=user.id, _external=True),
              'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
             config_local.SECRET_KEY, algorithm="HS256")
@@ -684,6 +690,9 @@ def auth_user():
     if not request.json or 'password' not in request.json:
         abort(400)
     our_user = db.session.query(models.User).filter_by(email=request.json['email']).first()
+    img = ''
+    if our_user.shops[0].image:
+        img = SERVER_NAME + our_user.shops[0].image
     if our_user is not None:
         if check_password_hash(our_user.hash_password, request.json['password']):
             token = jwt.encode(
@@ -699,7 +708,7 @@ def auth_user():
                           'city': our_user.shops[0].city,
                           'address': our_user.shops[0].address,
                           'phone': our_user.shops[0].phone,
-                          'image': SERVER_NAME + our_user.shops[0].image},
+                          'image': img},
                  'url': url_for('get_user', user_id=our_user.id, _external=True),
                  'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=60)},
                 config_local.SECRET_KEY, algorithm="HS256")
@@ -718,6 +727,9 @@ def auth_user_get():
 # Формирования словаря полей объявления для json ответа
 def shop_by_id(id_elem):
     ad = models.Shop.query.get(id_elem)
+    img = ''
+    if ad.image:
+        img = SERVER_NAME + ad.image
     new_ad_json = {
         'id': ad.id,
         'user_id': ad.user_id,
@@ -739,7 +751,7 @@ def shop_by_id(id_elem):
         'front_back': ad.front_back,
         'up_down': ad.up_down,
         'quantity': ad.quantity,
-        'image': SERVER_NAME + ad.image,
+        'image': img,
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
     return new_ad_json
