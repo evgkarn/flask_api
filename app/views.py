@@ -1386,6 +1386,11 @@ def status_pay():
     db.session.commit()
     return make_response("OK", 200)
 
+
+@application.route('/cabinet')
+def get_cabinet_html():
+    return render_template('cabinet.html')
+
 # Заготовка для поиска после перехода на VPS
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
 # # @token_required
