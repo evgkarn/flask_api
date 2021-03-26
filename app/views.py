@@ -195,10 +195,14 @@ def get_user_ads(user_id):
             'front_back': post.front_back,
             'up_down': post.up_down,
             'quantity': post.quantity,
-            'image': SERVER_NAME + post.image,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
         })
+        if post.image:
+            user_posts.append({
+                'image': SERVER_NAME + post.image,
+            })
+
     return jsonify({'ads': user_posts}), 201
 
 
