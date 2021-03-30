@@ -1403,10 +1403,6 @@ def status_pay():
     return make_response("OK", 200)
 
 
-@application.route('/cabinet')
-def get_cabinet_html():
-    return render_template('cabinet.html')
-
 # Заготовка для поиска после перехода на VPS
 # @application.route('/todo/api/v1.0/rate', methods=['POST'])
 # # @token_required
@@ -1463,15 +1459,17 @@ def get_cabinet_html():
 #     return jsonify(error_log), 201
 
 
-# @application.route('/new_search', methods=['GET'])
-# def search():
-#     if request.args.get('q'):
-#         print(request.args.get('q'))
-#         page = request.args.get('page', 1, type=int)
-#         posts, total = models.Post.search(request.args.get('q'), page, 10)
-#         print(total)
-#         print(posts.all())
-#     args = request.args
-#     url = re.sub(r'.page=\d+', '', request.url)
-#     return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
-#                            args=args)
+@application.route('/new_search', methods=['GET'])
+def search():
+    if request.args.get('q'):
+        print(request.args.get('q'))
+        page = request.args.get('page', 1, type=int)
+        posts, total = models.Post.search(request.args.get('q'), page, 10)
+        print(posts)
+        print(total)
+        print(posts.all())
+    args = request.args
+    print(args)
+    url = re.sub(r'.page=\d+', '', request.url)
+    return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
+                           args=args)
