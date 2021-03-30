@@ -1466,7 +1466,10 @@ def search():
         elem_list = 10
         page = request.args.get('page', 1, type=int)
         posts, total = models.Post.search(request.args.get('q'), page, elem_list)
-        pages = total['value'] // elem_list
+        if total['value'] % elem_list == 0:
+            pages = total['value'] // elem_list
+        else:
+            pages = (total['value'] // elem_list) + 1
     url = re.sub(r'.page=\d+', '', request.url)
     if len(request.args) == 1 and request.args.get('page') or not request.args:
         url += '?'
