@@ -896,98 +896,98 @@ def get_oferta_html():
     return render_template('oferta.html')
 
 
-@application.route('/search')
-def get_search_html():
-    filter_spec = []
-    if request.args.get('mark_auto'):
-        filter_spec.append({'field': 'mark_auto', 'op': '==', 'value': request.args.get('mark_auto')})
-    if request.args.get('model_auto'):
-        if request.args.get('model_auto') != 'all':
-            filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
-    if request.args.get('year_auto'):
-        if request.args.get('year_auto') != 'all':
-            filter_year = []
-            unique = set()
-            generation_list = ''
-            if request.args.get('mark_auto'):
-                mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
-                filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
-            if request.args.get('model_auto'):
-                filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
-            if request.args.get('year_auto'):
-                filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
-                query = models.Auto.query
-                filtered_query_year = apply_filters(query, filter_year)
-                for i in filtered_query_year.all():
-                    unique.add(i.generation)
-                unique_list = sorted(list(unique))
-                for i in range(len(unique_list)):
-                    if i + 1 != len(unique_list):
-                        generation_list += str(unique_list[i]) + ', '
-                    else:
-                        generation_list += str(unique_list[i])
-            filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
-    if request.args.get('series_auto'):
-        filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
-    if request.args.get('modification_auto'):
-        filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
-    filter_spec.append({'field': 'active', 'op': '==', 'value': 1})
-    name_lower = ''
-    if request.args.get('name'):
-        name_lower = request.args.get('name')
-        filter_spec.append({
-            'or': [
-                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-                {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-                {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-                {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-            ]
-        })
-    query = models.Post.query
-    sort_spec = [
-        {'field': 'timestamp', 'direction': 'desc'}
-    ]
-    filtered_query = apply_sort(query, sort_spec)
-    if request.args.get('sort') and request.args.get('sort') == 'price':
-        if request.args.get('method') and request.args.get('method') == "asc":
-            sort_spec = [
-                {'field': 'price', 'direction': 'asc'}
-            ]
-            filtered_query = apply_sort(query, sort_spec)
-        elif request.args.get('method') and request.args.get('method') == "desc":
-            sort_spec = [
-                {'field': 'price', 'direction': 'desc'}
-            ]
-            filtered_query = apply_sort(query, sort_spec)
-        else:
-            sort_spec = [
-                {'field': 'price', 'direction': 'desc'}
-            ]
-            filtered_query = apply_sort(query, sort_spec)
-    filtered_query = apply_filters(filtered_query, filter_spec)
-    page = 1
-    page_size = 10
-    if request.args.get('page'):
-        page = int(request.args.get('page'))
-    if request.args.get('page_size'):
-        page_size = int(request.args.get('page_size'))
-    filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
-    url = re.sub(r'.page=\d+', '', request.url)
-    if len(request.args) == 1 and request.args.get('page') or not request.args:
-        url += '?'
-    else:
-        url += '&'
-    args = request.args
-    return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url,
-                           args=args)
+# @application.route('/search')
+# def get_search_html():
+#     filter_spec = []
+#     if request.args.get('mark_auto'):
+#         filter_spec.append({'field': 'mark_auto', 'op': '==', 'value': request.args.get('mark_auto')})
+#     if request.args.get('model_auto'):
+#         if request.args.get('model_auto') != 'all':
+#             filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
+#     if request.args.get('year_auto'):
+#         if request.args.get('year_auto') != 'all':
+#             filter_year = []
+#             unique = set()
+#             generation_list = ''
+#             if request.args.get('mark_auto'):
+#                 mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
+#                 filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
+#             if request.args.get('model_auto'):
+#                 filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
+#             if request.args.get('year_auto'):
+#                 filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
+#                 query = models.Auto.query
+#                 filtered_query_year = apply_filters(query, filter_year)
+#                 for i in filtered_query_year.all():
+#                     unique.add(i.generation)
+#                 unique_list = sorted(list(unique))
+#                 for i in range(len(unique_list)):
+#                     if i + 1 != len(unique_list):
+#                         generation_list += str(unique_list[i]) + ', '
+#                     else:
+#                         generation_list += str(unique_list[i])
+#             filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
+#     if request.args.get('series_auto'):
+#         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
+#     if request.args.get('modification_auto'):
+#         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
+#     filter_spec.append({'field': 'active', 'op': '==', 'value': 1})
+#     name_lower = ''
+#     if request.args.get('name'):
+#         name_lower = request.args.get('name')
+#         filter_spec.append({
+#             'or': [
+#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower + '%'},
+#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
+#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
+#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
+#             ]
+#         })
+#     query = models.Post.query
+#     sort_spec = [
+#         {'field': 'timestamp', 'direction': 'desc'}
+#     ]
+#     filtered_query = apply_sort(query, sort_spec)
+#     if request.args.get('sort') and request.args.get('sort') == 'price':
+#         if request.args.get('method') and request.args.get('method') == "asc":
+#             sort_spec = [
+#                 {'field': 'price', 'direction': 'asc'}
+#             ]
+#             filtered_query = apply_sort(query, sort_spec)
+#         elif request.args.get('method') and request.args.get('method') == "desc":
+#             sort_spec = [
+#                 {'field': 'price', 'direction': 'desc'}
+#             ]
+#             filtered_query = apply_sort(query, sort_spec)
+#         else:
+#             sort_spec = [
+#                 {'field': 'price', 'direction': 'desc'}
+#             ]
+#             filtered_query = apply_sort(query, sort_spec)
+#     filtered_query = apply_filters(filtered_query, filter_spec)
+#     page = 1
+#     page_size = 10
+#     if request.args.get('page'):
+#         page = int(request.args.get('page'))
+#     if request.args.get('page_size'):
+#         page_size = int(request.args.get('page_size'))
+#     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
+#     url = re.sub(r'.page=\d+', '', request.url)
+#     if len(request.args) == 1 and request.args.get('page') or not request.args:
+#         url += '?'
+#     else:
+#         url += '&'
+#     args = request.args
+#     return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url,
+#                            args=args)
 
 
 # Скачивание файла объявлений
@@ -1459,17 +1459,24 @@ def status_pay():
 #     return jsonify(error_log), 201
 
 
-@application.route('/new_search', methods=['GET'])
+@application.route('/search', methods=['GET'])
 def search():
-    if request.args.get('q'):
-        qsearch = request.args.get('q')
-        elem_list = 10
-        page = request.args.get('page', 1, type=int)
-        posts, total = models.Post.search(request.args.get('q'), page, elem_list)
-        if total['value'] % elem_list == 0:
-            pages = total['value'] // elem_list
-        else:
-            pages = (total['value'] // elem_list) + 1
+    qsearch = ''
+    if request.args.get('name'):
+        qsearch += ' ' + request.args.get('name')
+    if request.args.get('mark_auto'):
+        qsearch += ' ' + request.args.get('mark_auto')
+    if request.args.get('model_auto'):
+        qsearch += ' ' + request.args.get('model_auto')
+    if request.args.get('year_auto'):
+        qsearch += ' ' + request.args.get('year_auto')
+    elem_list = 10
+    page = request.args.get('page', 1, type=int)
+    posts, total = models.Post.search(qsearch, page, elem_list)
+    if total['value'] % elem_list == 0:
+        pages = total['value'] // elem_list
+    else:
+        pages = (total['value'] // elem_list) + 1
     url = re.sub(r'.page=\d+', '', request.url)
     if len(request.args) == 1 and request.args.get('page') or not request.args:
         url += '?'
