@@ -1462,14 +1462,16 @@ def status_pay():
 @application.route('/new_search', methods=['GET'])
 def search():
     if request.args.get('q'):
-        print(request.args.get('q'))
+        qsearch = request.args.get('q')
+        elem_list = 10
         page = request.args.get('page', 1, type=int)
-        posts, total = models.Post.search(request.args.get('q'), page, 10)
-        print(posts)
-        print(total)
-        print(posts.all())
-    args = request.args
-    print(args)
+        posts, total = models.Post.search(request.args.get('q'), page, elem_list)
+        pages = total['value'] // elem_list
     url = re.sub(r'.page=\d+', '', request.url)
-    return render_template('search_new.html', ads=posts, pagination=total, search=request.args.get('q'), url=url,
+    if len(request.args) == 1 and request.args.get('page') or not request.args:
+        url += '?'
+    else:
+        url += '&'
+    args = request.args
+    return render_template('search_new.html', ads=posts, pagination=total, this_page=page, pages=pages, search=qsearch, url=url,
                            args=args)

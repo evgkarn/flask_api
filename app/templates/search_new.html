@@ -17,8 +17,8 @@
     </select>
     <input type="submit" value="Поиск" class="redButton">
 </form>
-<div class="results">
-    <h2>Результаты поиска: </h2>
+    <div class="results">
+    <h2>Результаты поиска: {{ pagination['value'] }}</h2>
     <div class="results-blocks">
         {% for ad in ads %}
         <div class="results-detail">
@@ -56,7 +56,73 @@
         </div>
         {% endfor %}
         <div class="center">
+    </div>
+</div>
+</div>
+    <div class="center">
+        <div class="pagination">
+            {% if this_page > 1 %}
+                <a href="{{url}}page={{this_page - 1}}"><</a>
+            {% endif %}
+            {% if this_page > 3 %}
+                <a href="{{url}}page=1">1</a>
+            {% endif %}
+            {% if this_page > 4 %}
+                <a class="disabled" href="#">..</a>
+            {% endif %}
+            {% if pages < 6 %}
+                {% for page in range(1, pages + 1) %}
+                    {% if page == this_page %}
+                        <a class="active" href="{{url}}page={{page}}">{{page}}</a>
+                    {% else %}
+                        <a href="{{url}}page={{page}}">{{page}}</a>
+                    {% endif %}
+                {% endfor %}
+            {% elif this_page + 2 < pages %}
+                {% if this_page > 2 %}
+                    {% for page in range(this_page -2, this_page + 3) %}
+                        {% if page == this_page %}
+                            <a class="active" href="{{url}}page={{page}}">{{page}}</a>
+                        {% else %}
+                            <a href="{{url}}page={{page}}">{{page}}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% elif this_page == 2 %}
+                    {% for page in range(this_page -1, this_page + 3) %}
+                        {% if page == this_page %}
+                            <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
+                        {% else %}
+                            <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% for page in range(this_page, this_page + 5) %}
+                        {% if page == this_page %}
+                            <a class="active" href="{{url}}page={{page}}">{{page}}</a>
+                        {% else %}
+                            <a href="{{url}}page={{page}}">{{page}}</a>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            {% else %}
+                {% for page in range(pages - 4, pages + 1) %}
+                    {% if page == this_page %}
+                        <a class="active" href="{{url}}page={{page}}">{{page}}</a>
+                    {% else %}
+                        <a href="{{url}}page={{page}}">{{page}}</a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
+            {% if this_page <  pages - 3 %}
+                <a class="disabled" href="#">..</a>
+            {% endif %}
+            {% if this_page <  pages - 2 %}
+                <a href="{{url}}page={{pages}}">{{pages}}</a>
+            {% endif %}
+            {% if this_page <  pages %}
+                <a href="{{url}}page={{this_page + 1}}">></a>
+            {% endif %}
         </div>
-</div>
-</div>
+    </div>
 {% endblock %}
