@@ -260,7 +260,7 @@ def create_ads():
             model_auto=request.form['model_auto'],
             year_auto=request.form['year_auto'],
             vin_auto=request.form.get('vin_auto', ""),
-            price=request.form['price'],
+            price=int(request.form['price']),
             series=request.form.get('series_auto', ""),
             modification=request.form.get('modification_auto', ""),
             # generation=generation_list,
@@ -271,8 +271,8 @@ def create_ads():
             left_right=request.form.get('left_right', ""),
             front_back=request.form.get('front_back', ""),
             up_down=request.form.get('up_down', ""),
-            quantity=request.form.get('quantity', ""),
-            user_id=request.form['user_id'],
+            quantity=int(request.form.get('quantity', "")),
+            user_id=int(request.form['user_id']),
             image=image_ads,
             timestamp=datetime.datetime.utcnow()
         )
