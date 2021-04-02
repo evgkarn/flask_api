@@ -264,6 +264,7 @@ def create_ads():
             series=request.form.get('series_auto', ""),
             modification=request.form.get('modification_auto', ""),
             # generation=generation_list,
+            generation=request.form.get('generation', ""),
             fuel=request.form.get('fuel_auto', ""),
             engine=request.form.get('engine_auto', ""),
             number=request.form.get('number', ""),
