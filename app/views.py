@@ -229,27 +229,27 @@ def create_ads():
     else:
         image_ads = ''
     error_log = {}
-    filter_spec = []
-    unique = set()
-    if request.form.get('mark_auto'):
-        mark = models.Model.query.filter_by(name=request.form.get('mark_auto')).first()
-        print(mark.id)
-        filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
-    if request.form.get('model_auto'):
-        filter_spec.append({'field': 'model', 'op': '==', 'value': request.form.get('model_auto')})
-    if request.form.get('year_auto'):
-        filter_spec.append({'field': 'year', 'op': '==', 'value': request.form.get('year_auto')})
-    query = models.Auto.query
-    filtered_query = apply_filters(query, filter_spec)
-    for i in filtered_query.all():
-        unique.add(i.generation)
-    unique_list = sorted(list(unique))
-    generation_list = ''
-    for i in range(len(unique_list)):
-        if i + 1 != len(unique_list):
-            generation_list += str(unique_list[i]) + ', '
-        else:
-            generation_list += str(unique_list[i])
+    # filter_spec = []
+    # unique = set()
+    # if request.form.get('mark_auto'):
+    #     mark = models.Model.query.filter_by(name=request.form.get('mark_auto')).first()
+    #     print(mark.id)
+    #     filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
+    # if request.form.get('model_auto'):
+    #     filter_spec.append({'field': 'model', 'op': '==', 'value': request.form.get('model_auto')})
+    # if request.form.get('year_auto'):
+    #     filter_spec.append({'field': 'year', 'op': '==', 'value': request.form.get('year_auto')})
+    # query = models.Auto.query
+    # filtered_query = apply_filters(query, filter_spec)
+    # for i in filtered_query.all():
+    #     unique.add(i.generation)
+    # unique_list = sorted(list(unique))
+    # generation_list = ''
+    # for i in range(len(unique_list)):
+    #     if i + 1 != len(unique_list):
+    #         generation_list += str(unique_list[i]) + ', '
+    #     else:
+    #         generation_list += str(unique_list[i])
     if ad_count < rate.limit:
         new_ad = models.Post(
             id=id_ad,
@@ -263,7 +263,7 @@ def create_ads():
             price=request.form['price'],
             series=request.form.get('series_auto', ""),
             modification=request.form.get('modification_auto', ""),
-            generation=generation_list,
+            # generation=generation_list,
             fuel=request.form.get('fuel_auto', ""),
             engine=request.form.get('engine_auto', ""),
             number=request.form.get('number', ""),
