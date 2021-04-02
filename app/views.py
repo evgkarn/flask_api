@@ -271,7 +271,7 @@ def create_ads():
             left_right=request.form.get('left_right', ""),
             front_back=request.form.get('front_back', ""),
             up_down=request.form.get('up_down', ""),
-            quantity=int(request.form.get('quantity', "")),
+            quantity=request.form.get('quantity', 1),
             user_id=int(request.form['user_id']),
             image=image_ads,
             timestamp=datetime.datetime.utcnow()
