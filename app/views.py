@@ -216,7 +216,6 @@ def create_ads():
     if not request.form or 'text' not in request.form:
         abort(400)
     ads = models.Post.query.order_by(models.Post.id).all()
-    # ads = models.Post.query.all()
     user = models.User.query.get(request.form['user_id'])
     rate = models.Rate.query.filter_by(name=user.status).first()
     ad_count = len(user.posts.all())
