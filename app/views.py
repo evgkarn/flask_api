@@ -1208,27 +1208,27 @@ def create_ads_from_csv():
             else:
                 image_path = ''
             id_ad += 1
-            filter_spec = []
-            unique = set()
-            if ad['mark_auto']:
-                mark = models.Model.query.filter_by(name=ad['mark_auto']).first()
-                print(mark.id)
-                filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
-            if ad['model_auto']:
-                filter_spec.append({'field': 'model', 'op': '==', 'value': ad['model_auto']})
-            if ad['year_auto']:
-                filter_spec.append({'field': 'year', 'op': '==', 'value': ad['year_auto']})
-            query = models.Auto.query
-            filtered_query = apply_filters(query, filter_spec)
-            for i in filtered_query.all():
-                unique.add(i.generation)
-            unique_list = sorted(list(unique))
-            generation_list = ''
-            for i in range(len(unique_list)):
-                if i + 1 != len(unique_list):
-                    generation_list += str(unique_list[i]) + ', '
-                else:
-                    generation_list += str(unique_list[i])
+            # filter_spec = []
+            # unique = set()
+            # if ad['mark_auto']:
+            #     mark = models.Model.query.filter_by(name=ad['mark_auto']).first()
+            #     print(mark.id)
+            #     filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
+            # if ad['model_auto']:
+            #     filter_spec.append({'field': 'model', 'op': '==', 'value': ad['model_auto']})
+            # if ad['year_auto']:
+            #     filter_spec.append({'field': 'year', 'op': '==', 'value': ad['year_auto']})
+            # query = models.Auto.query
+            # filtered_query = apply_filters(query, filter_spec)
+            # for i in filtered_query.all():
+            #     unique.add(i.generation)
+            # unique_list = sorted(list(unique))
+            # generation_list = ''
+            # for i in range(len(unique_list)):
+            #     if i + 1 != len(unique_list):
+            #         generation_list += str(unique_list[i]) + ', '
+            #     else:
+            #         generation_list += str(unique_list[i])
             new_ad = models.Post(
                 id=ad['id'],
                 active=0,
@@ -1238,9 +1238,10 @@ def create_ads_from_csv():
                 model_auto=ad['model_auto'],
                 year_auto=ad['year_auto'],
                 vin_auto=ad['vin_auto'],
-                generation=generation_list,
-                price=ad['price'],
-                user_id=request.form['user_id'],
+                # generation=generation_list,
+                generation=request.form.get('generation', ""),
+                price=int(ad['price']),
+                user_id=int(request.form['user_id']),
                 image=image_path,
                 timestamp=datetime.datetime.utcnow()
             )
@@ -1474,10 +1475,15 @@ def search():
     elem_list = 10
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list)
-    if total['value'] % elem_list == 0:
-        pages = total['value'] // elem_list
+    print(total)
+    if total != 0:
+        if total['value'] % elem_list == 0:
+            pages = total['value'] // elem_list
+        else:
+            pages = (total['value'] // elem_list) + 1
     else:
-        pages = (total['value'] // elem_list) + 1
+        total = {'value': 0}
+        pages = 0
     url = re.sub(r'.page=\d+', '', request.url)
     if len(request.args) == 1 and request.args.get('page') or not request.args:
         url += '?'
