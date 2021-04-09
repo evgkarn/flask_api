@@ -555,7 +555,8 @@ def create_user():
         city=request.form.get('city', "Иркутск"),
         address=request.form.get('address', "Адрес магазина не заполнен"),
         image=image_shop,
-        user_id=id_user
+        user_id=id_user,
+        timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_shop)
     db.session.commit()
