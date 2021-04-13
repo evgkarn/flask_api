@@ -1476,7 +1476,6 @@ def search():
     elem_list = 10
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list)
-    print(total)
     if total != 0:
         if total['value'] % elem_list == 0:
             pages = total['value'] // elem_list
