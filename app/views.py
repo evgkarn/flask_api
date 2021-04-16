@@ -1090,7 +1090,7 @@ def create_ads_from_csv():
                         continue
                     if row['Модель Авто']:
                         try:
-                            res = json.loads(get_model(row['Марка авто']).get_data().encode().decode("utf-8"))
+                            res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
                         except NotFound:
                             error_log.append({
                                 'number_row': count,
