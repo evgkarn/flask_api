@@ -97,7 +97,7 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-# Функция загруки фото в папку upload
+# Функция загрузки фото в папку upload
 def file_to_upload(file):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
@@ -1067,7 +1067,7 @@ def create_ads_from_csv():
                         continue
                     if row['Марка авто']:
                         try:
-                            res = json.loads(get_auto().get_data().encode().decode("utf-8"))
+                            res = json.loads(get_auto().get_data().decode("utf-8"))
                         except NotFound:
                             error_log.append({
                                 'number_row': count,
