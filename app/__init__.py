@@ -4,7 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 from elasticsearch import Elasticsearch
 
 application = Flask(__name__)
-CORS(application)
+CORS(application, resources={r"/*": {"origins": "*"}})
 application.config.from_object('config')
 db = SQLAlchemy(application)
 from app import views
