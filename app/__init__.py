@@ -1,8 +1,10 @@
 from flask import Flask
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from elasticsearch import Elasticsearch
 
 application = Flask(__name__)
+CORS(application)
 application.config.from_object('config')
 db = SQLAlchemy(application)
 from app import views

@@ -22,16 +22,15 @@ import csv
 import requests
 import json
 import re
+import time
 
 sys.path.append(config_local.PATH)
-from flask_cors import CORS
-from sqlalchemy_filters import apply_filters, apply_pagination, apply_sort
+
 
 auth = HTTPBasicAuth()
 application.config["SQLALCHEMY_POOL_RECYCLE"] = 30
 application.config['JSON_AS_ASCII'] = False
 application.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
-CORS(application, resources={r"/*": {"origins": "*"}})
 
 application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
@@ -229,27 +228,6 @@ def create_ads():
     else:
         image_ads = ''
     error_log = {}
-    # filter_spec = []
-    # unique = set()
-    # if request.form.get('mark_auto'):
-    #     mark = models.Model.query.filter_by(name=request.form.get('mark_auto')).first()
-    #     print(mark.id)
-    #     filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
-    # if request.form.get('model_auto'):
-    #     filter_spec.append({'field': 'model', 'op': '==', 'value': request.form.get('model_auto')})
-    # if request.form.get('year_auto'):
-    #     filter_spec.append({'field': 'year', 'op': '==', 'value': request.form.get('year_auto')})
-    # query = models.Auto.query
-    # filtered_query = apply_filters(query, filter_spec)
-    # for i in filtered_query.all():
-    #     unique.add(i.generation)
-    # unique_list = sorted(list(unique))
-    # generation_list = ''
-    # for i in range(len(unique_list)):
-    #     if i + 1 != len(unique_list):
-    #         generation_list += str(unique_list[i]) + ', '
-    #     else:
-    #         generation_list += str(unique_list[i])
     if ad_count < rate.limit:
         new_ad = models.Post(
             id=id_ad,
@@ -652,8 +630,8 @@ def delete_user(user_id):
 
 
 # Удаление всех объявление пользователя
-@application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['DELETE'])
-@token_required
+@application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['GET'])
+# @token_required
 def delete_ads_users(user_id):
     ads = models.Post.query.filter_by(user_id=user_id).all()
     if ads is None:
@@ -770,21 +748,35 @@ def get_auto():
     return jsonify({'auto': lt_auto})
 
 
-# Получить список модель по марке авто
+# Получить список модель по марке авто (если пустая, возвращает полный массив с данными марка-модели)
 @application.route('/todo/api/v1.0/auto/<auto_name>', methods=['GET'])
 # @token_required
 def get_model(auto_name):
-    model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
-    if model is None:
-        abort(404)
-    auto = db.session.query(models.Auto).filter_by(name=model.id).all()
-    if auto is None:
-        abort(404)
-    lt_auto = set()
-    for a in auto:
-        lt_auto.add(a.model)
-    lt_auto = sorted(list(lt_auto))
-    return jsonify({'model': lt_auto})
+    if auto_name != "all":
+        model = db.session.query(models.Model).filter_by(name=unquote(auto_name)).first()
+        if model is None:
+            abort(404)
+        auto = db.session.query(models.Auto).filter_by(name=model.id).all()
+        if auto is None:
+            abort(404)
+        lt_auto = set()
+        for a in auto:
+            lt_auto.add(a.model)
+        lt_auto = sorted(list(lt_auto))
+        return jsonify({'model': lt_auto})
+    else:
+        model = db.session.query(models.Model).all()
+        all_m = dict()
+        for m in model:
+            mark_auto = db.session.query(models.ModelMark).filter_by(model_id=m.id).all()
+            lt_auto = set()
+            for a in mark_auto:
+                lt_auto.add(a.model_name)
+            lt_auto = sorted(list(lt_auto))
+            all_m[m.name] = lt_auto
+        # print(all_m)
+        # print(len(model))
+        return jsonify(all_m)
 
 
 # Получить год по модели и марке авто
@@ -898,100 +890,6 @@ def get_oferta_html():
     return render_template('oferta.html')
 
 
-# @application.route('/search')
-# def get_search_html():
-#     filter_spec = []
-#     if request.args.get('mark_auto'):
-#         filter_spec.append({'field': 'mark_auto', 'op': '==', 'value': request.args.get('mark_auto')})
-#     if request.args.get('model_auto'):
-#         if request.args.get('model_auto') != 'all':
-#             filter_spec.append({'field': 'model_auto', 'op': '==', 'value': request.args.get('model_auto')})
-#     if request.args.get('year_auto'):
-#         if request.args.get('year_auto') != 'all':
-#             filter_year = []
-#             unique = set()
-#             generation_list = ''
-#             if request.args.get('mark_auto'):
-#                 mark = models.Model.query.filter_by(name=request.args.get('mark_auto')).first()
-#                 filter_year.append({'field': 'name', 'op': '==', 'value': mark.id})
-#             if request.args.get('model_auto'):
-#                 filter_year.append({'field': 'model', 'op': '==', 'value': request.args.get('model_auto')})
-#             if request.args.get('year_auto'):
-#                 filter_year.append({'field': 'year', 'op': '==', 'value': request.args.get('year_auto')})
-#                 query = models.Auto.query
-#                 filtered_query_year = apply_filters(query, filter_year)
-#                 for i in filtered_query_year.all():
-#                     unique.add(i.generation)
-#                 unique_list = sorted(list(unique))
-#                 for i in range(len(unique_list)):
-#                     if i + 1 != len(unique_list):
-#                         generation_list += str(unique_list[i]) + ', '
-#                     else:
-#                         generation_list += str(unique_list[i])
-#             filter_spec.append({'field': 'generation', 'op': '==', 'value': generation_list})
-#     if request.args.get('series_auto'):
-#         filter_spec.append({'field': 'series', 'op': '==', 'value': request.args.get('series_auto')})
-#     if request.args.get('modification_auto'):
-#         filter_spec.append({'field': 'modification', 'op': '==', 'value': request.args.get('modification_auto')})
-#     filter_spec.append({'field': 'active', 'op': '==', 'value': 1})
-#     name_lower = ''
-#     if request.args.get('name'):
-#         name_lower = request.args.get('name')
-#         filter_spec.append({
-#             'or': [
-#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower + '%'},
-#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.lower() + '%'},
-#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.capitalize() + '%'},
-#                 {'field': 'name_ads', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-#                 {'field': 'body', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-#                 {'field': 'number', 'op': 'ilike', 'value': '%' + name_lower.upper() + '%'},
-#             ]
-#         })
-#     query = models.Post.query
-#     sort_spec = [
-#         {'field': 'timestamp', 'direction': 'desc'}
-#     ]
-#     filtered_query = apply_sort(query, sort_spec)
-#     if request.args.get('sort') and request.args.get('sort') == 'price':
-#         if request.args.get('method') and request.args.get('method') == "asc":
-#             sort_spec = [
-#                 {'field': 'price', 'direction': 'asc'}
-#             ]
-#             filtered_query = apply_sort(query, sort_spec)
-#         elif request.args.get('method') and request.args.get('method') == "desc":
-#             sort_spec = [
-#                 {'field': 'price', 'direction': 'desc'}
-#             ]
-#             filtered_query = apply_sort(query, sort_spec)
-#         else:
-#             sort_spec = [
-#                 {'field': 'price', 'direction': 'desc'}
-#             ]
-#             filtered_query = apply_sort(query, sort_spec)
-#     filtered_query = apply_filters(filtered_query, filter_spec)
-#     page = 1
-#     page_size = 10
-#     if request.args.get('page'):
-#         page = int(request.args.get('page'))
-#     if request.args.get('page_size'):
-#         page_size = int(request.args.get('page_size'))
-#     filtered_query, pagination = apply_pagination(filtered_query, page_number=page, page_size=page_size)
-#     url = re.sub(r'.page=\d+', '', request.url)
-#     if len(request.args) == 1 and request.args.get('page') or not request.args:
-#         url += '?'
-#     else:
-#         url += '&'
-#     args = request.args
-#     return render_template('search.html', ads=filtered_query, pagination=pagination, search=name_lower, url=url,
-#                            args=args)
-
-
 # Скачивание файла объявлений
 @application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
 # @token_required
@@ -1010,6 +908,7 @@ def import_csv_file():
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
 def create_ads_from_csv():
+    start_time = time.time()
     ads = models.Post.query.all()
     if ads:
         id_ad = ads[-1].id
@@ -1044,6 +943,8 @@ def create_ads_from_csv():
         with open(file_path, newline="", encoding='windows-1251') as csvfile:
             reader = csv.DictReader(csvfile, delimiter=';')
             count = 0
+            res_mark = json.loads(get_auto().get_data().decode("utf-8"))
+            res_model = json.loads(get_model("all").get_data().decode("utf-8"))
             for row in reader:
                 if count < rate.limit:
                     id_ad += 1
@@ -1066,16 +967,7 @@ def create_ads_from_csv():
                         })
                         continue
                     if row['Марка авто']:
-                        try:
-                            res = json.loads(get_auto().get_data().decode("utf-8"))
-                        except NotFound:
-                            error_log.append({
-                                'number_row': count,
-                                'field': row['Марка авто'],
-                                'text_error': 'Марка авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
-                            })
-                            continue
-                        if row['Марка авто'] not in res['auto']:
+                        if row['Марка авто'].lower() not in res_mark['auto']:
                             error_log.append({
                                 'number_row': count,
                                 'field': row['Марка авто'],
@@ -1090,18 +982,18 @@ def create_ads_from_csv():
                         continue
                     if row['Модель Авто']:
                         try:
-                            res = json.loads(get_model(row['Марка авто']).get_data().decode("utf-8"))
-                        except NotFound:
+                            res_model[row['Марка авто'].lower()]
+                        except KeyError:
                             error_log.append({
                                 'number_row': count,
-                                'field': row['Модель Авто'],
+                                'field': row['Модель Авто'].lower(),
                                 'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                             })
                             continue
-                        if row['Модель Авто'] not in res['model']:
+                        if row['Модель Авто'].lower() not in res_model[row['Марка авто'].lower()]:
                             error_log.append({
                                 'number_row': count,
-                                'field': row['Модель Авто'],
+                                'field': row['Модель Авто'].lower(),
                                 'text_error': 'Модель авто должна строго соответствовать существующим значениям в базе данных. См. руководство.'
                             })
                             continue
@@ -1193,6 +1085,7 @@ def create_ads_from_csv():
                     count += 1
                 else:
                     break
+    print("--- %s seconds ---" % (time.time() - start_time))
     count_res = 0
     for ad in ads:
         ad_count = len(user.posts.all())
@@ -1209,27 +1102,6 @@ def create_ads_from_csv():
             else:
                 image_path = ''
             id_ad += 1
-            # filter_spec = []
-            # unique = set()
-            # if ad['mark_auto']:
-            #     mark = models.Model.query.filter_by(name=ad['mark_auto']).first()
-            #     print(mark.id)
-            #     filter_spec.append({'field': 'name', 'op': '==', 'value': mark.id})
-            # if ad['model_auto']:
-            #     filter_spec.append({'field': 'model', 'op': '==', 'value': ad['model_auto']})
-            # if ad['year_auto']:
-            #     filter_spec.append({'field': 'year', 'op': '==', 'value': ad['year_auto']})
-            # query = models.Auto.query
-            # filtered_query = apply_filters(query, filter_spec)
-            # for i in filtered_query.all():
-            #     unique.add(i.generation)
-            # unique_list = sorted(list(unique))
-            # generation_list = ''
-            # for i in range(len(unique_list)):
-            #     if i + 1 != len(unique_list):
-            #         generation_list += str(unique_list[i]) + ', '
-            #     else:
-            #         generation_list += str(unique_list[i])
             new_ad = models.Post(
                 id=ad['id'],
                 active=0,
@@ -1247,7 +1119,7 @@ def create_ads_from_csv():
                 timestamp=datetime.datetime.utcnow()
             )
             db.session.add(new_ad)
-            db.session.commit()
+            print("--- %s seconds ---" % (time.time() - start_time))
         else:
             error_log.append({
                 'number_row': count,
@@ -1256,6 +1128,8 @@ def create_ads_from_csv():
                     user.status) + '. Максимум: ' + str(rate.limit) + 'объявлений.'
             })
             break
+    db.session.commit()
+    print("--- %s seconds ---" % (time.time() - start_time))
     os.remove(file_path)
     result = {'Всего строк обработано по тарифу': count,
               'Корректных': len(ads),
@@ -1490,5 +1364,6 @@ def search():
     else:
         url += '&'
     args = request.args
-    return render_template('search_new.html', ads=posts, pagination=total, this_page=page, pages=pages, search=qsearch, url=url,
+    return render_template('search_new.html', ads=posts, pagination=total, this_page=page, pages=pages, search=qsearch,
+                           url=url,
                            args=args)

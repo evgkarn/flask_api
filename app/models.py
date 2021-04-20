@@ -17,7 +17,7 @@ class SearchableMixin(object):
 
             when.append((ids[i], i))
         return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)), total
+            db.case(when, value=cls.id)).filter_by(active=1), total
 
     @classmethod
     def before_commit(cls, session):
@@ -180,6 +180,15 @@ class Model(db.Model):
 
     def __repr__(self):
         return '<Model %r>' % self.name
+
+
+class ModelMark(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    model_id = db.Column(db.Integer, index=True)
+    model_name = db.Column(db.String(120), index=True)
+
+    def __repr__(self):
+        return '<Model_Mark %r>' % self.model_name
 
 
 class Rate(db.Model):
