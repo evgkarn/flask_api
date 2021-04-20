@@ -1368,3 +1368,12 @@ def search():
     return render_template('search_new.html', ads=posts, pagination=total, this_page=page, pages=pages, search=qsearch,
                            url=url,
                            args=args)
+
+
+# Переиндексация поиска
+@application.route('/todo/api/v1.0/reindex', methods=['GET'])
+# @token_required
+def reindex_search():
+    models.Post.reindex()
+    return jsonify({'Reindex': 'true'}), 201
+
