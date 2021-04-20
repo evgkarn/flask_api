@@ -1372,7 +1372,7 @@ def search():
 
 # Переиндексация поиска
 @application.route('/todo/api/v1.0/reindex', methods=['GET'])
-# @token_required
+@token_required
 def reindex_search():
     models.Post.reindex()
     return jsonify({'Reindex': 'true'}), 201
