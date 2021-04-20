@@ -630,8 +630,8 @@ def delete_user(user_id):
 
 
 # Удаление всех объявление пользователя
-@application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['GET'])
-# @token_required
+@application.route('/todo/api/v1.0/ads_delete/<int:user_id>', methods=['DELETE'])
+@token_required
 def delete_ads_users(user_id):
     ads = models.Post.query.filter_by(user_id=user_id).all()
     if ads is None:
@@ -1087,8 +1087,8 @@ def create_ads_from_csv():
                     break
     print("--- %s seconds ---" % (time.time() - start_time))
     count_res = 0
+    ad_count = len(user.posts.all())
     for ad in ads:
-        ad_count = len(user.posts.all())
         if ad_count < rate.limit:
             count_res += 1
             if ad['image'] and allowed_file(ad['image']):
@@ -1119,6 +1119,7 @@ def create_ads_from_csv():
                 timestamp=datetime.datetime.utcnow()
             )
             db.session.add(new_ad)
+            ad_count += 1
             print("--- %s seconds ---" % (time.time() - start_time))
         else:
             error_log.append({
