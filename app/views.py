@@ -909,7 +909,7 @@ def import_csv_file():
 # @token_required
 def create_ads_from_csv():
     start_time = time.time()
-    ads = models.Post.query.all()
+    ads = models.Post.query.order_by(models.Post.id).all()
     if ads:
         id_ad = ads[-1].id
     else:
