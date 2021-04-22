@@ -57,7 +57,10 @@ document.addEventListener("DOMContentLoaded", function() {
 			}
 		}
 		formInfo()
-
+// Делаем первую букву заглавной
+function capitalizeFirstLetter(string) {
+	return string.charAt(0).toUpperCase() + string.slice(1);
+  }
 		 // Получаем список автомобилей
 	async function getCars(){
 		let carsUrl = 'https://azato.ru/todo/api/v1.0/auto';
@@ -67,7 +70,8 @@ document.addEventListener("DOMContentLoaded", function() {
 		cars = await response.json();
 		carsOption = [];
 		carsOption.push( cars.auto.map((carModel)=>{
-			return `<option value='${carModel}'>${carModel} </option>`	
+			
+			return `<option value='${capitalizeFirstLetter(carModel)}'>${capitalizeFirstLetter(carModel)} </option>`	
 		}))
 		console.log(carsOption)
 		for(let i = 0; i < carsOption.length; i++){
@@ -87,7 +91,7 @@ document.addEventListener("DOMContentLoaded", function() {
 		modelOption = [`<option value='all'>Все</option>`];
 		carModels.remove(0);
 		modelOption.push( carsModel.model.map((carModel)=>{
-			return `<option value='${carModel}'>${carModel} </option>`	
+			return `<option value='${capitalizeFirstLetter(carModel)}'>${capitalizeFirstLetter(carModel)} </option>`	
 		}))
 		for(let i = 0; i < modelOption.length; i++){
 			carModels.innerHTML += modelOption[i];
