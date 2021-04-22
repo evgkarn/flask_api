@@ -618,6 +618,7 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
+    delete_ads_users(user_id)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if shop.image:
