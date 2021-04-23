@@ -99,7 +99,7 @@ def allowed_file(filename):
 
 
 # Функция загрузки фото в папку upload
-def file_to_upload(file, file_len=0):
+def file_to_upload(file):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
@@ -123,7 +123,7 @@ def import_file():
     if 'fileex' in request.files:
         print(request.content_length)
         file = request.files['fileex']
-        new_file = str(file_to_upload(file, request.content_length))
+        new_file = str(file_to_upload(file))
     else:
         abort(400)
     return jsonify({'file': new_file}), 201
