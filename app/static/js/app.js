@@ -61,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function() {
 function capitalizeFirstLetter(string) {
 	return string.charAt(0).toUpperCase() + string.slice(1);
   }
+  function minimalFirstLetter(string) {
+	return string.charAt(0).toLowerCase() + string.slice(1);
+  }
 		 // Получаем список автомобилей
 	async function getCars(){
 		let carsUrl = 'https://azato.ru/todo/api/v1.0/auto';
@@ -83,7 +86,7 @@ function capitalizeFirstLetter(string) {
 	// Получаем список моделей
 	async function getModels(){
 		console.log(carName.value)
-		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}`;
+		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${minimalFirstLetter(carName.value)}`;
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
@@ -102,7 +105,7 @@ function capitalizeFirstLetter(string) {
 
 	async function getYears(){
 		let carYear =  document.querySelector('#carYear');
-		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${carName.value}/${carModels.value}`
+		let carsUrl = `https://azato.ru/todo/api/v1.0/auto/${minimalFirstLetter(carName.value)}/${minimalFirstLetter(carModels.value)}`
 		let response = await fetch(carsUrl, {
 			method: 'GET'
 		});
