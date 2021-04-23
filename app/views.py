@@ -23,6 +23,8 @@ import requests
 import json
 import re
 import time
+import hashlib
+import inspect
 
 sys.path.append(config_local.PATH)
 
@@ -32,7 +34,7 @@ application.config["SQLALCHEMY_POOL_RECYCLE"] = 30
 application.config['JSON_AS_ASCII'] = False
 application.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 
-application.add_url_rule('/upload/<filename>', 'uploaded_file', build_only=True)
+application.add_url_rule('/upload/<folder_name>/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'csv'}
 
@@ -97,13 +99,34 @@ def allowed_file(filename):
 
 
 # Функция загрузки фото в папку upload
-def file_to_upload(file):
+def file_to_upload(file, file_len=0):
     if file and allowed_file(file.filename):
         filename = secure_filename(file.filename)
         suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
         filename = "_".join([suffix, filename])
-        file.save(os.path.join(application.config['UPLOAD_FOLDER'], filename))
-        return url_for('uploaded_file', filename=filename)
+        hash_file = hashlib.md5(filename.encode())
+        hashed_file = hash_file.hexdigest()
+        folder_name = hashed_file[:2]
+        if not os.path.exists(os.path.join(application.config['UPLOAD_FOLDER'], folder_name)):
+            path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
+            os.mkdir(path)
+        else:
+            path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
+        file.save(os.path.join(path, filename))
+        return url_for('uploaded_file', filename=filename, folder_name=folder_name)
+
+
+# Тестовое скачиваение файла
+@application.route('/todo/api/v1.0/import_file', methods=['POST'])
+# @token_required
+def import_file():
+    if 'fileex' in request.files:
+        print(request.content_length)
+        file = request.files['fileex']
+        new_file = str(file_to_upload(file, request.content_length))
+    else:
+        abort(400)
+    return jsonify({'file': new_file}), 201
 
 
 # Формирования словаря полей объявления для json ответа
@@ -618,6 +641,7 @@ def delete_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
         abort(404)
+    delete_ads_users(user_id)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
     if shop:
         if shop.image:
