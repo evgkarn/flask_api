@@ -12,6 +12,8 @@ from sqlalchemy import desc
 from urllib.parse import unquote
 from flask_mail import Mail, Message
 from threading import Thread
+from PIL import Image
+import PIL
 import html
 import datetime
 import jwt
@@ -97,6 +99,11 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
+# Проверка на расширения файла
+def format_file(filename):
+    return filename.rsplit('.', 1)[1]
+
+
 # Функция загрузки фото в папку upload
 def file_to_upload(file):
     if file and allowed_file(file.filename):
@@ -111,7 +118,16 @@ def file_to_upload(file):
             os.mkdir(path)
         else:
             path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
-        file.save(os.path.join(path, filename))
+        if format_file(file.filename) != 'csv':
+            image = Image.open(file)
+            basewidth = 1000
+            if image.size[0] > basewidth:
+                ratio = (basewidth / float(image.size[0]))
+                height = int((float(image.size[1]) * float(ratio)))
+                image = image.resize((basewidth, height), PIL.Image.ANTIALIAS)
+            image.save(os.path.join(path, filename), quality=80)
+        else:
+            file.save(os.path.join(path, filename))
         return url_for('uploaded_file', filename=filename, folder_name=folder_name)
 
 
