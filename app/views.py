@@ -24,7 +24,6 @@ import json
 import re
 import time
 import hashlib
-import inspect
 
 sys.path.append(config_local.PATH)
 
