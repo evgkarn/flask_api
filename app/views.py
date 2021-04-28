@@ -394,7 +394,6 @@ def get_order_ads(shop_id):
         if order.post:
             order_post_id = order.post_id,
             order_post_name = order.post.name_ads
-        print(order_post_id)
         shop_orders.append({
             'id': order.id,
             'text': order.body,
@@ -813,8 +812,6 @@ def get_model(auto_name):
                 lt_auto.add(a.model_name)
             lt_auto = sorted(list(lt_auto))
             all_m[m.name] = lt_auto
-        # print(all_m)
-        # print(len(model))
         return jsonify(all_m)
 
 
@@ -947,7 +944,6 @@ def import_csv_file():
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
 # @token_required
 def create_ads_from_csv():
-    start_time = time.time()
     ads = models.Post.query.order_by(models.Post.id).all()
     if ads:
         id_ad = ads[-1].id
@@ -1124,7 +1120,6 @@ def create_ads_from_csv():
                     count += 1
                 else:
                     break
-    print("--- %s seconds ---" % (time.time() - start_time))
     count_res = 0
     ad_count = len(user.posts.all())
     for ad in ads:
@@ -1159,7 +1154,6 @@ def create_ads_from_csv():
             )
             db.session.add(new_ad)
             ad_count += 1
-            print("--- %s seconds ---" % (time.time() - start_time))
         else:
             error_log.append({
                 'number_row': count,
@@ -1169,7 +1163,6 @@ def create_ads_from_csv():
             })
             break
     db.session.commit()
-    print("--- %s seconds ---" % (time.time() - start_time))
     os.remove(file_path)
     result = {'Всего строк обработано по тарифу': count,
               'Корректных': len(ads),
