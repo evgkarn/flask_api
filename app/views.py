@@ -222,6 +222,9 @@ def get_user_ads(user_id):
     posts = user.posts
     user_posts = []
     for post in posts:
+        img = ''
+        if post.image:
+            img = SERVER_NAME + post.image
         user_posts.append({
             'name': post.name_ads,
             'text': post.body,
@@ -241,11 +244,10 @@ def get_user_ads(user_id):
             'front_back': post.front_back,
             'up_down': post.up_down,
             'quantity': post.quantity,
+            'image': img,
             'url': url_for('get_ad', ad_id=post.id, _external=True),
             'user': post.user.shops.first().name
         })
-        if post.image:
-            user_posts[0]['image'] = SERVER_NAME + post.image
 
     return jsonify({'ads': user_posts}), 201
 
