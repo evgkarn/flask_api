@@ -245,9 +245,7 @@ def get_user_ads(user_id):
             'user': post.user.shops.first().name
         })
         if post.image:
-            user_posts.append({
-                'image': SERVER_NAME + post.image,
-            })
+            user_posts[0]['image'] = SERVER_NAME + post.image
 
     return jsonify({'ads': user_posts}), 201
 
