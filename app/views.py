@@ -37,7 +37,7 @@ application.config['UPLOAD_FOLDER'] = config_local.UPLOAD_FOLDER
 
 application.add_url_rule('/upload/<folder_name>/<filename>', 'uploaded_file', build_only=True)
 application.wsgi_app = SharedDataMiddleware(application.wsgi_app, {'/upload': application.config['UPLOAD_FOLDER']})
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'csv'}
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'PNG', 'JPG', 'JPEG', 'csv'}
 
 application.config['MAIL_SERVER'] = config_local.MAIL_SERVER
 application.config['MAIL_PORT'] = config_local.MAIL_PORT
@@ -99,25 +99,31 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ALLOWED_EXTENSIONS
 
 
-# Проверка на расширения файла
+# Получить расширение файла
 def format_file(filename):
     return filename.rsplit('.', 1)[1]
+
+
+# Путь к файлу по его имени
+def path_to_file(name):
+    filename = secure_filename(name)
+    suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
+    filename = "_".join([suffix, filename])
+    hash_file = hashlib.md5(filename.encode())
+    hashed_file = hash_file.hexdigest()
+    folder_name = hashed_file[:2]
+    if not os.path.exists(os.path.join(application.config['UPLOAD_FOLDER'], folder_name)):
+        path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
+        os.mkdir(path)
+    else:
+        path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
+    return filename, folder_name, path
 
 
 # Функция загрузки фото в папку upload
 def file_to_upload(file):
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
-        filename = "_".join([suffix, filename])
-        hash_file = hashlib.md5(filename.encode())
-        hashed_file = hash_file.hexdigest()
-        folder_name = hashed_file[:2]
-        if not os.path.exists(os.path.join(application.config['UPLOAD_FOLDER'], folder_name)):
-            path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
-            os.mkdir(path)
-        else:
-            path = os.path.join(application.config['UPLOAD_FOLDER'], folder_name)
+        filename, folder_name, path = path_to_file(file.filename)
         if format_file(file.filename) != 'csv':
             image = Image.open(file)
             basewidth = 1000
@@ -1127,12 +1133,14 @@ def create_ads_from_csv():
             count_res += 1
             if ad['image'] and allowed_file(ad['image']):
                 img = requests.get(ad['image']).content
+                # img = requests.get(ad['image'], stream=True).raw
                 suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
                 filename = "_".join([suffix, 'upload_img.jpg'])
-                out = open(os.path.join(application.config['UPLOAD_FOLDER'], filename), "wb")
+                filename, folder_name, path = path_to_file(filename)
+                out = open(os.path.join(path, filename), "wb")
                 out.write(img)
                 out.close()
-                image_path = url_for('uploaded_file', filename=filename)
+                image_path = url_for('uploaded_file', filename=filename, folder_name=folder_name)
             else:
                 image_path = ''
             id_ad += 1
@@ -1311,62 +1319,6 @@ def status_pay():
         order.shop.user.balance = balance
     db.session.commit()
     return make_response("OK", 200)
-
-
-# Заготовка для поиска после перехода на VPS
-# @application.route('/todo/api/v1.0/rate', methods=['POST'])
-# # @token_required
-# def change_rate():
-#     if not request.json or not 'user_id' in request.json or not 'Status' in request.json:
-#         abort(400)
-#     rate = models.Rate.query.filter_by(name=request.json['Status']).first()
-#     if not rate:
-#         abort(400)
-#     user = models.User.query.get(request.json['user_id'])
-#     error_log = {'status': 'OK', 'text': None}
-#     if request.json['Status'] == user.status:
-#         error_log['status'] = 'error'
-#         error_log['text'] = 'Выбранный тариф равен текущему'
-#     elif rate.price * 100 > user.balance:
-#         error_log['status'] = 'error'
-#         error_log['text'] = 'Не достаточно средств на балансе'
-#     elif len(user.posts.all()) > rate.limit:
-#         error_log['status'] = 'error'
-#         error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + rate.limit
-#     elif error_log['status'] != 'error':
-#         pay_operation = models.PayOperation.query.all()
-#         if pay_operation:
-#             id_order = pay_operation[-1].id + 1
-#         else:
-#             id_order = 1
-#         new_pay_operation = models.PayOperation(
-#             id=id_order,
-#             shop_id=user.shops.first().id,
-#             type='expanse',
-#             amount=rate.price * 100,
-#             comment=request.json['Status'],
-#             timestamp=datetime.datetime.utcnow()
-#         )
-#         print(id_order)
-#         print(user.shops.first())
-#         print('expanse')
-#         print(rate.price * 100)
-#         print(user.balance)
-#         print(request.json['Status'])
-#         print(datetime.datetime.utcnow())
-#         db.session.add(new_pay_operation)
-#         user.status = request.json['Status']
-#         db.session.commit()
-#         if user.shops.first().pay_operation:
-#             balance = 0
-#             for pay in user.shops.first().pay_operation:
-#                 if pay.type == "income":
-#                     balance += pay.amount
-#                 elif pay.type == "expanse":
-#                     balance -= pay.amount
-#             user.balance = balance
-#         db.session.commit()
-#     return jsonify(error_log), 201
 
 
 @application.route('/search', methods=['GET'])
