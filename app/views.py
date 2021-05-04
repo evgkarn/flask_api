@@ -137,6 +137,20 @@ def file_to_upload(file):
         return url_for('uploaded_file', filename=filename, folder_name=folder_name)
 
 
+def pay_operation(id_order, shop_id, type, amount, comment):
+    new_pay_operation = models.PayOperation(
+        id=id_order,
+        shop_id=shop_id,
+        type=type,
+        amount=amount * 100,
+        comment=comment,
+        timestamp=datetime.datetime.utcnow()
+    )
+    db.session.add(new_pay_operation)
+    db.session.commit()
+    return "Ok"
+
+
 # Тестовое скачиваение файла
 @application.route('/todo/api/v1.0/import_file', methods=['POST'])
 # @token_required
@@ -619,15 +633,7 @@ def update_user(user_id):
                 id_order = pay_operation[-1].id + 1
             else:
                 id_order = 1
-            new_pay_operation = models.PayOperation(
-                id=id_order,
-                shop_id=user.shops.first().id,
-                type='expanse',
-                amount=rate.price * 100,
-                comment=request.form['status'],
-                timestamp=datetime.datetime.utcnow()
-            )
-            db.session.add(new_pay_operation)
+            pay_operation(id_order, user.shops.first().id, 'expanse', rate.price, request.form['status'])
             user.status = request.form['status']
             db.session.commit()
             if user.shops.first().pay_operation:
@@ -1276,37 +1282,13 @@ def status_pay():
     else:
         id_order = 1
     if request.json['Status'] == "CONFIRMED":
-        new_pay_operation = models.PayOperation(
-            id=id_order,
-            shop_id=order.shop_id,
-            type='income',
-            amount=request.json.get('Amount', 0),
-            comment=request.json['Status'],
-            timestamp=datetime.datetime.utcnow()
-        )
-        db.session.add(new_pay_operation)
+        pay_operation(id_order, order.shop_id, 'income', request.json.get('Amount', 0), request.json['Status'])
         order.status = 1
     if request.json['Status'] == "REFUNDED":
-        new_pay_operation = models.PayOperation(
-            id=id_order,
-            shop_id=order.shop_id,
-            type='expanse',
-            amount=request.json.get('Amount', 0),
-            comment=request.json['Status'],
-            timestamp=datetime.datetime.utcnow()
-        )
-        db.session.add(new_pay_operation)
+        pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
         order.status = 0
     if request.json['Status'] == "PARTIAL_REFUNDED":
-        new_pay_operation = models.PayOperation(
-            id=id_order,
-            shop_id=order.shop_id,
-            type='expanse',
-            amount=request.json.get('Amount', 0),
-            comment=request.json['Status'],
-            timestamp=datetime.datetime.utcnow()
-        )
-        db.session.add(new_pay_operation)
+        pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
         order.status = 1
     db.session.commit()
     if order.shop.pay_operation:
