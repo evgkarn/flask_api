@@ -421,7 +421,7 @@ def get_order_ads(shop_id):
 def create_order():
     if not request.form or 'ad_id' not in request.form:
         abort(400)
-    order = models.Order.query.all()
+    order = models.Order.query.order_by(models.Order.id).all()
     if order:
         id_order = order[-1].id + 1
     else:
@@ -543,7 +543,7 @@ def create_user():
     our_user = db.session.query(models.User).filter_by(email=request.form['email']).first()
     if our_user is not None:
         return jsonify({'error': 'User already created'})
-    users = models.User.query.all()
+    users = models.User.query.order_by(models.User.id).all()
     if users:
         id_user = users[-1].id + 1
     else:
@@ -558,7 +558,7 @@ def create_user():
     )
     db.session.add(new_user)
     db.session.commit()
-    shop = models.Shop.query.all()
+    shop = models.Shop.query.order_by(models.Shop.id).all()
     if shop:
         id_shop = shop[-1].id + 1
     else:
@@ -614,7 +614,7 @@ def update_user(user_id):
             error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(
                 rate.limit)
         elif error_log['status'] != 'error':
-            pay_operation = models.PayOperation.query.all()
+            pay_operation = models.PayOperation.query.order_by(models.PayOperation.id).all()
             if pay_operation:
                 id_order = pay_operation[-1].id + 1
             else:
@@ -1203,7 +1203,7 @@ def create_pay():
     amount = 0
     if request.form['amount']:
         amount = int(request.form['amount']) * 100
-    order = models.PayOrder.query.all()
+    order = models.PayOrder.query.order_by(models.PayOrder.id).all()
     if order:
         id_order = order[-1].id + 1
     else:
@@ -1270,7 +1270,7 @@ def status_pay():
     if not request.json['Success'] is True:
         abort(400)
     order = models.PayOrder.query.get(request.json['OrderId'])
-    pay_operation = models.PayOperation.query.all()
+    pay_operation = models.PayOperation.query.order_by(models.PayOperation.id).all()
     if pay_operation:
         id_order = pay_operation[-1].id + 1
     else:
