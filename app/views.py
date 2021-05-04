@@ -137,7 +137,7 @@ def file_to_upload(file):
         return url_for('uploaded_file', filename=filename, folder_name=folder_name)
 
 
-def pay_operation(id_order, shop_id, type, amount, comment):
+def add_pay_operation(id_order, shop_id, type, amount, comment):
     new_pay_operation = models.PayOperation(
         id=id_order,
         shop_id=shop_id,
@@ -633,7 +633,7 @@ def update_user(user_id):
                 id_order = pay_operation[-1].id + 1
             else:
                 id_order = 1
-            pay_operation(id_order, user.shops.first().id, 'expanse', rate.price, request.form['status'])
+            add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price, request.form['status'])
             user.status = request.form['status']
             db.session.commit()
             if user.shops.first().pay_operation:
@@ -1282,13 +1282,13 @@ def status_pay():
     else:
         id_order = 1
     if request.json['Status'] == "CONFIRMED":
-        pay_operation(id_order, order.shop_id, 'income', request.json.get('Amount', 0), request.json['Status'])
+        add_pay_operation(id_order, order.shop_id, 'income', request.json.get('Amount', 0), request.json['Status'])
         order.status = 1
     if request.json['Status'] == "REFUNDED":
-        pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
+        add_pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
         order.status = 0
     if request.json['Status'] == "PARTIAL_REFUNDED":
-        pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
+        add_pay_operation(id_order, order.shop_id, 'expanse', request.json.get('Amount', 0), request.json['Status'])
         order.status = 1
     db.session.commit()
     if order.shop.pay_operation:
