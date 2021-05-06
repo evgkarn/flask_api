@@ -1145,7 +1145,6 @@ def create_ads_from_csv():
             count_res += 1
             if ad['image'] and allowed_file(ad['image']):
                 img = requests.get(ad['image']).content
-                # img = requests.get(ad['image'], stream=True).raw
                 suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
                 filename = "_".join([suffix, 'upload_img.jpg'])
                 filename, folder_name, path = path_to_file(filename)
@@ -1208,7 +1207,7 @@ def pay_by_id(id_elem):
 
 # Создание заказа на оплату и получение ссылки
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
-# @token_required
+@token_required
 def create_pay():
     if not request.form or 'shop_id' not in request.form:
         abort(400)
