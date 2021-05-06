@@ -137,18 +137,31 @@ def file_to_upload(file):
         return url_for('uploaded_file', filename=filename, folder_name=folder_name)
 
 
+# Фукция добавления ордера на оплату
 def add_pay_operation(id_order, shop_id, type, amount, comment):
     new_pay_operation = models.PayOperation(
         id=id_order,
         shop_id=shop_id,
         type=type,
-        amount=amount * 100,
+        amount=amount,
         comment=comment,
         timestamp=datetime.datetime.utcnow()
     )
     db.session.add(new_pay_operation)
     db.session.commit()
     return "Ok"
+
+
+# Обновление баланса пользователя
+def user_balance(obj_user):
+    balance = 0
+    for pay in obj_user.shops.first().pay_operation:
+        if pay.type == "income":
+            balance += pay.amount
+        elif pay.type == "expanse":
+            balance -= pay.amount
+    obj_user.balance = balance
+    db.session.commit()
 
 
 # Тестовое скачиваение файла
@@ -633,18 +646,11 @@ def update_user(user_id):
                 id_order = pay_operation[-1].id + 1
             else:
                 id_order = 1
-            add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price, request.form['status'])
+            add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, request.form['status'])
             user.status = request.form['status']
             db.session.commit()
             if user.shops.first().pay_operation:
-                balance = 0
-                for pay in user.shops.first().pay_operation:
-                    if pay.type == "income":
-                        balance += pay.amount
-                    elif pay.type == "expanse":
-                        balance -= pay.amount
-                user.balance = balance
-            db.session.commit()
+                user_balance(user)
     user.email = request.form.get('email', user.email)
     user.role = request.form.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
@@ -1202,7 +1208,7 @@ def pay_by_id(id_elem):
 
 # Создание заказа на оплату и получение ссылки
 @application.route('/todo/api/v1.0/pay', methods=['POST'])
-@token_required
+# @token_required
 def create_pay():
     if not request.form or 'shop_id' not in request.form:
         abort(400)
@@ -1292,14 +1298,7 @@ def status_pay():
         order.status = 1
     db.session.commit()
     if order.shop.pay_operation:
-        balance = 0
-        for pay in order.shop.pay_operation:
-            if pay.type == "income":
-                balance += pay.amount
-            elif pay.type == "expanse":
-                balance -= pay.amount
-        order.shop.user.balance = balance
-    db.session.commit()
+        user_balance(order.shop.user)
     return make_response("OK", 200)
 
 
