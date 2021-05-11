@@ -604,7 +604,8 @@ def create_user():
         address=request.form.get('address', "Адрес магазина не заполнен"),
         image=image_shop,
         user_id=id_user,
-        timestamp=datetime.datetime.utcnow()
+        date_create=datetime.datetime.utcnow(),
+        date_change_status=datetime.datetime.utcnow()
     )
     db.session.add(new_shop)
     db.session.commit()
@@ -640,6 +641,7 @@ def change_status(user, status):
             id_order = 1
         add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, status)
         user.status = status
+        user.shop.date_create = datetime.datetime.utcnow()
         db.session.commit()
         if user.shops.first().pay_operation:
             user_balance(user)
