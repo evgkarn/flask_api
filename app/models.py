@@ -62,7 +62,7 @@ class User(db.Model):
     shops = db.relationship('Shop', backref='author', lazy='dynamic')
 
     def __repr__(self):
-        return '<User %r>' % self.nickname
+        return '<User %r>' % self.email
 
 
 # class Post(db.Model):

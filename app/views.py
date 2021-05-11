@@ -537,7 +537,7 @@ def user_by_id(id_elem, error_log=None):
     if shop:
         new_user_json['shop'] = user_shops
     if token:
-        new_user_json['token'] = token.encode().decode('UTF-8')
+        new_user_json['token'] = token.decode('UTF-8')
     return new_user_json
 
 
@@ -613,9 +613,42 @@ def create_user():
     return jsonify(user_by_id(id_user)), 201
 
 
+# Изменение тарифа пользователя
+def change_status(user, status):
+    error_log = {'status': 'OK', 'text': None}
+    rate = models.Rate.query.filter_by(name=status).first()
+    if not rate:
+        abort(400)
+    if status == user.status:
+        error_log['status'] = 'error'
+        error_log['text'] = 'Выбранный тариф равен текущему'
+    elif rate.price * 100 > user.balance:
+        error_log['status'] = 'error'
+        error_log['text'] = 'Недостаточно средств на балансе'
+    elif error_log['status'] != 'error':
+        active_ads = user.posts.filter_by(active=1).all()
+        if len(active_ads) > rate.limit:
+            for ad in active_ads[:len(active_ads) - rate.limit]:
+                ad.active = 0
+            error_log['status'] = 'OK'
+            error_log['text'] = 'Количество активных объявлений после изменения тарифа: ' + str(
+                rate.limit)
+        pay_operation = models.PayOperation.query.order_by(models.PayOperation.id).all()
+        if pay_operation:
+            id_order = pay_operation[-1].id + 1
+        else:
+            id_order = 1
+        add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, status)
+        user.status = status
+        db.session.commit()
+        if user.shops.first().pay_operation:
+            user_balance(user)
+    return error_log
+
+
 # Изменение пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-@token_required
+# @token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
@@ -626,31 +659,7 @@ def update_user(user_id):
         user.hash_password = generate_password_hash(request.form['password'])
     error_log = {'status': 'OK', 'text': None}
     if 'status' in request.form:
-        rate = models.Rate.query.filter_by(name=request.form['status']).first()
-        if not rate:
-            abort(400)
-        user = models.User.query.get(user_id)
-        if request.form['status'] == user.status:
-            error_log['status'] = 'error'
-            error_log['text'] = 'Выбранный тариф равен текущему'
-        elif rate.price * 100 > user.balance:
-            error_log['status'] = 'error'
-            error_log['text'] = 'Недостаточно средств на балансе'
-        elif len(user.posts.all()) > rate.limit:
-            error_log['status'] = 'error'
-            error_log['text'] = 'Для текущего тарифа количество созданных объявлений должно быть не более ' + str(
-                rate.limit)
-        elif error_log['status'] != 'error':
-            pay_operation = models.PayOperation.query.order_by(models.PayOperation.id).all()
-            if pay_operation:
-                id_order = pay_operation[-1].id + 1
-            else:
-                id_order = 1
-            add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, request.form['status'])
-            user.status = request.form['status']
-            db.session.commit()
-            if user.shops.first().pay_operation:
-                user_balance(user)
+        error_log = change_status(user, request.form['status'])
     user.email = request.form.get('email', user.email)
     user.role = request.form.get('role', user.role)
     shop = models.Shop.query.filter_by(user_id=user_id).first()
