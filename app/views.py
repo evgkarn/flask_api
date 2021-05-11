@@ -615,7 +615,7 @@ def create_user():
 
 # Изменение тарифа пользователя
 def change_status(user, status):
-    error_log = {'status': 'OK', 'text': None}
+    error_log = {'status': 'OK', 'text': "Тариф изменён"}
     rate = models.Rate.query.filter_by(name=status).first()
     if not rate:
         abort(400)
@@ -648,7 +648,7 @@ def change_status(user, status):
 
 # Изменение пользователя
 @application.route('/todo/api/v1.0/users/<int:user_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_user(user_id):
     user = models.User.query.get(user_id)
     if user is None:
