@@ -112,7 +112,8 @@ class Shop(db.Model):
     orders = db.relationship('Order')
     pay_orders = db.relationship('PayOrder')
     pay_operation = db.relationship('PayOperation')
-    timestamp = db.Column(db.DateTime)
+    date_create = db.Column(db.DateTime)
+    date_change_status = db.Column(db.DateTime)
 
     def __repr__(self):
         return '<Shop %r>' % self.name
