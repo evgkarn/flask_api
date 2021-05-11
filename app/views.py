@@ -597,11 +597,11 @@ def create_user():
         image_shop = ''
     new_shop = models.Shop(
         id=id_shop,
-        name=request.form['name_shop'],
+        name=request.form.get('name_shop', 'Тут должно быть название магазина'),
         body=request.form.get('text_shop', "Описание магазина не заполнено"),
-        phone=request.form['phone'],
-        city=request.form.get('city', "Иркутск"),
-        address=request.form.get('address', "Адрес магазина не заполнен"),
+        phone=request.form.get('phone', ''),
+        city=request.form.get('city', 'Иркутск'),
+        address=request.form.get('address', 'Адрес магазина не заполнен'),
         image=image_shop,
         user_id=id_user,
         date_create=datetime.datetime.utcnow(),
