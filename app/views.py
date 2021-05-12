@@ -641,7 +641,7 @@ def change_status(user, status):
             id_order = 1
         add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, status)
         user.status = status
-        user.shops.first().date_create = datetime.datetime.utcnow()
+        user.shops.first().date_change_status = datetime.datetime.utcnow()
         db.session.commit()
         if user.shops.first().pay_operation:
             user_balance(user)
@@ -957,7 +957,7 @@ def get_oferta_html():
 
 # Скачивание файла объявлений
 @application.route('/todo/api/v1.0/import_csv_file', methods=['POST'])
-# @token_required
+@token_required
 def import_csv_file():
     file_path = config_local.APP_FOLDER
     if 'fileex' in request.files:
@@ -971,7 +971,7 @@ def import_csv_file():
 
 # Создание объявлений из файла
 @application.route('/todo/api/v1.0/csv', methods=['POST'])
-# @token_required
+@token_required
 def create_ads_from_csv():
     ads = models.Post.query.order_by(models.Post.id).all()
     if ads:
