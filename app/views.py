@@ -641,7 +641,7 @@ def change_status(user, status):
             id_order = 1
         add_pay_operation(id_order, user.shops.first().id, 'expanse', rate.price * 100, status)
         user.status = status
-        user.shop.date_create = datetime.datetime.utcnow()
+        user.shops.first().date_create = datetime.datetime.utcnow()
         db.session.commit()
         if user.shops.first().pay_operation:
             user_balance(user)
