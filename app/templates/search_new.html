@@ -90,9 +90,9 @@
                 {% elif this_page == 2 %}
                     {% for page in range(this_page -1, this_page + 3) %}
                         {% if page == this_page %}
-                            <a class="active" href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
+                            <a class="active" href="{{url}}page={{page}}">{{page}}</a>
                         {% else %}
-                            <a href="{{ url_for('get_main_html', page=page) }}">{{page}}</a>
+                            <a href="{{url}}page={{page}}">{{page}}</a>
                         {% endif %}
                     {% endfor %}
                 {% else %}
