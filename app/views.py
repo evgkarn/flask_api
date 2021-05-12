@@ -1317,10 +1317,10 @@ def search():
     qsearch = ''
     if request.args.get('name'):
         qsearch += ' ' + request.args.get('name')
-    if request.args.get('mark_auto'):
-        qsearch += ' ' + request.args.get('mark_auto')
     if request.args.get('model_auto'):
         qsearch += ' ' + request.args.get('model_auto')
+    if request.args.get('mark_auto'):
+        qsearch += ' ' + request.args.get('mark_auto')
     if request.args.get('year_auto'):
         qsearch += ' ' + request.args.get('year_auto')
     elem_list = 10
