@@ -537,7 +537,7 @@ def user_by_id(id_elem, error_log=None):
     if shop:
         new_user_json['shop'] = user_shops
     if token:
-        new_user_json['token'] = token.decode('UTF-8')
+        new_user_json['token'] = token.encode().decode('UTF-8')
     return new_user_json
 
 
