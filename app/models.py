@@ -17,7 +17,7 @@ class SearchableMixin(object):
 
             when.append((ids[i], i))
         return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)).filter_by(**filters), total
+            db.case(when, value=cls.id)).filter_by(mark_auto='ВАЗ (Lada)'), total
 
     @classmethod
     def before_commit(cls, session):
