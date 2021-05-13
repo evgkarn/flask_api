@@ -1315,17 +1315,21 @@ def status_pay():
 @application.route('/search', methods=['GET'])
 def search():
     qsearch = ''
+    filters = {'active': 1}
     if request.args.get('name'):
-        qsearch += ' ' + request.args.get('name')
+        qsearch += request.args.get('name')
     if request.args.get('model_auto'):
-        qsearch += ' ' + request.args.get('model_auto')
+        if request.args.get('model_auto') != 'all':
+            filters['model_auto'] = request.args.get('model_auto')
     if request.args.get('mark_auto'):
-        qsearch += ' ' + request.args.get('mark_auto')
+        if request.args.get('mark_auto') != 'all':
+            filters['mark_auto'] = request.args.get('mark_auto')
     if request.args.get('year_auto'):
-        qsearch += ' ' + request.args.get('year_auto')
+        if request.args.get('year_auto') != 'all':
+            filters['year_auto'] = request.args.get('year_auto')
     elem_list = 10
     page = request.args.get('page', 1, type=int)
-    posts, total = models.Post.search(qsearch, page, elem_list)
+    posts, total = models.Post.search(qsearch, page, elem_list, filters)
     if total != 0:
         if total['value'] % elem_list == 0:
             pages = total['value'] // elem_list

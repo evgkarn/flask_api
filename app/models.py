@@ -8,7 +8,7 @@ DEFAULT = ''
 
 class SearchableMixin(object):
     @classmethod
-    def search(cls, expression, page, per_page):
+    def search(cls, expression, page, per_page, filters={'active': 1}):
         ids, total = query_index(cls.__tablename__, expression, page, per_page)
         if total['value'] == 0:
             return cls.query.filter_by(id=0), 0
@@ -17,7 +17,7 @@ class SearchableMixin(object):
 
             when.append((ids[i], i))
         return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)).filter_by(active=1), total
+            db.case(when, value=cls.id)).filter_by(**filters), total
 
     @classmethod
     def before_commit(cls, session):
