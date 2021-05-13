@@ -8,7 +8,7 @@ DEFAULT = ''
 
 class SearchableMixin(object):
     @classmethod
-    def search(cls, expression, page, per_page, filters={'active': 1}):
+    def search(cls, expression, page, per_page, filters={'mark_auto': 'Ваз (lada)'}):
         ids, total = query_index(cls.__tablename__, expression, page, per_page)
         if total['value'] == 0:
             return cls.query.filter_by(id=0), 0

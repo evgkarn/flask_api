@@ -1315,7 +1315,7 @@ def status_pay():
 @application.route('/search', methods=['GET'])
 def search():
     qsearch = ''
-    filters = {'active': 1}
+    filters = {'mark_auto': 'Ваз (lada)'}
     if request.args.get('name'):
         qsearch += request.args.get('name')
     if request.args.get('model_auto'):
