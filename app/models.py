@@ -8,16 +8,22 @@ DEFAULT = ''
 
 class SearchableMixin(object):
     @classmethod
-    def search(cls, expression, page, per_page, filters={'mark_auto': 'ВАЗ (Lada)'}):
-        ids, total = query_index(cls.__tablename__, expression, page, per_page)
+    def search(cls, expression, page, per_page, filters={'active': 1}):
+        ids, total = query_index(cls.__tablename__, expression)
+        print(ids)
         if total['value'] == 0:
             return cls.query.filter_by(id=0), 0
         when = []
         for i in range(len(ids)):
 
             when.append((ids[i], i))
-        return cls.query.filter(cls.id.in_(ids)).order_by(
-            db.case(when, value=cls.id)).filter_by(mark_auto='ВАЗ (Lada)'), total
+        itog = cls.query.filter(cls.id.in_(ids)).order_by(
+            db.case(when, value=cls.id)).filter_by(**filters)
+        vse = itog.all()
+        print(vse)
+        total['value'] = len(vse)
+        itog2 = itog.paginate(page, per_page, False).items
+        return itog2, total
 
     @classmethod
     def before_commit(cls, session):
