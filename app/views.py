@@ -1328,6 +1328,7 @@ def search():
         if request.args.get('year_auto') != 'all':
             filters['year_auto'] = request.args.get('year_auto')
     elem_list = 10
+    print(filters)
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list, filters)
     if total != 0:
