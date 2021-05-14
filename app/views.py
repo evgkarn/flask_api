@@ -690,6 +690,15 @@ def delete_user(user_id):
         if shop.image:
             if os.path.exists(os.path.dirname(os.path.abspath(__file__)) + shop.image):
                 os.remove(os.path.dirname(os.path.abspath(__file__)) + shop.image)
+        if shop.pay_operation:
+            for operation in shop.pay_operation:
+                db.session.delete(operation)
+        if shop.pay_orders:
+            for pay_order in shop.pay_orders:
+                db.session.delete(pay_order)
+        if shop.orders:
+            for order in shop.orders:
+                db.session.delete(order)
     db.session.delete(shop)
     db.session.delete(user)
     db.session.commit()
@@ -1292,6 +1301,8 @@ def status_pay():
     if not request.json['Success'] is True:
         abort(400)
     order = models.PayOrder.query.get(request.json['OrderId'])
+    if order is None:
+        abort(400)
     pay_operation = models.PayOperation.query.order_by(models.PayOperation.id).all()
     if pay_operation:
         id_order = pay_operation[-1].id + 1
