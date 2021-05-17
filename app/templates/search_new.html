@@ -1,11 +1,12 @@
 {% extends "skeleton.html" %}
 {% block content %}
+<div class="header-wrapper header-small"></div>
 <div class="container">
-<div class="main-header">
+<!-- <div class="main-header">
     <h1>Подбор автозапчастей</h1>
-</div>
+</div> -->
 <form class="search-form">
-    <img src="../static/search-car.png" alt="azato.ru">
+    <!-- <img src="../static/search-car.png" alt="azato.ru"> -->
     <input type="text" id="detailName" placeholder="Название/номер детали" required/>
     <select name="" id="carName">
         <option value="">Марка автомобиля</option>
@@ -18,6 +19,9 @@
     </select>
     <input type="submit" value="Поиск" class="redButton">
 </form>
+</div>
+</div>
+<div class="container">
     <div class="results">
     <h2>Результаты поиска: {{ pagination['value'] }}</h2>
     <div class="results-blocks">

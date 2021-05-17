@@ -146,6 +146,12 @@
     align-items: center;
     margin-bottom: 31px;
 }
+.header-small{
+    height: 173px;
+}
+.Header{
+    border-bottom: 2px solid #f63e3e;
+}
 .center{
     text-align: center;
 }
