@@ -699,7 +699,7 @@ def delete_user(user_id):
         if shop.orders:
             for order in shop.orders:
                 db.session.delete(order)
-    db.session.delete(shop)
+        db.session.delete(shop)
     db.session.delete(user)
     db.session.commit()
     return jsonify({'result': True})
