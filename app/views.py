@@ -279,6 +279,44 @@ def get_user_ads(user_id):
     return jsonify({'ads': user_posts}), 201
 
 
+# Поколения
+def async_generation(ad_id):
+    thr = Thread(target=generation_search, args=[application, ad_id])
+    thr.start()
+    return 'Ok'
+
+
+def generation_search(app, ad_id):
+    with app.app_context():
+        ad = models.Post.query.get(ad_id)
+        if ad is None:
+            abort(404)
+        filter_spec = dict()
+        unique = set()
+        if ad.mark_auto:
+            mark = models.Model.query.filter_by(name=ad.mark_auto).first()
+            filter_spec['name'] = mark.id
+        if ad.model_auto:
+            filter_spec['model'] = ad.model_auto
+        if ad.year_auto:
+            filter_spec['year'] = ad.year_auto
+        print(filter_spec)
+        filtered_query = models.Auto.query.filter_by(**filter_spec).all()
+        print(filtered_query)
+        for i in filtered_query:
+            unique.add(i.generation)
+        unique_list = sorted(list(unique))
+        generation_list = ''
+        for i in range(len(unique_list)):
+            if i + 1 != len(unique_list):
+                generation_list += str(unique_list[i]) + ', '
+            else:
+                generation_list += str(unique_list[i])
+        print(generation_list)
+        ad.generation = generation_list
+        db.session.commit()
+
+
 # Создание объявления
 @application.route('/todo/api/v1.0/ads', methods=['POST'])
 @token_required
@@ -312,7 +350,6 @@ def create_ads():
             price=int(request.form['price']),
             series=request.form.get('series_auto', ""),
             modification=request.form.get('modification_auto', ""),
-            # generation=generation_list,
             generation=request.form.get('generation', ""),
             fuel=request.form.get('fuel_auto', ""),
             engine=request.form.get('engine_auto', ""),
@@ -327,6 +364,7 @@ def create_ads():
         )
         db.session.add(new_ad)
         db.session.commit()
+        async_generation(id_ad)
     else:
         error_log['status'] = 'error'
         error_log['text'] = 'Для текущего тарифа создано максимальное количество объявлений:   ' + str(ad_count)
@@ -1367,37 +1405,4 @@ def search():
 def reindex_search():
     models.Post.reindex()
     return jsonify({'Reindex': 'true'}), 201
-
-
-# Поколения
-@application.route('/todo/api/v1.0/gen/<int:ad_id>', methods=['GET'])
-def generation_search(ad_id):
-    ad = models.Post.query.get(ad_id)
-    if ad is None:
-        abort(404)
-    filter_spec = dict()
-    unique = set()
-    if ad.mark_auto:
-        mark = models.Model.query.filter_by(name=ad.mark_auto).first()
-        filter_spec['name'] = mark.id
-    if ad.model_auto:
-        filter_spec['model'] = ad.model_auto
-    if ad.year_auto:
-        filter_spec['year'] = ad.year_auto
-    print(filter_spec)
-    filtered_query = models.Auto.query.filter_by(**filter_spec).all()
-    for i in filtered_query:
-        unique.add(i.generation)
-    unique_list = sorted(list(unique))
-    generation_list = ''
-    for i in range(len(unique_list)):
-        if i + 1 != len(unique_list):
-            generation_list += str(unique_list[i]) + ', '
-        else:
-            generation_list += str(unique_list[i])
-    print(generation_list)
-    ad.generation = generation_list
-    db.session.commit()
-
-    return jsonify({'generation': generation_list}), 201
 
