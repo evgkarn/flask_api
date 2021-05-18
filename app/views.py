@@ -1222,7 +1222,6 @@ def create_ads_from_csv():
                 model_auto=ad['model_auto'],
                 year_auto=ad['year_auto'],
                 vin_auto=ad['vin_auto'],
-                # generation=generation_list,
                 generation=request.form.get('generation', ""),
                 price=int(ad['price']),
                 user_id=int(request.form['user_id']),
@@ -1240,6 +1239,8 @@ def create_ads_from_csv():
             })
             break
     db.session.commit()
+    for ad in ads:
+        async_generation(ad['id'])
     os.remove(file_path)
     result = {'Всего строк обработано по тарифу': count,
               'Корректных': len(ads),
