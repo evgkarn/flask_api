@@ -1373,6 +1373,8 @@ def reindex_search():
 @application.route('/todo/api/v1.0/gen/<int:ad_id>', methods=['GET'])
 def generation_search(ad_id):
     ad = models.Post.query.get(ad_id)
+    if ad is None:
+        abort(404)
     filter_spec = dict()
     unique = set()
     if ad.mark_auto:
