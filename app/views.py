@@ -1386,7 +1386,6 @@ def generation_search(ad_id):
         filter_spec['year'] = ad.year_auto
     print(filter_spec)
     filtered_query = models.Auto.query.filter_by(**filter_spec).all()
-    print(filtered_query)
     for i in filtered_query:
         unique.add(i.generation)
     unique_list = sorted(list(unique))
@@ -1396,6 +1395,7 @@ def generation_search(ad_id):
             generation_list += str(unique_list[i]) + ', '
         else:
             generation_list += str(unique_list[i])
+    print(generation_list)
     ad.generation = generation_list
     db.session.commit()
 
