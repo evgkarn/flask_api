@@ -1369,7 +1369,7 @@ def reindex_search():
     return jsonify({'Reindex': 'true'}), 201
 
 
-# Поиск
+# Поколения
 @application.route('/todo/api/v1.0/gen/<int:ad_id>', methods=['GET'])
 def generation_search(ad_id):
     ad = models.Post.query.get(ad_id)
@@ -1396,5 +1396,8 @@ def generation_search(ad_id):
             generation_list += str(unique_list[i]) + ', '
         else:
             generation_list += str(unique_list[i])
+    ad.generation = generation_list
+    db.session.commit()
+
     return jsonify({'generation': generation_list}), 201
 
