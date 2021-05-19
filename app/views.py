@@ -166,10 +166,9 @@ def user_balance(obj_user):
 
 # Тестовое скачиваение файла
 @application.route('/todo/api/v1.0/import_file', methods=['POST'])
-# @token_required
+@token_required
 def import_file():
     if 'fileex' in request.files:
-        print(request.content_length)
         file = request.files['fileex']
         new_file = str(file_to_upload(file))
     else:
@@ -300,9 +299,7 @@ def generation_search(app, ad_id):
             filter_spec['model'] = ad.model_auto
         if ad.year_auto:
             filter_spec['year'] = ad.year_auto
-        print(filter_spec)
         filtered_query = models.Auto.query.filter_by(**filter_spec).all()
-        print(filtered_query)
         for i in filtered_query:
             unique.add(i.generation)
         unique_list = sorted(list(unique))
@@ -312,7 +309,6 @@ def generation_search(app, ad_id):
                 generation_list += str(unique_list[i]) + ', '
             else:
                 generation_list += str(unique_list[i])
-        print(generation_list)
         ad.generation = generation_list
         db.session.commit()
 
@@ -1376,11 +1372,29 @@ def search():
             filters['mark_auto'] = request.args.get('mark_auto').lower()
     if request.args.get('year_auto'):
         if request.args.get('year_auto') != 'all':
-            filters['year_auto'] = request.args.get('year_auto')
+            filter_year = dict()
+            unique = set()
+            generation_list = ''
+            if request.args.get('mark_auto'):
+                mark = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
+                filter_year['name'] = mark.id
+            if request.args.get('model_auto'):
+                filter_year['model'] = request.args.get('model_auto').lower()
+            if request.args.get('year_auto'):
+                filter_year['year'] = request.args.get('year_auto')
+                filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
+                for i in filtered_query_year:
+                    unique.add(i.generation)
+                unique_list = sorted(list(unique))
+                for i in range(len(unique_list)):
+                    if i + 1 != len(unique_list):
+                        generation_list += str(unique_list[i]) + ', '
+                    else:
+                        generation_list += str(unique_list[i])
+            filters['generation'] = generation_list
     elem_list = 10
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list, filters)
-    print(filters, total)
     if total != 0:
         if total['value'] % elem_list == 0:
             pages = total['value'] // elem_list
@@ -1402,7 +1416,7 @@ def search():
 
 # Переиндексация поиска
 @application.route('/todo/api/v1.0/reindex', methods=['GET'])
-@token_required
+# @token_required
 def reindex_search():
     models.Post.reindex()
     return jsonify({'Reindex': 'true'}), 201
