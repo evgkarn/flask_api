@@ -397,6 +397,7 @@ def update_ad(ad_id):
     ad.quantity = request.form.get('quantity', ad.quantity)
     ad.fuel = request.form.get('fuel_auto', ad.fuel)
     db.session.commit()
+    async_generation(ad_id)
     return jsonify(ad_by_id(ad_id)), 201
 
 
