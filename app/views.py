@@ -1393,6 +1393,7 @@ def search():
                     else:
                         generation_list += str(unique_list[i])
             filters['generation'] = generation_list
+            print(filters)
     elem_list = 10
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list, filters)
