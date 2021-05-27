@@ -578,6 +578,9 @@ select {
 .results-ads-image img {
   max-height: 200px;
 }
+.ads-shop{
+  line-height: 11px;
+}
 .redButton:hover {
   background: #c72020;
 }
@@ -891,6 +894,7 @@ a.redButton:hover {
   }
   .results-detail .ads-name {
     font-size: 13px;
+    margin-bottom: 19px;
   }
   .redButton {
     padding: 8px 20px;
