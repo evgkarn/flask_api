@@ -40,17 +40,17 @@
                 </div>
                 <div class="ads-info">
                     <p>{{ad.body|safe}}</p>
-                  </div>
-                  <div class="ads-shop">
-                    <p>Автомобиль: Toyota Corolla</p>
-                    <p>Год выпуска: 2001 (1 поколение)</a></p>
+                </div>
+                <div class="ads-shop">
+                    <p>Автомобиль: {{ad.mark_auto}} {{ad.model_auto}}</p>
+                    <p>Год выпуска: {{ad.year_auto}}</a></p>
                     <p>Продавец: <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
-                  </div>
-                  <div class="ads-shop-adress">
+                </div>
+                <div class="ads-shop-adress">
                       {% if ad.user.shops.first().address %}
                         <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ad.user.shops.first().address}}</p>
                       {% endif %}
-                  </div>
+                </div>
             </div>
             <div class="results-ads-more">
                 <div class="ads-price">
