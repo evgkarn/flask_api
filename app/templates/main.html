@@ -48,7 +48,11 @@
                   </div>
                   <div class="ads-shop">
                     <p>Автомобиль: {{ad.mark_auto}} {{ad.model_auto}}</p>
-                    <p>Год выпуска: {{ad.year_auto}}</a></p>
+                      {% if ad.year_auto %}
+                        <p>Год выпуска: {{ad.year_auto}}</a></p>
+                      {% else %}
+                      <p>Год выпуска: Не указан</a></p>
+                      {% endif %}
                     <p>Продавец: <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                   </div>
                   <div class="ads-shop-adress">
