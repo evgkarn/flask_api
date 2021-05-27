@@ -22,7 +22,7 @@
                 </div>
             
                 <div class="inner-ad-info">
-                <p><strong>Автомобиль:</strong> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</p>
+                <p><strong>Автомобиль:</strong><span class="car-name-text"> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</span> </p>
                 <p><strong>Продавец:</strong> <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                 <p><strong>Контактный телефон продавца:</strong> <a href="tel:{{ad.user.shops.first().phone}}">{{ad.user.shops.first().phone}}</a></p>
                 <p><strong>Адрес магазина:</strong> {{ad.user.shops.first().address}}</p>
@@ -31,7 +31,7 @@
                 {% endif %}
                 </div>
                
-                <a href="" class="send-message">Задать вопрос продавцу</a>
+                <a href="" class="send-message">Написать продавцу</a>
             </div>
         </div>
 
@@ -45,7 +45,7 @@
         <input id="ad_id" type="hidden" value="{{ad.id}}">
         {% if recommendation|length > 1 %}
         <div class="results">
-            <h2>Другие запчасти для  {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}:</h2>
+            <h2>Другие запчасти для <span class="car-name-text">{{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</span>:</h2>
             <div class="results-blocks">
              {% for ad_rec in recommendation %}
              {% if ad_rec.id != ad.id %}
