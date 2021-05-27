@@ -777,7 +777,6 @@ select {
   color: #f63e3e;
   background: #ffffff;
   transition: 0.5s all linear;
-  text-transform: lowercase;
   margin-top: 10px;
   display: inline-block;
 }
