@@ -39,7 +39,7 @@
                   <h3>{{ad.name_ads|safe}}</h3>
                 </div>
                 <div class="ads-shop">
-                    <p>Автомобиль: {{ad.mark_auto}} {{ad.model_auto}}</p>
+                    <p>Автомобиль: <span class="car-name-text">{{ad.mark_auto}} {{ad.model_auto}}</span></p>
                     <p>Год выпуска: {{ad.year_auto}}</a></p>
                     <p>Продавец: <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                 </div>
