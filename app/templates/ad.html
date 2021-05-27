@@ -22,7 +22,7 @@
                 </div>
             
                 <div class="inner-ad-info">
-                <p><strong>Автомобиль:</strong> {{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</p>
+                <p><strong>Автомобиль:</strong><span class="car-name-text">{{ ad.mark_auto }} {{ad.model_auto}} {{ad.year_auto}}</span> </p>
                 <p><strong>Продавец:</strong> <a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                 <p><strong>Контактный телефон продавца:</strong> <a href="tel:{{ad.user.shops.first().phone}}">{{ad.user.shops.first().phone}}</a></p>
                 <p><strong>Адрес магазина:</strong> {{ad.user.shops.first().address}}</p>
