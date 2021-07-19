@@ -969,7 +969,31 @@ def get_main_html(page):
 @application.route('/shop/<int:shop_id>')
 def get_shop_html(shop_id):
     shop = models.Shop.query.get(shop_id)
-    return render_template('shop.html', shop=shop)
+    per_page = 10
+    page = request.args.get('page', 1, type=int)
+    ads = models.Post.query.order_by(desc(models.Post.id)).filter_by(
+        active=1,
+        user_id=shop.user_id
+    ).paginate(page, per_page, error_out=False)
+    total = {'value': ads.total}
+    if total != 0:
+        if total['value'] % per_page == 0:
+            pages = total['value'] // per_page
+        else:
+            pages = (total['value'] // per_page) + 1
+    else:
+        total = {'value': 0}
+        pages = 0
+    url = re.sub(r'.page=\d+', '', request.url)
+    if len(request.args) == 1 and request.args.get('page') or not request.args:
+        url += '?'
+    else:
+        url += '&'
+    args = request.args
+    return render_template('shop.html', ads=ads, pagination=total, this_page=page, pages=pages,
+                           url=url,
+                           args=args,
+                           shop=shop)
 
 
 @application.route('/ad/<int:ad_id>')
