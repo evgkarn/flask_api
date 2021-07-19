@@ -864,7 +864,7 @@ a.redButton:hover {
   border: 1px solid #a89f9f;
 }
 .results-blocks {
-  width: 75%;
+  width: 100%;
 }
 .body-wrapper {
   display: flex;
