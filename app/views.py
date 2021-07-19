@@ -1156,7 +1156,8 @@ def create_ads_from_csv():
                         continue
                     else:
                         row['Количество'] = ''
-                    if row['Фотография'] and allowed_file(row['Фотография']):
+                    # if row['Фотография'] and allowed_file(row['Фотография']):
+                    if row['Фотография']:
                         try:
                             img = row['Фотография']
                         except requests.exceptions.ConnectionError:
