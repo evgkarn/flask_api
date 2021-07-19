@@ -1199,7 +1199,8 @@ def create_ads_from_csv():
     for ad in ads:
         if ad_count < rate.limit:
             count_res += 1
-            if ad['image'] and allowed_file(ad['image']):
+            # if ad['image'] and allowed_file(ad['image']):
+            if ad['image']:
                 img = requests.get(ad['image']).content
                 suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S%f")
                 filename = "_".join([suffix, 'upload_img.jpg'])
