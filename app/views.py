@@ -472,6 +472,7 @@ def get_order_ads(shop_id):
             'url': url_for('get_order', order_id=order.id, _external=True),
             'date_create': order.timestamp,
             'shop': order.shop.name,
+            'city_id': order.shop.city_shop.city_name,
             'ad_id': order_post_id,
             'ad_name': order_post_name,
         })
@@ -636,6 +637,7 @@ def create_user():
         body=request.form.get('text_shop', "Описание магазина не заполнено"),
         phone=request.form.get('phone', ''),
         city=request.form.get('city', 'Иркутск'),
+        city_id=request.form.get('city_id', 1),
         address=request.form.get('address', 'Адрес магазина не заполнен'),
         image=image_shop,
         user_id=id_user,
@@ -708,6 +710,7 @@ def update_user(user_id):
         shop.phone = request.form.get('phone', shop.phone)
         shop.city = request.form.get('city', shop.city)
         shop.address = request.form.get('address', shop.address)
+        shop.city_id = request.form.get('city_id', shop.city_shop.city_name)
     db.session.commit()
     return jsonify(user_by_id(user_id, error_log)), 201
 
@@ -796,7 +799,7 @@ def auth_user():
                  'shop': {'id': our_user.shops[0].id,
                           'name': our_user.shops[0].name,
                           'text': our_user.shops[0].body,
-                          'city': our_user.shops[0].city,
+                          'city_id': our_user.shops[0].city_shop.city_name,
                           'address': our_user.shops[0].address,
                           'phone': our_user.shops[0].phone,
                           'image': img},
@@ -846,6 +849,59 @@ def shop_by_id(id_elem):
         'url': url_for('get_ad', ad_id=ad.id, _external=True),
     }
     return new_ad_json
+
+
+# Формирования словаря полей города для json ответа
+def city_by_id(id_city):
+    city = models.City.query.get(id_city)
+    new_city_json = {
+        'id': city.id,
+        'name': city.city_name,
+        'domain': city.city_domain,
+    }
+    return new_city_json
+
+
+# Создание города
+@application.route('/todo/api/v1.0/city', methods=['POST'])
+# @token_required
+def create_city():
+    if not request.form or 'name' not in request.form:
+        abort(400)
+    city = models.City.query.order_by(models.City.id).all()
+    if city:
+        id_city = city[-1].id + 1
+    else:
+        id_city = 1
+    new_city = models.City(
+        id=id_city,
+        city_name=request.form.get('name', ""),
+        city_domain=request.form.get('domain', ""),
+    )
+    db.session.add(new_city)
+    db.session.commit()
+    return jsonify(city_by_id(id_city)), 201
+
+
+# Получить все города
+@application.route('/todo/api/v1.0/city', methods=['GET'])
+# @token_required
+def get_cities():
+    cities = models.City.query.all()
+    lt_cities = []
+    for u in cities:
+        lt_cities.append(city_by_id(u.id))
+    return jsonify({'cities': lt_cities}), 201
+
+
+# Получить город по id
+@application.route('/todo/api/v1.0/city/<int:ad_city>', methods=['GET'])
+# @token_required
+def get_city(ad_city):
+    ad = models.Post.query.get(ad_city)
+    if ad is None:
+        abort(404)
+    return jsonify({'ad': ad_by_id(ad_city)}), 201
 
 
 # Получить список марок авто

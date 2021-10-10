@@ -111,6 +111,7 @@ class Shop(db.Model):
     body = db.Column(db.String(768), index=True)
     phone = db.Column(db.String(11), index=True)
     city = db.Column(db.String(400), index=True)
+    city_id = db.Column(db.Integer, db.ForeignKey('city.id'))
     address = db.Column(db.String(400), index=True)
     image = db.Column(db.String(500), index=True, default=DEFAULT)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -118,6 +119,7 @@ class Shop(db.Model):
     orders = db.relationship('Order')
     pay_orders = db.relationship('PayOrder')
     pay_operation = db.relationship('PayOperation')
+    city_shop = db.relationship("City")
     date_create = db.Column(db.DateTime)
     date_change_status = db.Column(db.DateTime)
 
@@ -164,6 +166,16 @@ class PayOperation(db.Model):
 
     def __repr__(self):
         return '<PayOperation %r>' % self.id
+
+
+class City(db.Model):
+    id = db.Column(db.Integer, primary_key=True, unique=True)
+    city_name = db.Column(db.String(120), index=True)
+    city_domain = db.Column(db.String(120), index=True)
+    shop = db.relationship("Shop")
+
+    def __repr__(self):
+        return '<City %r>' % self.city_name
 
 
 class Auto(db.Model):
