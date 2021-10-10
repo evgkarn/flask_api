@@ -710,7 +710,7 @@ def update_user(user_id):
         shop.phone = request.form.get('phone', shop.phone)
         shop.city = request.form.get('city', shop.city)
         shop.address = request.form.get('address', shop.address)
-        shop.city_id = request.form.get('city_id', shop.city_shop.city_name)
+        shop.city_id = request.form.get('city_id', shop.city_shop.id)
     db.session.commit()
     return jsonify(user_by_id(user_id, error_log)), 201
 
