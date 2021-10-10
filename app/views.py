@@ -182,9 +182,9 @@ def ad_by_id(id_elem, error_log=None):
         error_log = {}
     ad = models.Post.query.get(id_elem)
     img = ''
-    if ad.image:
-        img = SERVER_NAME + ad.image
     if ad:
+        if ad.image:
+            img = SERVER_NAME + ad.image
         new_ad_json = {
             'id': ad.id,
             'user_id': ad.user_id,
