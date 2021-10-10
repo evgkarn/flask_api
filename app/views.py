@@ -864,7 +864,7 @@ def city_by_id(id_city):
 
 # Создание города
 @application.route('/todo/api/v1.0/city', methods=['POST'])
-# @token_required
+@token_required
 def create_city():
     if not request.form or 'name' not in request.form:
         abort(400)
@@ -895,13 +895,25 @@ def get_cities():
 
 
 # Получить город по id
-@application.route('/todo/api/v1.0/city/<int:ad_city>', methods=['GET'])
+@application.route('/todo/api/v1.0/city/<int:id_city>', methods=['GET'])
 # @token_required
-def get_city(ad_city):
-    ad = models.Post.query.get(ad_city)
+def get_city(id_city):
+    ad = models.Post.query.get(id_city)
     if ad is None:
         abort(404)
-    return jsonify({'ad': ad_by_id(ad_city)}), 201
+    return jsonify({'ad': ad_by_id(id_city)}), 201
+
+
+# Удаление города
+@application.route('/todo/api/v1.0/city/<int:id_city>', methods=['DELETE'])
+@token_required
+def delete_city(id_city):
+    city = models.Post.query.get(id_city)
+    if city is None:
+        abort(404)
+    db.session.delete(city)
+    db.session.commit()
+    return jsonify({'result': True})
 
 
 # Получить список марок авто
