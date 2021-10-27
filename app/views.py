@@ -898,8 +898,8 @@ def get_cities():
 @application.route('/todo/api/v1.0/city/<int:id_city>', methods=['GET'])
 # @token_required
 def get_city(id_city):
-    ad = models.Post.query.get(id_city)
-    if ad is None:
+    city = models.City.query.get(id_city)
+    if city is None:
         abort(404)
     return jsonify({'ad': ad_by_id(id_city)}), 201
 
@@ -908,7 +908,7 @@ def get_city(id_city):
 @application.route('/todo/api/v1.0/city/<int:id_city>', methods=['DELETE'])
 @token_required
 def delete_city(id_city):
-    city = models.Post.query.get(id_city)
+    city = models.City.query.get(id_city)
     if city is None:
         abort(404)
     db.session.delete(city)
