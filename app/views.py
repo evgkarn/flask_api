@@ -901,7 +901,7 @@ def get_city(id_city):
     city = models.City.query.get(id_city)
     if city is None:
         abort(404)
-    return jsonify({'ad': ad_by_id(id_city)}), 201
+    return jsonify({'city': city_by_id(id_city)}), 201
 
 
 # Удаление города
