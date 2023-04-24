@@ -5,7 +5,7 @@
     <h1>Подбор автозапчастей</h1>
 </div>
 <form class="search-form">
-    <img src="../static/search-car.png" alt="azato.ru">
+    <img src="../search-car.png" alt="azato.ru">
     <input type="text" id="detailName" placeholder="Название/номер детали" required/>
     <select name="" id="carName">
         <option value="">Марка автомобиля</option>
@@ -28,7 +28,7 @@
                 {% if ad.image %}
                 <img src="{{ad.image}}" alt="{{ad.name_ads}}">
                 {% else %}
-                <img src="/static/not_found.jpg" alt="{{ad.name_ads}}"></img>
+                <img src="/not_found.jpg" alt="{{ad.name_ads}}"></img>
                 {% endif %}
             </div>
             <div class="results-ads-info">
@@ -63,7 +63,7 @@
         </div>
         <div class="ban-section">
             <a href="https://www.instagram.com/top4service/" target="_blank">
-            <img src="../static/banner2.jpeg" alt="top4service">
+            <img src="../banner2.jpeg" alt="top4service">
             </a>
         </div>
     </div>
