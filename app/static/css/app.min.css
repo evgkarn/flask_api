@@ -489,7 +489,7 @@ ul {
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
-  height: 10пшы0px;
+  height: 100px;
 }
 .Footer {
   background: #333;
@@ -566,7 +566,7 @@ ul {
   flex: 1 0 auto;
 }
 .main-header h1 {
-  font-family: Poppins-Bold;
+  font-family: Poppins-Bold, sans-serif;
 }
 input[type='text'],
 select {
@@ -612,7 +612,7 @@ select {
   text-align: left;
 }
 .results h2 {
-  font-family: Poppins-Bold;
+  font-family: Poppins-Bold, sans-serif;
 }
 .results-detail {
   display: -webkit-box;
@@ -654,7 +654,7 @@ select {
   text-align: right;
 }
 .results-detail .results-ads-more .ads-price {
-  font-family: Poppins-Bold;
+  font-family: Poppins-Bold, sans-serif;
   font-size: 18px;
   margin-bottom: 10px;
 }
