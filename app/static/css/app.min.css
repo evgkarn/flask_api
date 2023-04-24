@@ -365,6 +365,18 @@ body {
   font-family: Geometria-Bold;
   src: url(../fonts/Geometria/Geometria-Bold.ttf);
 }
+@font-face {
+  font-family: Poppins-Bold;
+  src: url(../fonts/Poppins/Poppins-Bold.ttf);
+}
+@font-face {
+  font-family: Poppins;
+  src: url(../fonts/Poppins/Poppins-Regular.ttf);
+}
+@font-face {
+  font-family: Poppins-medium;
+  src: url(../fonts/Poppins/Poppins-Medium.ttf);
+}
 body,
 html {
   height: 100%;
@@ -375,7 +387,7 @@ img {
 }
 body {
   margin: 0;
-  font-family: Geometria, sans-serif;
+  font-family: Poppins, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: -webkit-box;
@@ -400,7 +412,7 @@ a:hover {
   height: 100%;
 }
 ul {
-  font-family: Geometria-medium, sans-serif;
+  font-family: Poppins-medium, sans-serif;
 }
 .container {
   width: 1130px;
@@ -431,7 +443,7 @@ ul {
 }
 .navigationSection ul {
   list-style: none;
-  font-family: Geometria-medium, sans-serif;
+  font-family: Poppins-medium, sans-serif;
   margin-bottom: 0;
 }
 .navigationSection ul li {
@@ -550,7 +562,7 @@ ul {
   flex: 1 0 auto;
 }
 .main-header h1 {
-  font-family: Geometria-Bold;
+  font-family: Poppins-Bold;
 }
 input[type='text'],
 select {
@@ -593,7 +605,7 @@ select {
   text-align: left;
 }
 .results h2 {
-  font-family: Geometria-Bold;
+  font-family: Poppins-Bold;
 }
 .results-detail {
   display: -webkit-box;
@@ -635,7 +647,7 @@ select {
   text-align: right;
 }
 .results-detail .results-ads-more .ads-price {
-  font-family: Geometria-Bold;
+  font-family: Poppins-Bold;
   font-size: 18px;
   margin-bottom: 10px;
 }
@@ -645,7 +657,7 @@ select {
 }
 .results-detail .ads-name {
   font-size: 17px;
-  font-family: Geometria-Bold, sans-serif;
+  font-family: Poppins-Bold, sans-serif;
 }
 .results-detail .results-ads-info {
   width: 630px;
