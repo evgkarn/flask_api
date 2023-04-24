@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from app import application, models, db
-from flask import jsonify, abort, request, make_response, url_for, render_template, send_from_directory
+from flask import jsonify, abort, request, make_response, url_for, render_template
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import check_password_hash, generate_password_hash
 from werkzeug.utils import secure_filename
@@ -1517,8 +1517,3 @@ def reindex_search():
     models.Post.reindex()
     return jsonify({'Reindex': 'true'}), 201
 
-
-# Вывод файла ads.txt для проверки рекламы
-@application.route('/ads.txt')
-def ads():
-    return send_from_directory(application.static_folder, request.path[1:])
