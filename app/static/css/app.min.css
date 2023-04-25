@@ -482,10 +482,16 @@ ul {
 .car-model-text{
   background: #FFE6B0;
   font-size: 13px;
-  width: 500;
   font-family: Poppins, sans-serif;
   padding: 4px 8px;
-  border-radius: 15px;
+  border-radius: 8px;
+
+}
+.car-model-text:not(:first-child){
+  margin-left: 10px;
+}
+.car-model-text:first-letter{
+  text-transform: uppercase;
 }
 .headerContainer {
   display: -webkit-box;
@@ -673,6 +679,8 @@ select {
 .results-detail .ads-name h3 {
   font-size: 17px;
   font-family: Poppins, sans-serif;
+  font-weight: 400;
+  color: #4E4B66;
 }
 .results-detail .results-ads-info {
   width: 630px;
