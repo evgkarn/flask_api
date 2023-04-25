@@ -487,6 +487,9 @@ ul {
   border-radius: 8px;
 
 }
+.shop-link{
+  color:#6E7191;
+}
 .car-model-text:not(:first-child){
   margin-left: 10px;
 }

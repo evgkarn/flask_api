@@ -59,7 +59,7 @@
                     <p><span class="car-model-text">{{ad.model_auto}} </span>  {% if ad.year_auto %} <span class="car-model-text">{{ad.year_auto}} </span>   {% else %}
                         <span class="car-model-text">Год не указан</span> 
                         {% endif %}</p>
-                    <p><a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
+                    <p><a href="/shop/{{ad.user.shops.first().id}}" class="shop-link">{{ad.user.shops.first().name}}</a></p>
                   </div>
               
             </div>
