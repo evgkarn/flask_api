@@ -216,7 +216,7 @@ if(contactButton){
 
 	// Получение телефонов по клику
 
-	let phones = document.querySelectorAll('.results-ads-more button')
+	let phones = document.querySelectorAll('.phone-adt-button')
 		console.log(phones)
 	if(phones){
 		for(let i=0; i<phones.length; i++){

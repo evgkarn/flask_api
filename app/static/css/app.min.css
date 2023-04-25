@@ -479,6 +479,13 @@ ul {
 .car-name-text{
   text-transform: capitalize;
 }
+.adt-image{
+  max-width: 180px;
+    max-height: 180px;
+    object-fit: contain;
+    -o-object-position: center;
+    object-position: center;
+}
 .car-model-text{
   background: #FFE6B0;
   font-size: 13px;
@@ -636,8 +643,8 @@ select {
   display: -ms-flexbox;
   display: flex;
   border: 1px solid #c7c7c763;
-  padding: 19px 10px;
-  height: 210px;
+  padding: 0 20px 0 0;
+  height: 180px;
   border-radius: 8px;
   box-shadow: 1px 1px 1px #b9b3b38a;
   background: #fff;
@@ -684,6 +691,14 @@ select {
   font-family: Poppins, sans-serif;
   font-weight: 400;
   color: #4E4B66;
+  margin-top: 20px;
+}
+.phone-adt-button{
+  color:#14142B;
+  font-size: 13px;
+  padding: 4px 8px;
+  background-color:#EFF0F6;
+  border-radius: 8px;
 }
 .results-detail .results-ads-info {
   width: 630px;
