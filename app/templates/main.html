@@ -40,15 +40,17 @@
         {% if ad.active != 0 %}
         <div class="results-detail">
             <div class="results-ads-image">
+                <a href="/ad/{{ad.id}}">
                 {% if ad.image %}
                 <img src="{{ad.image}}" alt="{{ad.name_ads}}" class="adt-image">
                 {% else %}
                 <img src="/not_found.jpg" alt="{{ad.name_ads}}"></img>
                 {% endif %}
+            </a>
             </div>
             <div class="results-ads-info">
                 <div class="ads-name">
-                    <h3>{{ad.name_ads|safe}}</h3>
+                    <a href="/ad/{{ad.id}}"> <h3>{{ad.name_ads|safe}}</h3></a>
 
                     <!-- <h3><a href="/ad/{{ad.id}}">{{ad.name_ads|safe}}</a></h3> -->
                 </div>
@@ -70,9 +72,6 @@
                 <div class="ads-price">
                     <span>{{ad.price}} ₽</span>
                 </div>
-
-               
-                <a href="/ad/{{ad.id}}" class="redButton">Подробнее о товаре</a>
             </div>
         </div>
         {% endif %}
