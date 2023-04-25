@@ -56,19 +56,12 @@
                   </div>
                   <div class="ads-shop">
                     <p><span class="car-name-text">{{ad.mark_auto}}</span></p>
-                    <p><span class="car-model-text">{{ad.model_auto}}</span></p>
-                      {% if ad.year_auto %}
-                        <p>Год выпуска: {{ad.year_auto}}</a></p>
-                      {% else %}
-                      <p>Год выпуска: Не указан</a></p>
-                      {% endif %}
+                    <p><span class="car-model-text">{{ad.model_auto}} </span>  {% if ad.year_auto %} <span class="car-model-text">{{ad.year_auto}} </span>   {% else %}
+                        <span class="car-model-text">Год не указан</span> 
+                        {% endif %}</p>
                     <p><a href="/shop/{{ad.user.shops.first().id}}">{{ad.user.shops.first().name}}</a></p>
                   </div>
-                  <div class="ads-shop-adress">
-                      {% if ad.user.shops.first().address %}
-                        <p><i class="fa fa-map-marker" aria-hidden="true"></i> {{ad.user.shops.first().address}}</p>
-                      {% endif %}
-                  </div>
+              
             </div>
             <div class="results-ads-more">
                 <div class="ads-price">
