@@ -616,7 +616,7 @@ select {
   transition: 0.5s all;
 }
 .results-ads-image img {
-  max-height: 200px;
+  max-height: 180px;
 }
 .ads-shop{
   line-height: 11px;
@@ -694,11 +694,12 @@ select {
   margin-top: 20px;
 }
 .phone-adt-button{
-  color:#14142B;
+  color: #14142B;
   font-size: 13px;
-  padding: 4px 8px;
-  background-color:#EFF0F6;
+  padding: 6px 8px;
+  background-color: #EFF0F6;
   border-radius: 8px;
+  border: none;
 }
 .results-detail .results-ads-info {
   width: 630px;
