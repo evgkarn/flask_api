@@ -356,7 +356,8 @@ def create_ads():
             quantity=request.form.get('quantity', 1),
             user_id=int(request.form['user_id']),
             image=image_ads,
-            timestamp=datetime.datetime.utcnow()
+            timestamp=datetime.datetime.utcnow(),
+            update_timestamp=datetime.datetime.utcnow()
         )
         db.session.add(new_ad)
         db.session.commit()
@@ -369,7 +370,7 @@ def create_ads():
 
 # Изменение объявления
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
-@token_required
+# @token_required
 def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
@@ -396,6 +397,7 @@ def update_ad(ad_id):
     ad.up_down = request.form.get('up_down', ad.up_down)
     ad.quantity = request.form.get('quantity', ad.quantity)
     ad.fuel = request.form.get('fuel_auto', ad.fuel)
+    ad.update_timestamp = datetime.datetime.utcnow()
     db.session.commit()
     async_generation(ad_id)
     return jsonify(ad_by_id(ad_id)), 201

@@ -97,6 +97,7 @@ class Post(SearchableMixin, db.Model):
     quantity = db.Column(db.Integer, index=True)
     fuel = db.Column(db.String(120), index=True, default=DEFAULT)
     timestamp = db.Column(db.DateTime)
+    update_timestamp = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     user = db.relationship("User")
     order = db.relationship('Order')
