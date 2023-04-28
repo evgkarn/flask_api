@@ -803,6 +803,23 @@ select {
   width: 230px;
   background: #EFF0F6;
   color: #6E7191;
+
+}
+.sedan-button{
+  font-size: 14px;
+  font-weight: 600;
+  font-family: Poppins, sans-serif;
+  padding: 18px 22px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ background: #FFE5E3;
+ margin: 20px 0;
+}
+.sedan-button img{
+  width: 25px;
+  height: 25px;
+  margin-right: 16px;
 }
 .search-form img {
   position: absolute;
