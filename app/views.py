@@ -370,7 +370,7 @@ def create_ads():
 
 # Изменение объявления
 @application.route('/todo/api/v1.0/ads/<int:ad_id>', methods=['PUT'])
-# @token_required
+@token_required
 def update_ad(ad_id):
     ad = models.Post.query.get(ad_id)
     if ad is None:
