@@ -29,6 +29,9 @@
                 {% if ad.number %}
                 <p><strong>Номер детали:</strong> {{ad.number}}</p>
                 {% endif %}
+                {% if ad.update_timestamp %}
+                <p><strong>Дата изменения:</strong> {{ad.update_timestamp}}</p>
+                {% endif %}
                 </div>
                
                 <a href="" class="send-message">Написать продавцу</a>
