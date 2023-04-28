@@ -821,7 +821,7 @@ select {
   height: 25px;
   margin-right: 16px;
 }
-.search-form img {
+.search-form img.pashalka {
   position: absolute;
   width: 139px;
   top: -39px;
