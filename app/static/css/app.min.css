@@ -809,12 +809,15 @@ select {
   font-size: 14px;
   font-weight: 600;
   font-family: Poppins, sans-serif;
-  padding: 18px 22px;
+  padding: 16px 22px;
   display: flex;
   justify-content: center;
   align-items: center;
- background: #FFE5E3;
- margin: 20px 0;
+  background: #FFE5E3;
+  margin: 20px 0;
+  border: none;
+  border-radius: 14px;
+  margin-left: 34px;
 }
 .sedan-button img{
   width: 25px;
