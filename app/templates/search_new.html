@@ -6,7 +6,7 @@
     <h1>Подбор автозапчастей</h1>
 </div> -->
 <form class="search-form">
-    <!-- <img src="../static/search-car.png" alt="azato.ru"> -->
+    <!-- <img src="../search-car.png" alt="azato.ru"> -->
     <input type="text" id="detailName" placeholder="Название/номер детали" required/>
     <select name="" id="carName">
         <option value="">Марка автомобиля</option>
@@ -32,7 +32,7 @@
                 {% if ad.image %}
                 <img src="{{ad.image}}" alt="{{ad.name_ads}}" class="adt-image">
                 {% else %}
-                <img src="/static/not_found.jpg" alt="{{ad.name_ads}}"></img>
+                <img src="/not_found.jpg" alt="{{ad.name_ads}}"></img>
                 {% endif %}
             </a>
             </div>

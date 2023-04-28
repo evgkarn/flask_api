@@ -10,6 +10,7 @@
 <form class="search-form">
     <button class="sedan-button"><img src="../static/Sedan.png" alt="Легковые автомобили">Легковые автомобили</button>
     <img src="../static/search-car.png" alt="azato.ru">
+
     <input type="text" id="detailName" placeholder="Название/номер детали" required/>
     <select name="" id="carName">
         <option value="">Марка автомобиля</option>
@@ -37,7 +38,7 @@
                 {% if ad.image %}
                 <img src="{{ad.image}}" alt="{{ad.name_ads}}" class="adt-image">
                 {% else %}
-                <img src="/static/not_found.jpg" alt="{{ad.name_ads}}"></img>
+                <img src="/not_found.jpg" alt="{{ad.name_ads}}"></img>
                 {% endif %}
             </a>
             </div>
@@ -146,7 +147,7 @@
     </div>
     <!-- <div class="ban-section">
         <a href="https://www.instagram.com/top4service/" target="_blank">
-        <img src="../static/banner2.jpeg" alt="top4service">
+        <img src="../banner2.jpeg" alt="top4service">
         </a>
     </div> -->
     </div>
