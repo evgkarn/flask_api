@@ -774,6 +774,7 @@ def active_ads_users(user_id):
         abort(404)
     for ad in ads:
         ad.active = int(request.form['active'])
+        ad.update_timestamp = datetime.datetime.utcnow()
     db.session.commit()
     return jsonify({'result': True})
 
