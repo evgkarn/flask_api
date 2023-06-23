@@ -8,7 +8,9 @@
 
             <div class="ads-page-photo">
                 {% if ad.image %}
-                 <img src="{{ad.image}}" alt="">
+                <a href="{{ad.image}}" data-fancybox="gallery">
+                 <img src="{{ad.image}}" alt="{{ad.name_ads|safe}}">
+                 </a>
                 {% else %}
                 <img src="/not_found.jpg" alt="">
                 {% endif %}
