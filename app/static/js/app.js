@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
 	let carYear =  document.querySelector('#carYear');
 	let cityIp =  document.querySelector('.cityIp');
 	let searchForm = document.querySelector('.search-form');
-	let carImage = document.querySelector('.search-form img')
+	let carImage = document.querySelector('.pashalka');
 
 	let url = String(window.location.href)
 	
