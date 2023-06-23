@@ -236,5 +236,9 @@ if(contactButton){
 			carImage.classList.add('animation-car')
 		})
 	}
+
+	Fancybox.bind("[data-fancybox]", {
+		// Your custom options
+	  });
 });
 
