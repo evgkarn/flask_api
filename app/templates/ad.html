@@ -54,29 +54,29 @@
              {% if ad_rec.id != ad.id %}
              <div class="results-detail">
                 <div class="results-ads-image">
-                    <a href="/ad/{{ad.id}}">
+                    <a href="/ad/{{ad_rec.id}}">
                     {% if ad.image %}
-                    <img src="{{ad.image}}" alt="{{ad.name_ads}}" class="adt-image">
+                    <img src="{{ad_rec.image}}" alt="{{ad_rec.name_ads}}" class="adt-image">
                     {% else %}
-                    <img src="/static/not_found.jpg" alt="{{ad.name_ads}}"></img>
+                    <img src="/static/not_found.jpg" alt="{{ad_rec.name_ads}}"></img>
                     {% endif %}
                 </a>
                 </div>
                 <div class="results-ads-info">
                     <div class="ads-name">
-                        <a href="/ad/{{ad.id}}"> <h3>{{ad.name_ads|safe}}</h3></a>
+                        <a href="/ad/{{ad_rec.id}}"> <h3>{{ad_rec.name_ads|safe}}</h3></a>
     
                         <!-- <h3><a href="/ad/{{ad.id}}">{{ad.name_ads|safe}}</a></h3> -->
                     </div>
                     <div class="ads-info">
                       </div>
                       <div class="ads-shop">
-                        <p><span class="car-name-text">{{ad.mark_auto}}</span></p>
-                        <p><span class="car-model-text">{{ad.model_auto}} </span>  {% if ad.year_auto %} <span class="car-model-text">{{ad.year_auto}} </span>   {% else %}
+                        <p><span class="car-name-text">{{ad_rec.mark_auto}}</span></p>
+                        <p><span class="car-model-text">{{ad_rec.model_auto}} </span>  {% if ad_rec.year_auto %} <span class="car-model-text">{{ad_rec.year_auto}} </span>   {% else %}
                             <span class="car-model-text">Год не указан</span> 
                             {% endif %}</p>
-                        <p><a href="/shop/{{ad.user.shops.first().id}}" class="shop-link">{{ad.user.shops.first().name}}</a>
-                        <button value="{{ad.user.shops.first().phone}}" class="phone-adt-button">Показать телефон</button>
+                        <p><a href="/shop/{{ad_rec.user.shops.first().id}}" class="shop-link">{{ad_rec.user.shops.first().name}}</a>
+                        <button value="{{ad_rec.user.shops.first().phone}}" class="phone-adt-button">Показать телефон</button>
                         
                         </p>
                       </div>
@@ -84,7 +84,7 @@
                 </div>
                 <div class="results-ads-more">
                     <div class="ads-price">
-                        <span>{{ad.price}} ₽</span>
+                        <span>{{ad_rec.price}} ₽</span>
                     </div>
     
                     <div class="ads-city">
