@@ -1465,22 +1465,22 @@ def search():
     if request.args.get('model_auto'):
         if request.args.get('model_auto') != 'all':
             filters['model_auto'] = request.args.get('model_auto').lower()
-        else:
-            filter_auto = dict()
-            auto_list = ''
-            unique_auto = set()
-            mark_auto = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
-            filter_auto['name'] = mark_auto.id
-            filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
-            for i in filtered_query_auto:
-                unique_auto.add(i.model)
-            unique_auto_list = sorted(list(unique_auto))
-            for i in range(len(unique_auto_list)):
-                if i + 1 != len(unique_auto_list):
-                    auto_list += str(unique_auto_list[i]) + ', '
-                else:
-                    auto_list += str(unique_auto_list[i])
-            filters['model_auto'] = auto_list
+        # else:
+        #     filter_auto = dict()
+        #     auto_list = ''
+        #     unique_auto = set()
+        #     mark_auto = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
+        #     filter_auto['name'] = mark_auto.id
+        #     filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
+        #     for i in filtered_query_auto:
+        #         unique_auto.add(i.model)
+        #     unique_auto_list = sorted(list(unique_auto))
+        #     for i in range(len(unique_auto_list)):
+        #         if i + 1 != len(unique_auto_list):
+        #             auto_list += str(unique_auto_list[i]) + ', '
+        #         else:
+        #             auto_list += str(unique_auto_list[i])
+        #     filters['model_auto'] = auto_list
     if request.args.get('mark_auto'):
         if request.args.get('mark_auto') != 'all':
             filters['mark_auto'] = request.args.get('mark_auto').lower()
