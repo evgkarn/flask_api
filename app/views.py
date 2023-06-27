@@ -1496,7 +1496,6 @@ def search():
             if request.args.get('year_auto'):
                 filter_year['year'] = request.args.get('year_auto')
                 filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
-                print(filtered_query_year)
                 for i in filtered_query_year:
                     unique.add(i.generation)
                 unique_list = sorted(list(unique))
@@ -1506,7 +1505,7 @@ def search():
                     else:
                         generation_list += str(unique_list[i])
             filters['generation'] = generation_list
-            print(filters)
+    print(filters)
     elem_list = 10
     page = request.args.get('page', 1, type=int)
     posts, total = models.Post.search(qsearch, page, elem_list, filters)
