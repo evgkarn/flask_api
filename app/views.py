@@ -1472,7 +1472,7 @@ def search():
             filter_auto['mark_auto'] = request.args.get('mark_auto')
             filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
             for i in filtered_query_auto:
-                unique_auto.add(i.generation)
+                unique_auto.add(i.model)
             unique_auto_list = sorted(list(unique_auto))
             for i in range(len(unique_auto_list)):
                 if i + 1 != len(unique_auto_list):
