@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", function() {
 				arrUrl = arrUrl.join('').split('&')
 				
 				for(let el of arrUrl){
-					if(arrUrl.length === 4){
 						el = el.split('=')
 						if(el[0] === 'name'){
 							document.querySelector('#detailName').value = decodeURIComponent(el[1])
@@ -53,22 +52,6 @@ document.addEventListener("DOMContentLoaded", function() {
 			
 							document.querySelector('#carYear').value = decodeURIComponent(el[1])
 						}
-					} else{
-
-						el = el.split('=')
-						if(el[0] === 'mark_auto'){
-							await getCars()
-							document.querySelector('#carName').value = decodeURIComponent(el[1])
-						}else if(el[0] === 'model_auto'){
-							await getModels()
-			
-							document.querySelector('#carModel').value = decodeURIComponent(el[1])
-						}else if(el[0] === 'year_auto'){
-							await getYears()
-			
-							document.querySelector('#carYear').value = decodeURIComponent(el[1])
-						}
-					}
 									
 				}
 			}else{
