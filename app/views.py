@@ -1463,11 +1463,8 @@ def search():
     if request.args.get('name'):
         qsearch += request.args.get('name')
     if request.args.get('model_auto'):
-        if request.args.get('model_auto') != 'all' and request.args.get('name'):
+        if request.args.get('model_auto') != 'all':
             filters['model_auto'] = request.args.get('model_auto').lower()
-    if request.args.get('mark_auto'):
-        if request.args.get('mark_auto') != 'all':
-            filters['mark_auto'] = request.args.get('mark_auto').lower()
         else:
             filter_auto = dict()
             auto_list = ''
@@ -1483,6 +1480,9 @@ def search():
                 else:
                     auto_list += str(unique_auto_list[i])
             filters['mark_auto'] = auto_list
+    if request.args.get('mark_auto'):
+        if request.args.get('mark_auto') != 'all':
+            filters['mark_auto'] = request.args.get('mark_auto').lower()
     if request.args.get('year_auto'):
         if request.args.get('year_auto') != 'all':
             filter_year = dict()
