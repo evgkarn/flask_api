@@ -1463,11 +1463,26 @@ def search():
     if request.args.get('name'):
         qsearch += request.args.get('name')
     if request.args.get('model_auto'):
-        if request.args.get('model_auto') != 'all':
+        if request.args.get('model_auto') != 'all' and request.args.get('name'):
             filters['model_auto'] = request.args.get('model_auto').lower()
     if request.args.get('mark_auto'):
         if request.args.get('mark_auto') != 'all':
             filters['mark_auto'] = request.args.get('mark_auto').lower()
+        else:
+            filter_auto = dict()
+            auto_list = ''
+            unique_auto = set()
+            filter_auto['mark_auto'] = request.args.get('mark_auto')
+            filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
+            for i in filtered_query_auto:
+                unique_auto.add(i.generation)
+            unique_auto_list = sorted(list(unique_auto))
+            for i in range(len(unique_auto_list)):
+                if i + 1 != len(unique_auto_list):
+                    auto_list += str(unique_auto_list[i]) + ', '
+                else:
+                    auto_list += str(unique_auto_list[i])
+            filters['mark_auto'] = auto_list
     if request.args.get('year_auto'):
         if request.args.get('year_auto') != 'all':
             filter_year = dict()
@@ -1481,6 +1496,7 @@ def search():
             if request.args.get('year_auto'):
                 filter_year['year'] = request.args.get('year_auto')
                 filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
+                print(filtered_query_year)
                 for i in filtered_query_year:
                     unique.add(i.generation)
                 unique_list = sorted(list(unique))
