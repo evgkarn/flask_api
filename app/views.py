@@ -1479,7 +1479,7 @@ def search():
                     auto_list += str(unique_auto_list[i]) + ', '
                 else:
                     auto_list += str(unique_auto_list[i])
-            filters['mark_auto'] = auto_list
+            filters['model_auto'] = auto_list
     if request.args.get('mark_auto'):
         if request.args.get('mark_auto') != 'all':
             filters['mark_auto'] = request.args.get('mark_auto').lower()
