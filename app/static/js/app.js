@@ -140,7 +140,7 @@ function capitalizeFirstLetter(string) {
 	//Поиск запчасти
 	searchForm.addEventListener('submit', (e)=>{
 		e.preventDefault();
-		let name = searchForm.querySelector('#detailName').value.length > 0 ? searchForm.querySelector('#detailName').value : 'all'
+		let name = searchForm.querySelector('#detailName').value.length > 0 ? searchForm.querySelector('#detailName').value : ''
 		let markAuto = searchForm.querySelector('#carName').value
 		let modelAuto = searchForm.querySelector('#carModel').value
 		let carYear = searchForm.querySelector('#carYear').value
