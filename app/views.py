@@ -1469,7 +1469,7 @@ def search():
             filter_auto = dict()
             auto_list = ''
             unique_auto = set()
-            filter_auto['mark_auto'] = request.args.get('mark_auto')
+            filter_auto['model'] = request.args.get('mark_auto')
             filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
             for i in filtered_query_auto:
                 unique_auto.add(i.model)
