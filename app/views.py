@@ -1516,6 +1516,28 @@ def search():
         if request.args.get('mark_auto'):
             if request.args.get('mark_auto') != 'all':
                 filters['mark_auto'] = request.args.get('mark_auto').lower()
+        if request.args.get('year_auto'):
+            if request.args.get('year_auto') != 'all':
+                filter_year = dict()
+                unique = set()
+                generation_list = ''
+                if request.args.get('mark_auto'):
+                    mark = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
+                    filter_year['name'] = mark.id
+                if request.args.get('model_auto'):
+                    filter_year['model'] = request.args.get('model_auto').lower()
+                if request.args.get('year_auto'):
+                    filter_year['year'] = request.args.get('year_auto')
+                    filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
+                    for i in filtered_query_year:
+                        unique.add(i.generation)
+                    unique_list = sorted(list(unique))
+                    for i in range(len(unique_list)):
+                        if i + 1 != len(unique_list):
+                            generation_list += str(unique_list[i]) + ', '
+                        else:
+                            generation_list += str(unique_list[i])
+                filters['generation'] = generation_list
         posts = models.Post.query.order_by(desc(models.Post.id)).filter_by(**filters).paginate(page,
                                                                                                per_page,
                                                                                                error_out=False)
