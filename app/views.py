@@ -1460,70 +1460,80 @@ def status_pay():
 def search():
     qsearch = ''
     filters = {'active': 1}
+    args = request.args
     if request.args.get('name'):
         qsearch += request.args.get('name')
-    if request.args.get('model_auto'):
-        if request.args.get('model_auto') != 'all':
-            filters['model_auto'] = request.args.get('model_auto').lower()
-        # else:
-        #     filter_auto = dict()
-        #     auto_list = ''
-        #     unique_auto = set()
-        #     mark_auto = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
-        #     filter_auto['name'] = mark_auto.id
-        #     filtered_query_auto = models.Auto.query.filter_by(**filter_auto).all()
-        #     for i in filtered_query_auto:
-        #         unique_auto.add(i.model)
-        #     unique_auto_list = sorted(list(unique_auto))
-        #     for i in range(len(unique_auto_list)):
-        #         if i + 1 != len(unique_auto_list):
-        #             auto_list += str(unique_auto_list[i]) + ', '
-        #         else:
-        #             auto_list += str(unique_auto_list[i])
-        #     filters['model_auto'] = auto_list
-    if request.args.get('mark_auto'):
-        if request.args.get('mark_auto') != 'all':
-            filters['mark_auto'] = request.args.get('mark_auto').lower()
-    if request.args.get('year_auto'):
-        if request.args.get('year_auto') != 'all':
-            filter_year = dict()
-            unique = set()
-            generation_list = ''
-            if request.args.get('mark_auto'):
-                mark = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
-                filter_year['name'] = mark.id
-            if request.args.get('model_auto'):
-                filter_year['model'] = request.args.get('model_auto').lower()
-            if request.args.get('year_auto'):
-                filter_year['year'] = request.args.get('year_auto')
-                filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
-                for i in filtered_query_year:
-                    unique.add(i.generation)
-                unique_list = sorted(list(unique))
-                for i in range(len(unique_list)):
-                    if i + 1 != len(unique_list):
-                        generation_list += str(unique_list[i]) + ', '
-                    else:
-                        generation_list += str(unique_list[i])
-            filters['generation'] = generation_list
-    print(filters)
-    elem_list = 10
-    page = request.args.get('page', 1, type=int)
-    posts, total = models.Post.search(qsearch, page, elem_list, filters)
-    if total != 0:
-        if total['value'] % elem_list == 0:
-            pages = total['value'] // elem_list
+        if request.args.get('model_auto'):
+            if request.args.get('model_auto') != 'all':
+                filters['model_auto'] = request.args.get('model_auto').lower()
+        if request.args.get('mark_auto'):
+            if request.args.get('mark_auto') != 'all':
+                filters['mark_auto'] = request.args.get('mark_auto').lower()
+        if request.args.get('year_auto'):
+            if request.args.get('year_auto') != 'all':
+                filter_year = dict()
+                unique = set()
+                generation_list = ''
+                if request.args.get('mark_auto'):
+                    mark = models.Model.query.filter_by(name=request.args.get('mark_auto').lower()).first()
+                    filter_year['name'] = mark.id
+                if request.args.get('model_auto'):
+                    filter_year['model'] = request.args.get('model_auto').lower()
+                if request.args.get('year_auto'):
+                    filter_year['year'] = request.args.get('year_auto')
+                    filtered_query_year = models.Auto.query.filter_by(**filter_year).all()
+                    for i in filtered_query_year:
+                        unique.add(i.generation)
+                    unique_list = sorted(list(unique))
+                    for i in range(len(unique_list)):
+                        if i + 1 != len(unique_list):
+                            generation_list += str(unique_list[i]) + ', '
+                        else:
+                            generation_list += str(unique_list[i])
+                filters['generation'] = generation_list
+        elem_list = 10
+        page = request.args.get('page', 1, type=int)
+        posts, total = models.Post.search(qsearch, page, elem_list, filters)
+        if total != 0:
+            if total['value'] % elem_list == 0:
+                pages = total['value'] // elem_list
+            else:
+                pages = (total['value'] // elem_list) + 1
         else:
-            pages = (total['value'] // elem_list) + 1
+            total = {'value': 0}
+            pages = 0
+        url = re.sub(r'.page=\d+', '', request.url)
+        if len(request.args) == 1 and request.args.get('page') or not request.args:
+            url += '?'
+        else:
+            url += '&'
     else:
-        total = {'value': 0}
-        pages = 0
-    url = re.sub(r'.page=\d+', '', request.url)
-    if len(request.args) == 1 and request.args.get('page') or not request.args:
-        url += '?'
-    else:
-        url += '&'
-    args = request.args
+        per_page = 10
+        page = request.args.get('page', 1, type=int)
+        if request.args.get('model_auto'):
+            if request.args.get('model_auto') != 'all':
+                filters['model_auto'] = request.args.get('model_auto').lower()
+        if request.args.get('mark_auto'):
+            if request.args.get('mark_auto') != 'all':
+                filters['mark_auto'] = request.args.get('mark_auto').lower()
+        posts = models.Post.query.order_by(desc(models.Post.id)).filter_by(**filters).paginate(page,
+                                                                                               per_page,
+                                                                                               error_out=False)
+        total = {'value': posts.total}
+        posts = posts.items
+        if total != 0:
+            if total['value'] % per_page == 0:
+                pages = total['value'] // per_page
+            else:
+                pages = (total['value'] // per_page) + 1
+        else:
+            total = {'value': 0}
+            pages = 0
+        url = re.sub(r'.page=\d+', '', request.url)
+        if len(request.args) == 1 and request.args.get('page') or not request.args:
+            url += '?'
+        else:
+            url += '&'
     return render_template('search_new.html', ads=posts, pagination=total, this_page=page, pages=pages, search=qsearch,
                            url=url,
                            args=args)
